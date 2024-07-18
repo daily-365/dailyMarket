@@ -1,0 +1,27 @@
+package com.dailyMarket.www.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import com.dailyMarket.www.vo.BusiFileVO;
+import com.dailyMarket.www.vo.BusiVO;
+import com.dailyMarket.www.vo.MenuVO;
+import com.dailyMarket.www.vo.StoreFileVO;
+
+public interface OwnerDAO {
+	public int selectBusiNumDupChk(String busiNum)throws Exception;
+	public void insertOwnerRegist(BusiVO busiVO)throws Exception;
+	public void insertBusiFile(Map<String, Object> map)throws Exception;
+	public BusiVO selectBusiByWriter(String userId)throws Exception;
+	public void deleteBusiFile(int busiFileNo)throws Exception;
+	public void updateBusi(BusiVO busiVO)throws Exception;
+	public void deleteBusi(int busiNo)throws Exception;
+	public void insertStoreFile(Map<String,Object> map)throws Exception;
+	public List<StoreFileVO> selectStoreFile(int busiNo)throws Exception;
+	public void deleteStoreFile(int busiNo)throws Exception;
+	public void deleteStoreFileByFileNo(int fileNo)throws Exception;
+	public void insertMenu(Map<String,Object>map)throws Exception;
+	public int insertMenuFile(Map<String,Object>map)throws Exception;
+	public int menuFileNoCnt()throws Exception;
+	public List<MenuVO> selectMenuList(int busiNo)throws Exception;
+}

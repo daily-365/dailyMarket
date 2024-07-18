@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="AdminMapper">
+<sql id="busiSearch">
+<if test="searchType !=null and !searchType.equals('')">
+	<if test="searchType=='all'.toString()">
+		AND ( busiNum like CONCAT('%',#{keyword},'%') 
+			OR writer like CONCAT('%',#{keyword} ,'%')
+			OR ownerName like CONCAT('%',#{keyword},'%')
+			OR busiName like CONCAT('%',#{keyword},'%')
+			<choose>
+				<when test="keyword=='입점완료'.toString()">OR state = 'Y'</when>
+				<when test="keyword=='입점대기'.toString()">OR state = 'S'</when>
+				<otherwise>OR state='N'</otherwise>
+			</choose>
+			)
+	</if>
+	<if test="searchType=='busiNum'.toString()">
+		AND busiNum like CONCAT('%',#{keyword},'%')
+	</if>
+	<if test="searchType=='writer'.toString()">
+		AND writer like CONCAT('%',#{keyword} ,'%')
+	</if>
+	<if test="searchType=='ownerName'.toString()">
+		AND ownerName like CONCAT('%',#{keyword},'%')
+	</if>
+	<if test="searchType=='busiName'.toString()">
+		AND busiName like CONCAT('%',#{keyword},'%')
+	</if>
+	<if test="searchType=='state'.toString() ">
+		<choose>
+			<when test="keyword=='입점완료'.toString()">AND state = 'Y'</when>
+			<when test="keyword=='입점대기'.toString()">AND state = 'S'</when>
+			<otherwise>AND state='N'</otherwise>
+		</choose>
+	</if>
+</if>
+<if test="startDate!=null and !startDate.equals('') and endDate!=null and !endDate.equals('')">
+	AND substring(regDate,1,10) BETWEEN #{startDate} and #{endDate}
+</if>
+</sql>
+
+<sql id="productSearch">
+<if test="searchType != null and !searchType.equals('')">
+	<if test="searchType=='all'.toString()">
+		AND ( title like CONCAT('%',#{keyword},'%')
+			OR <![CDATA[ price <= #{keyword}]]>
+			OR  location like CONCAT('%',#{keyword},'%')
+			OR  writer like CONCAT('%',#{keyword},'%')
+			<choose>
+				<when test="keyword=='판매'.toString()">OR type ='sale'</when>
+				<when test="keyword=='나눔'.toString()">OR type ='share'</when>
+				<otherwise>AND type=#{keyword}</otherwise>
+			</choose>
+			)
+	</if>
+	<if test="searchType=='title'.toString()">AND title like CONCAT('%',#{keyword},'%') </if>
+	<if test="searchType=='price'.toString()"> <![CDATA[AND price <= #{keyword}]]> </if>
+	<if test="searchType=='location'.toString()">AND location like CONCAT('%',#{keyword},'%') </if>
+	<if test="searchType=='writer'.toString()">AND writer like CONCAT('%',#{keyword},'%') </if>
+	<if test="searchType=='type'.toString()"> 
+		<choose>
+			<when test="keyword=='판매'.toString()">AND type ='sale'</when>
+			<when test="keyword=='나눔'.toString()">AND type ='share'</when>
+			<otherwise>AND type=#{keyword}</otherwise>
+		</choose>
+	</if>
+</if>
+<if test="startDate!=null and !startDate.equals('') and  endDate!=null and !endDate.equals('') ">
+	AND substring(regDate,1,10) BETWEEN #{startDate} AND #{endDate}
+</if>
+</sql>
+
+<select id="selectAdminLogin" resultType="int">
+SELECT COUNT(userId)
+FROM admin
+WHERE 1=1
+	AND userId=#{userId}
+	AND userPass=#{userPass}
+</select>
+
+
+<select id="selectProductList" resultType="com.dailyMarket.www.vo.ProductVO">
+SELECT rnum,productNo,title,CASE TYPE when 'sale' then '판매' when 'share' then '나눔' END AS TYPE 
+		, price,content,location,writer,hitCnt,reportCnt,regDate,modDate,delDate,deleteYn
+FROM (
+	SELECT productNo,title,TYPE  
+		, price,content,location,writer,hitCnt,reportCnt,regDate,modDate,delDate,deleteYn
+		,ROW_NUMBER() OVER(ORDER BY productNo DESC) AS rnum
+		FROM product 
+		WHERE 1=1
+			<include refid="productSearch"/>
+		) R
+WHERE 1=1 
+ORDER BY productNo DESC 
+</select>
+<select id="selectProductTotalCount" resultType="int">
+SELECT COUNT(productNo)
+FROM product
+WHERE 1=1
+	<include refid="productSearch"/>
+</select>
+<select id="selectProductByProductNo" resultType="com.dailyMarket.www.vo.ProductVO">
+SELECT productNo,title,type
+		, price,content,location,writer,hitCnt,reportCnt,regDate,modDate,delDate,deleteYn
+FROM product
+where productNo=#{productNo}
+</select>
+<select id="selectProductFile" resultType="com.dailyMarket.www.vo.ProductFileVO">
+SELECT productFileNo,productNo,productOriginFileName,productStoredFileName,productFileSize,productWriter,regDate,modDate,delDate,deleteYn
+FROM productfile
+WHERE productNo = #{productNo}
+</select>
+<update id="deleteProduct">
+UPDATE product SET deleteYn ='Y' , delDate =now()
+WHERE
+productNo =#{productNo}
+</update>
+<update id="updateProduct">
+UPDATE product SET deleteYn ='N' , modDate =now()
+WHERE
+productNo =#{productNo}
+</update>
+
+
+<select id="selectBusiList" resultType="com.dailyMarket.www.vo.BusiVO">
+SELECT rnum,busiNo,busiNum,writer,ownerName,busiTel,busiName,busiType1,busiType2,busiType3
+		,storeTel,storeAddr,storeAddrDetail,agreeYn
+		,CASE state when 'Y' then '입점완료'  when 'S' then '입점대기'  when 'N' then '반려 및 재검수 요청' END  AS state 
+		,regDate,modDate,delDate,deleteYn
+FROM (SELECT busiNo,busiNum,writer,ownerName,busiTel,busiName,busiType1,busiType2,busiType3
+		,storeTel,storeAddr,storeAddrDetail,agreeYn,state,regDate,modDate,delDate,deleteYn
+		,ROW_NUMBER()  OVER(ORDER BY busiNo DESC ) AS rnum 
+		FROM busi
+		WHERE 1=1
+		<include refid="busiSearch"/>
+	)R
+WHERE 1=1
+AND rnum BETWEEN 1 AND 5
+AND deleteYn ='N'
+ORDER BY busiNo DESC 
+</select>
+<select id="selectBusiByBusiNo" resultType="com.dailyMarket.www.vo.BusiVO">
+SELECT busiNo,busiNum,writer,ownerName,busiTel,busiName,busiType1,busiType2,busiType3
+		,storeTel,storeAddr,storeAddrDetail,agreeYn,state,regDate,modDate,delDate,deleteYn
+FROM busi 
+WHERE busiNo =#{busiNo}
+</select>
+<update id="updateBusiState" >
+UPDATE busi SET state=#{state}, modDate =now()
+WHERE busiNo =#{busiNo}
+</update>
+<select id="selectBusiTotalCount" resultType="int">
+SELECT COUNT(busiNo)
+FROM BUSI
+WHERE 1=1
+	<include refid="busiSearch"/>
+</select>
+<select id="selectBusiFile" resultType="com.dailyMarket.www.vo.BusiFileVO">
+SELECT busiFileNo,busiNo,busiOriginFileName,busiStoredFileName,busiFileSize,writer,regDate,modDate,delDate,deleteYn
+FROM busifile
+WHERE busiNo=#{busiNo}
+AND deleteYn='N'
+</select>
+<select id="selectStoreFile" resultType="com.dailyMarket.www.vo.StoreFileVO">
+SELECT fileNo,busiNo,originFileName,storedFileName,fileSize,regDate,modDate,delDate,deleteYn
+FROM storeFile
+where busiNo=#{busiNo}
+AND deleteYn='N'
+</select>
+
+</mapper>

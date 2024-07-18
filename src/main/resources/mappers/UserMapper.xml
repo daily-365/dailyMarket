@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="UserMapper">
+<insert id="insertUserRegist">
+Insert Into user (	userId,userPass,userName,userNick,userMail,userTel,userBirth,userGender
+					,userAddr1,userAddr2,userAgree1,userAgree2
+					)
+			values ( #{userId},#{userPass},#{userName},#{userNick},#{userMail},#{userTel},#{userBirth},#{userGender}
+					,#{userAddr1},#{userAddr2},#{userAgree1},#{userAgree2}
+					)
+
+</insert>
+<select id="selectUserLogin" resultType="int">
+Select Count(userId)
+From user
+where 1=1
+	and userId=#{userId}
+	and userPass=#{userPass}
+</select>
+
+<insert id="insertUserProduct">
+Insert into product(title,type,price,content,location,writer)
+	values(#{title},#{type},#{price},#{content},#{location},#{writer})
+</insert>
+
+<insert id="insertUserFile">
+Insert into productFile(productNo, productOriginFileName,productStoredFileName,productFileSize,productWriter)
+	values ( (SELECT IFNULL((SELECT max(productNo)+1),1) From product) ,#{productOriginFileName},#{productStoredFileName},#{productFileSize},#{productWriter})
+</insert>
+
+<select id="selectProductList" resultType="com.dailyMarket.www.vo.ProductVO">
+SELECT rnum,productNo,title,type,price,content,location,writer,hitCnt,likeCnt,reportCnt,regDate,modDate,delDate,deleteYn,productStoredFileName
+FROM (
+	SELECT 
+		 p.productNo,p.title,p.type,p.price,p.content,p.location,p.writer,p.hitCnt,p.likeCnt,p.reportCnt,p.regDate,p.modDate,p.delDate,p.deleteYn,
+		 f.productStoredFileName
+		 ,ROW_NUMBER() OVER (ORDER BY productNo DESC ) AS rnum
+	FROM product p
+	LEFT OUTER JOIN productFile f
+	ON p.productNo = f.productNo
+	WHERE 1=1
+) R
+WHERE 1=1
+	AND deleteYn ='N'
+	GROUP BY productNo
+ORDER BY productNo DESC 
+LIMIT #{startRow},12
+</select>
+
+<select id="selectProductDetail" resultType="com.dailyMarket.www.vo.ProductVO">
+SELECT 
+	 p.productNo,p.title,p.type,p.price,p.content,p.location,p.writer,p.hitCnt,p.likeCnt,p.reportCnt,p.regDate,p.modDate,p.delDate,p.deleteYn,
+	 f.productStoredFileName
+FROM product p
+LEFT OUTER JOIN productFile f
+	ON p.productNo = f.productNo
+WHERE 1=1
+	AND p.productNo =#{productNo}
+	AND p.deleteYn ='N'
+</select>
+
+<select id="selectBusiList" resultType="com.dailyMarket.www.vo.BusiVO">
+SELECT a.busiNo,a.busiNum,a.writer,a.ownerName,a.busiTel,a.busiName,a.busiType1,a.busiType2,a.busiType3,a.storeTel
+		,a.storeAddr,a.storeAddrDetail,a.agreeYn,a.state,a.homepage,a.introduce,a.regDate,a.modDate,a.delDate,a.deleteYn,a.title
+		,b.storedFileName
+FROM busi a
+INNER JOIN storeFile b
+ON a.busiNo = b.busiNo
+WHERE 1=1
+	AND a.deleteYn='N'
+	AND b.fileNo =  a.busiNo
+</select>
+<select id="selectByBusiNo" resultType="com.dailyMarket.www.vo.BusiVO">
+SELECT busiNo,busiNum,writer,ownerName,busiTel,busiName,busiType1,busiType2,busiType3,storeTel,storeAddr,storeAddrDetail,introduce,homePage,agreeYn,state
+		,regDate,modDate,delDate,deleteYn,title
+FROM busi
+WHERE 1=1
+	AND busiNo= #{busiNo}
+</select>
+
+<select id="selectStoreList" resultType="com.dailyMarket.www.vo.StoreFileVO">
+SELECT fileNo,busiNo,originFileName,storedFileName,fileSize,writer,regDate,modDate,delDate,deleteYn
+FROM storeFile
+WHERE 1=1
+ AND busiNo = #{busiNo}
+</select>
+
+<select id="selectMenuList" resultType="com.dailyMarket.www.vo.MenuVO">
+SELECT a.menuNo,a.busiNo,a.name,a.price,a.count,a.content,a.deleveryYn,a.deleveryPrice,a.regDate,a.modDate,a.delDate,a.deleteYn
+		,b.fileNo,b.menuNo,b.originFileName,b.storedFileName,b.fileSize,b.fileSize,b.writer,b.regDate,b.modDate,b.delDate,b.deleteYn
+FROM menu a
+INNER JOIN menufile b
+ON a.menuNo = b.menuNo
+WHERE busiNo = #{busiNo}
+and a.deleteYn='N'
+</select>
+
+</mapper>

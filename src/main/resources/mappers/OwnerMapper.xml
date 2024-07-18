@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="OwnerMapper">
+<select id="selectBusiNumDupChk" resultType="int">
+Select Count(busiNum)
+From busi
+where busiNum = #{busiNum}
+</select>
+<insert id="insertOwnerRegist">
+Insert into busi (busiNum,writer,ownerName,busiTel,busiName,busiType1,busiType2,busiType3,storeTel,storeAddr,storeAddrDetail,agreeYn,introduce,homePage,title)
+		values (#{busiNum},#{writer},#{ownerName},#{busiTel},#{busiName},#{busiType1},#{busiType2},#{busiType3},#{storeTel},#{storeAddr},#{storeAddrDetail},#{agreeYn},#{introduce},#{homePage},#{title})
+</insert>
+<insert id="insertBusiFile">
+Insert into busiFile(busiNo,busiOriginFileName,busiStoredFileName,busiFileSize,writer)
+		values ( (SELECT IFNULL(max(busiNo),1)FROM busi), #{busiOriginFileName},#{busiStoredFileName},#{busiFileSize},#{writer})
+</insert>
+<insert id="insertStoreFile">
+Insert into storefile(busiNo,originFileName,storedFileName,fileSize,writer,regDate)
+		values ( (SELECT IFNULL(max(busiNo),1)FROM busi), #{originFileName},#{storedFileName},#{fileSize},#{writer},now())
+</insert>
+<select id="selectBusiByWriter" resultType="com.dailyMarket.www.vo.BusiVO">
+SELECT a.busiNo,a.busiNum,a.ownerName,a.busiTel,a.busiName,a.busiType1,a.busiType2,a.busiType3,a.storeTel,a.storeAddr,a.storeAddrDetail,a.agreeYn,a.state,a.regDate,a.modDate,a.delDate,a.deleteYn
+		,a.title,a.homePage,a.introduce,b.busiFileNo,b.busiStoredFileName
+FROM busi a
+INNER JOIN busifile b
+ON a.busiNo= b.busiNo 
+WHERE 1=1
+	AND a.writer =#{writer}
+	AND a.deleteYn ='N'
+	AND b.deleteYn ='N'
+</select>
+<update id="deleteBusiFile">
+UPDATE busiFile SET modDate=now(),delDate=now(), deleteYn='Y'
+where busiFileNo = #{busiFileNo}
+</update>
+<update id="updateBusi">
+UPDATE busi SET ownerName=#{ownerName},busiTel=#{busiTel},busiName=#{busiName}
+				,busiType1=#{busiType1},busiType2=#{busiType2},busiType3=#{busiType3}
+				,storeTel=#{storeTel},storeAddr=#{storeAddr},storeAddrDetail=#{storeAddrDetail},agreeYn=#{agreeYn}
+				,modDate=now()
+				,homePage=#{homePage}
+				,introduce=#{introduce}
+where busiNo = #{busiNo}
+</update>
+<update id="deleteBusi">
+UPDATE busi SET modDate =now() ,delDate = now() , deleteYN='Y'
+where busiNo = #{busiNo}
+</update>
+<select id="selectStoreFile" resultType="com.dailyMarket.www.vo.StoreFileVO">
+SELECT fileNo,busiNo,originFileName,storedFileName,fileSize,writer,regDate,modDate,delDate,deleteYn
+FROM storeFile  
+WHERE busiNo=#{busiNo}
+AND deleteYn='N'
+</select>
+<update id="deleteStoreFile">
+UPDATE storeFile set deleteYn='Y', modDate =now() ,delDate =now()
+WHERE busiNo=#{busiNo}
+</update>
+<update id="deleteStoreFileByFileNo">
+UPDATE storeFile set deleteYn='Y' , modDate =now() ,delDate =now()
+WHERE fileNo=#{fileNo}
+</update>
+
+<insert id="insertMenu">
+INSERT into menu (busiNo,name,price,count,content,deleveryYn,deleveryPrice,regDate)
+			values ( (SELECT IFNULL(max(busiNo),1)FROM busi) ,#{name},#{price},#{count},#{content},#{deleveryYn},#{deleveryPrice},now())
+</insert>
+
+<select id="selectMenuFileNoCnt" resultType="int">
+SELECT IFNULL(max(menuNo),1) FROM menu  
+</select>
+
+<!--  다중 insert Mybatis Foreach 구문 (index 포함 ) --> 
+<insert id="insertMenuFile" parameterType="java.util.HashMap">
+INSERT into menuFile(menuNo,originFileName,storedFileName,fileSize,writer)
+	values 
+	<foreach item="item" collection="menuFileMap"   index="idx" open="(" close=")" separator=",">
+		#{item.menuNo} ,#{item.originFileName},#{item.storedFileName},#{item.fileSize},#{item.writer} 
+	</foreach>
+</insert>
+
+<select id="selectMenuList" resultType="com.dailyMarket.www.vo.MenuVO">
+SELECT a.menuNo,a.busiNo,a.name,a.price,a.count,a.content,a.deleveryYn,a.deleveryPrice,a.regDate,a.modDate,a.delDate,a.deleteYn
+		,b.fileNo,b.menuNo,b.originFileName,b.storedFileName,b.fileSize,b.fileSize,b.writer,b.regDate,b.modDate,b.delDate,b.deleteYn
+FROM menu a
+INNER JOIN menufile b
+ON a.menuNo = b.menuNo
+WHERE busiNo = #{busiNo}
+and a.deleteYn='N'
+</select>
+
+</mapper>
