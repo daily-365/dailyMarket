@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 
 import com.dailyMarket.www.vo.BusiFileVO;
 import com.dailyMarket.www.vo.BusiVO;
+import com.dailyMarket.www.vo.JobFileVO;
+import com.dailyMarket.www.vo.JobVO;
 import com.dailyMarket.www.vo.MenuVO;
 import com.dailyMarket.www.vo.StoreFileVO;
 
@@ -88,6 +90,16 @@ public class OwnerDAOImpl implements OwnerDAO {
 	public List<MenuVO> selectMenuList(int busiNo) throws Exception {
 		return sqlSession.selectList("OwnerMapper.selectMenuList",busiNo);
 	}
+	@Override
+	public void insertJob(JobVO jobVO) throws Exception {
+		sqlSession.insert("OwnerMapper.insertJob",jobVO);
+	}
+	@Override
+	public void insertJobFile(Map<String,Object> map) throws Exception {
+		sqlSession.insert("OwnerMapper.insertJobFile",map);
+		
+	}
+	
 	
 	
 }

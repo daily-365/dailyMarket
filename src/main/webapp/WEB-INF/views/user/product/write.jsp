@@ -38,8 +38,11 @@
 					</svg>
 					<span class="svg fw-bold text-dark">10&nbsp;</span>
 				</div>
-			</div><br>
-			<div class="col" id="fileContent"></div>
+			</div>
+			<br>
+			<br>
+			<div class="row" id="fileContent"></div>
+			<br>
 			<div class="col-6">
 				<label for="title" class="form-label fw-bold" >제목</label>
 				<input type="text" id="title" name="title" class="form-control" maxlength="15">

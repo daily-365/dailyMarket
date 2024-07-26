@@ -14,13 +14,13 @@
       <ul class="navbar-nav  ">
        <li class="nav-item me-4">
       	 <div class="dropdown">
-			  <a href="#" class="dropdown-toggle nav-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+			  <a href="/user/main" class="dropdown-toggle nav-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
 		    	글쓰기
 			  </a>
 			  <ul class="dropdown-menu">
 			    <li><a class="dropdown-item" href="/user/job/write">알바 지원하기</a></li>
 			    <li><a class="dropdown-item" href="/user/estate/writeOne">부동산 매물 올리기</a></li>
-			    <li><a class="dropdown-item" href="/user/car/write">중고차 직거래</a></li>
+			    <li><a class="dropdown-item" href="/user/car/regist">중고차 직거래</a></li>
 			    <li><hr class="dropdown-divider"></li>
 			    <li><a class="dropdown-item" href="/user/product/write">내 물건 팔기</a></li>
 			  </ul>

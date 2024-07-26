@@ -89,4 +89,14 @@ WHERE busiNo = #{busiNo}
 and a.deleteYn='N'
 </select>
 
+<insert id="insertJob">
+Insert into job (jobWriter,jobCompany,jobTitle,jobType,jobMoney,jobLoc,jobLocDetail,jobWorkDate,jobWorkTime,jobContent,jobLocContent)
+		values (#{jobWriter}, #{jobCompany},#{jobTitle},#{jobType},#{jobMoney},#{jobLoc},#{jobLocDetail},#{jobWorkDate},#{jobWorkTime},#{jobContent},#{jobLocContent})
+</insert>
+<insert id="insertJobFile">
+Insert into jobFile(jobNo,writer,originFileName,storedFileName,fileSize)
+	values ( ( SELECT IFNULL(max(jobNo),1) From job )  ,#{writer},#{originFileName},#{storedFileName},#{fileSize})
+</insert>
+
+
 </mapper>

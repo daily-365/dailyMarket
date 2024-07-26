@@ -1,5 +1,10 @@
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="java.util.Date"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,14 +12,49 @@
 <title>부동산 상세 페이지</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<style type="text/css">
+.img {
+	margin-left: 43%;
+	width: 800px;
+	height: 500px;
+}
+</style>
 </head>
 <body class="container-fluid">
 <%@ include file="/resources/common/user/header.jsp" %>
-<div class="container">
 	<br><br>
-	<div class="row">
-		<div class="col d-flex justify-content-center">
-			<img class="rounded" style="width: 800px; height: 450px;" src="https://dnvefa72aowie.cloudfront.net/jobs/article/8142178/1718845223461/job-post-2551321589.jpeg?q=95&s=1440x1440&t=inside">		
+		<div class="topCard cycle-slideshow  " 
+			data-cycle-fx="carousel"
+			data-cycle-timeout="1000"
+			data-cycle-speed="1000"
+			data-cycle-slides="> .slide"
+			data-cycle-carousel-visible="1"
+			data-cycle-carousel-vertical="false"
+			data-cycle-log="false"
+			data-cycle-pause-on-hover="true"
+			data-cycle-pager="#per-slide-template"
+			data-cycle-next="#next"
+		    data-cycle-prev="#prev"
+		    data-cycle-pager="#pager"
+		    data-cylce-page-template="<li><a href='#'></a></li>"
+			>
+			<c:forEach var="file" items="${file }">
+				<div class="slide" data-cycle-pager-template="<span></span>">
+					<a href="#" ><img  class="img"src="/resources/upload/user/estate/${file.storedFileName }" /></a>
+				</div>
+			</c:forEach>
+			<br>
+			<div id="buttons" class="text-center fw-bold text-dark h4">
+		    <span data-cycle-cmd="prev">
+		    	<svg class="imgSvg" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-left-fill" viewBox="0 0 16 16">
+		  			<path d="m3.86 8.753 5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z"/>
+				</svg>
+			</span>
+		    <span data-cycle-cmd="next">
+		    	<svg class="imgSvg" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-right-fill" viewBox="0 0 16 16">
+		  			<path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
+				</svg>
+			</span>
 		</div>
 	</div>
 	<br><br>
@@ -22,9 +62,11 @@
 		<div class="col d-flex justify-content-center">
 			<img style="padding: 30px;" class="rounded-circle bg-secondary" src="">
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<p class="fw-bold">해바라기</p>
+			<p class="fw-bold">${userId }</p>
 			&nbsp;&nbsp;&nbsp;
-			<p>목3동</p>
+			<c:set value="${estate.esLoc}" var="esLoc" />
+			${fn:substring(esLoc,0,9 ) }
+			
 		</div>
 	</div>	
 	<hr>
@@ -33,12 +75,28 @@
 		<div class="col-2">
 		</div>
 		<div class="col-3">
-			<p class="fw-bold h5">집주인</p>
-			<p class="h5">아파트</p>
+			<p class="fw-bold h5">${estate.esHumType }</p>
+			<p class="h5">${estate.esRoomType }</p>
 		</div>
 		<div class="col-3">
-			<h4 class="fw-bold"><span calss="text-danger">판매중</span>매매 2억 9,500</h4>
-			<p>거의 2년전 작성</p> <!--  datediff ,,,  마감된 경우 마감으로 표시-->
+			<h4 class="fw-bold">
+				<span class="text-dark"><c:if test="${estate.esTradeYn eq 'N' }"> 판매중 </c:if></span>${estate.esTradeType }  ${estate.esPrice }
+				<span class="text-danger"><c:if test="${estate.esTradeYn eq 'Y' }"> 거래완료 </c:if></span>
+			</h4>
+			<% Date date = new Date();
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				String now = sdf.format(date);
+			%>
+			<c:set value="<%=now %>" var="today" />
+			<c:choose>
+				<c:when test="${estate.esMoveDate eq today}">
+					<p class="h5 text-danger ">마감 </p>
+				</c:when>
+				<c:otherwise>
+					<p class="h5 "> <fmt:formatDate value="${estate.regDate }" pattern="yyyy-MM-dd"/> ~ ${estate.esMoveDate } </p> 
+				</c:otherwise>
+			</c:choose>
+			
 		</div>
 	</div>
 	<br>
@@ -54,7 +112,9 @@
 		<div class="col-2">
 		</div>
 		<div class="col">
-			<span class="h5 fw-bold text-secondary">면적 </span>&nbsp;&nbsp;&nbsp;<span class="h5 fw-bold text-dark">26평. 전용 85.5m2</span>
+			<span class="h5 fw-bold text-secondary">면적 </span>&nbsp;&nbsp;&nbsp;<span class="h5 fw-bold text-dark">
+				공급 ${estate.esSize1 }m2 전용  ${estate.esSize2 }m2
+			</span>
 		</div>
 	</div>
 	<br>
@@ -62,7 +122,9 @@
 		<div class="col-2">
 		</div>
 		<div class="col">
-			<span class="h5 fw-bold text-secondary">방/욕실 수 </span>&nbsp;&nbsp;&nbsp;<span class="h5 fw-bold text-dark">방 3개 / 욕실 1개</span>
+			<span class="h5 fw-bold text-secondary">방/욕실 수 </span>&nbsp;&nbsp;&nbsp;<span class="h5 fw-bold text-dark">
+				방 ${estate.esOption1 }개/ 욕실 ${estate.esOption2 }개
+			</span>
 		</div>
 	</div>
 	<br>
@@ -70,7 +132,7 @@
 		<div class="col-2">
 		</div>
 		<div class="col">
-			<span class="h5 fw-bold text-secondary">층 </span>&nbsp;&nbsp;&nbsp;<span class="h5 fw-bold text-dark">14층 / 20층</span>
+			<span class="h5 fw-bold text-secondary">층 </span>&nbsp;&nbsp;&nbsp;<span class="h5 fw-bold text-dark">${estate.esOption3 }층</span>
 		</div>
 	</div>
 	<br>
@@ -78,7 +140,14 @@
 		<div class="col-2">
 		</div>
 		<div class="col">
-			<span class="h5 fw-bold text-secondary">대출가능여부 </span>&nbsp;&nbsp;&nbsp;<span class="h5 fw-bold text-dark">가능</span>
+			<span class="h5 fw-bold text-secondary">대출가능여부 </span>&nbsp;&nbsp;&nbsp;
+			<span class="h5 fw-bold text-dark">
+				<c:choose>
+					<c:when test="${estate.esLoanYn eq 'S' }">확인필요</c:when>
+					<c:when test="${estate.esLoanYn eq 'Y' }">가능</c:when>
+					<c:when test="${estate.esLoanYn eq 'N' }">불가능</c:when>
+				</c:choose>
+			</span>
 		</div>
 	</div>
 	<br>
@@ -86,7 +155,11 @@
 		<div class="col-2">
 		</div>
 		<div class="col">
-			<span class="h5 fw-bold text-secondary">입주 가능일 </span>&nbsp;&nbsp;&nbsp;<span class="h5 fw-bold text-dark">즉시 가능</span>
+			<span class="h5 fw-bold text-secondary">입주 가능일 </span>&nbsp;&nbsp;&nbsp;
+			 <span class="h5 fw-bold text-dark">
+			 	<c:if test="${estate.esMoveYn eq 'Y' }"> 즉시 가능</c:if>
+				<c:if test="${estate.esMoveYn eq 'N' }">${estate.esMoveDate}</c:if>
+			 </span>
 		</div>
 	</div>
 	<br>
@@ -94,7 +167,13 @@
 		<div class="col-2">
 		</div>
 		<div class="col">
-			<span class="h5 fw-bold text-secondary">반려동물 </span>&nbsp;&nbsp;&nbsp;<span class="h5 fw-bold text-dark">불가능</span>
+			<span class="h5 fw-bold text-secondary">반려동물 </span>&nbsp;&nbsp;&nbsp;<span class="h5 fw-bold text-dark">
+				<c:choose>
+					<c:when test="${estate.esAnimalYn eq 'S' }">확인필요</c:when>
+					<c:when test="${estate.esAnimalYn eq 'Y' }">가능</c:when>
+					<c:when test="${estate.esAnimalYn eq 'N' }">불가능</c:when>
+				</c:choose>
+			</span>
 		</div>
 	</div>
 	<br>
@@ -102,7 +181,13 @@
 		<div class="col-2">
 		</div>
 		<div class="col">
-			<span class="h5 fw-bold text-secondary">주차 </span>&nbsp;&nbsp;&nbsp;<span class="h5 fw-bold text-dark">가능</span>
+			<span class="h5 fw-bold text-secondary">주차 </span>&nbsp;&nbsp;&nbsp;<span class="h5 fw-bold text-dark">
+				<c:choose>
+					<c:when test="${estate.esParkingYn eq 'S' }">확인필요</c:when>
+					<c:when test="${estate.esParkingYn eq 'Y' }">가능</c:when>
+					<c:when test="${estate.esParkingYn eq 'N' }">불가능</c:when>
+				</c:choose>
+			</span>
 		</div>
 	</div>
 	<br>
@@ -110,15 +195,9 @@
 		<div class="col-2">
 		</div>
 		<div class="col">
-			<span class="h5 fw-bold text-secondary">엘리베이터 </span>&nbsp;&nbsp;&nbsp;<span class="h5 fw-bold text-dark">있음</span>
-		</div>
-	</div>
-	<br>
-	<div class="row">
-		<div class="col-2">
-		</div>
-		<div class="col">
-			<span class="h5 fw-bold text-secondary">내부 시설 </span>&nbsp;&nbsp;&nbsp;<span class="h5 fw-bold text-dark">세탁기, 냉장고, 에어컨, 가스렌지, 침대</span>
+			<span class="h5 fw-bold text-secondary">내부 시설 </span>&nbsp;&nbsp;&nbsp;<span class="h5 fw-bold text-dark">
+				${estate.esFacility }
+			</span>
 		</div>
 	</div>
 	<br><br>
@@ -133,34 +212,34 @@
 	<div class="row">
 		<div class="col-2">
 		</div>
-		<div class="col">
-<pre class="h5">
-주인거주중으로 주인직접 
-찔러보기x.부동산사양합니다.  
-
-▷우방사랑마을 26평(전용59.94) 14층 동향
-    매매가: 2억9,500만원(방3개 화장실1개)
-
-* 주소,위치 아래 상세히나옵니다
-학군,층수,트인뷰 좋습니다. 부동산가서 계약서 작성.
--발코니 샷시제외 올수리.(4-5년전)
--수성구학군 동일초배정.
--2호선 대구은행역 도보3분 초역세권.
--3호선 수성시장역 도보11분 더블역세.
--신천대로.앞산순환도로 이용편리
--동대구역 KTX역 차량 8분거리
--수성구 주요학원가(범어역,수성구청역)및 
-시내(반월당) 지하철1-2코스내 이용가능
--학교.학원.대형마트.병원.은행.우체국.스타벅스.맥도날드등 상권이용편리
--아파트 단지들로 형성되어있어 생활환경 쾌적
--바로 옆 수성근린공원(여름 물놀이터운영)및 신천가까움-> 산책.운동하기 좋아요
--현대엘리베이터 교체공사(23년초 교체완료)
-★대중교통,자차 교통이용편리!!
-
-</pre>		
+		<div class="col-8">
+			<p class="h5 fw-bold">${estate.esAdvantage }</p>
+			<p class="h5">${estate.esHouseIntro }</p>
 		</div>	
 	</div>
 		<br><br>
+	<c:if test="${estate.esCostYn eq 'Y' }">
+		<div class="row">
+			<div class="col-2">
+			</div>
+			<div class="col">
+				<span class="h5 fw-bold">관리비</span>
+			</div>
+		</div>
+		<br>
+		<div class="row">
+			<div class="col-2">
+			</div>
+			<div class="col-8">
+				<p class="h5 fw-bold"><fmt:formatNumber value="${estate.esCost }" pattern="#,###"/>원</p><br>
+				<p class="h5 text-secondary fw-bold">관리비 포함 항목 <span class="fw-bold text-dark">&nbsp;&nbsp;&nbsp;${estate.esCostChk }</span></p>
+				<p class="h5 text-secondary fw-bold">관리비와 별도인 항목 <span class="fw-bold text-dark">&nbsp;&nbsp;&nbsp;${estate.esSeperCostChk }</span></p>
+				<br>
+				<p class="h5">${estate.esCostContent}</p>
+			</div>	
+		</div>
+	</c:if>
+	<br><br>
 	<div class="row">
 		<div class="col-2">
 		</div>
@@ -175,78 +254,68 @@
 		<div class="col-8 text-center">
 			<div id="map" style="width:100%;height:350px;"></div>
 			<br><br>
-			<h6 id="location" class="fw-bold h5">힐스테이트 등촌역</h6>
+			<h6 id="location" class="fw-bold h5">${estate.esLoc } ${estate.esLocDetail }</h6>
+			<p class="fw-bold">${estate.esLocContent }</p>
 		</div>
 	</div>
 	<br>	
-	
+<input type="text" value="${estate.esLoc}" id="esLoc" style="display: none;">
+<input type="text" value="${estate.esLocDetail}" id="esLocDetail" style="display: none;">
 </div>
 <%@ include file="/resources/common/user/footer.jsp" %>
 </body>
+<!-- jQuery Cycle2 Plugin CDN JS -->
+
 <!-- 카카오지도 API -->
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7e7eda9c8086805cb16eb9832f3a8b1e&libraries=services"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<!--  CYCLE 2  -->
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.cycle2/20140216/jquery.cycle2.min.js" type="text/javascript"></script>
 <script type="text/javascript">
+var address = document.getElementById('esLoc')
+var addrVal = address.value
 
-// 마커를 클릭하면 장소명을 표출할 인포윈도우 입니다
-var infowindow = new kakao.maps.InfoWindow({zIndex:1});
+var addrDetail = document.getElementById('esLocDetail').value
 
 var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
     mapOption = {
-        center: new kakao.maps.LatLng(37.566826, 126.9786567), // 지도의 중심좌표
+        center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
         level: 3 // 지도의 확대 레벨
     };  
 
 // 지도를 생성합니다    
 var map = new kakao.maps.Map(mapContainer, mapOption); 
 
-// 장소 검색 객체를 생성합니다
-var ps = new kakao.maps.services.Places(); 
+// 주소-좌표 변환 객체를 생성합니다
+var geocoder = new kakao.maps.services.Geocoder();
 
-// 키워드로 장소를 검색합니다-----------------------------변수 설정으로 변경하기
-ps.keywordSearch('힐스테이트등촌역', placesSearchCB); 
+// 주소로 좌표를 검색합니다
+geocoder.addressSearch(''+addrVal+'', function(result, status) {
 
-// 키워드 검색 완료 시 호출되는 콜백함수 입니다
-function placesSearchCB (data, status, pagination) {
-    if (status === kakao.maps.services.Status.OK) {
+    // 정상적으로 검색이 완료됐으면 
+     if (status === kakao.maps.services.Status.OK) {
 
-        // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
-        // LatLngBounds 객체에 좌표를 추가합니다
-        var bounds = new kakao.maps.LatLngBounds();
+        var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
 
-        for (var i=0; i<data.length; i++) {
-            displayMarker(data[i]);    
-            bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
-        }       
+        // 결과값으로 받은 위치를 마커로 표시합니다
+        var marker = new kakao.maps.Marker({
+            map: map,
+            position: coords
+        });
 
-        // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
-        map.setBounds(bounds);
-    } 
-}
-
-// 지도에 마커를 표시하는 함수입니다
-function displayMarker(place) {
-    
-    // 마커를 생성하고 지도에 표시합니다
-    var marker = new kakao.maps.Marker({
-        map: map,
-        position: new kakao.maps.LatLng(place.y, place.x) 
-    });
-
-    // 마커에 클릭이벤트를 등록합니다
-    kakao.maps.event.addListener(marker, 'click', function() {
-        // 마커를 클릭하면 장소명이 인포윈도우에 표출됩니다
-        infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>');
+        // 인포윈도우로 장소에 대한 설명을 표시합니다
+        var infowindow = new kakao.maps.InfoWindow({
+            content: '<div style="width:150px;text-align:center;padding:6px 0;">'+addrVal+"  "+addrDetail +'</div>'
+        });
         infowindow.open(map, marker);
-    });
-}
 
-// 지도 확대 축소를 제어할 수 있는  줌 컨트롤을 생성합니다
-var zoomControl = new kakao.maps.ZoomControl();
-map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+        // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+        map.setCenter(coords);
+    } 
+});  
 
 </script>
 </html>

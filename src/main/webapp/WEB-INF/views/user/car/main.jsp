@@ -1,5 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -20,7 +23,7 @@
         						   <pre class="h5">데일리에서 직거래 해보세요.</pre>
        	</p>
         <p>
-          <a href="#" class="btn btn-light my-2" onclick="javascript: location.href='/user/car/write'">내 차 판매하기</a>
+          <a href="#" class="btn btn-light my-2" onclick="javascript: location.href='/user/car/regist'">내 차 판매하기</a>
         </p>
       </div>
     </div>
@@ -34,77 +37,21 @@
 	<br><br>
 	<div class="row text-center">
   		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/car/articles/195460af999f34f37f3fe9c2b75650398240b0cd217d264edf900972b8380eba_1715685623819.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
+  		<c:forEach var="file" items="${file }" begin="0" end="0">
+  			<img src="/resources/upload/user/car/${file.storedFileName }" style="width:120px; height: 120px;">
+  		</c:forEach>
+  		<c:forEach var="list" items="${list }">
   			<br><br>
-  			<a href="/user/car/detail" class="fw-bold text-dark">험머 H2 6.04WD</a>
+  			<a href="/user/car/detail?carNo=${list.carNo}" class="fw-bold text-dark">${list.carType }</a>
   			<br><br>
-  			<p><span>06년식</span>&nbsp;&nbsp;&nbsp;<span>2.7만km</span>&nbsp;&nbsp;&nbsp;<span>우장산동</span></p>
-  			<p class="fw-bold">3,300만원</p> 
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/car/articles/f5aa8d18db3dac8c8fb7c28281c7eb015ed9ba8afb9cda73f4b99805392a1f6a_1708420891524.png?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<a href="/user/car/detail" class="fw-bold text-dark">현대 갤로퍼 M 롱바디 인터쿨러 엑시드</a>
-  			<br><br>
-  			<p><span>97년식</span>&nbsp;&nbsp;&nbsp;<span>26만km</span>&nbsp;&nbsp;&nbsp;<span>은계동</span></p>
-  			<p class="fw-bold">1,300만원</p> 
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/car/articles/910f5980b98942a891b0c396d23d7fbcdcbbc86d51d7f3919a849bfcbeb8ed8f_1711850045897.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<a href="/user/car/detail" class="fw-bold text-dark">벤틀리 컨티넨탈 GT I 6.0 GT (W12) 쿠페</a>
-  			<br><br>
-  			<p><span>07년식</span>&nbsp;&nbsp;&nbsp;<span>6.5만km</span>&nbsp;&nbsp;&nbsp;<span>연산제6동</span></p>
-  			<p class="fw-bold">2,800만원</p> 
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/car/articles/910f5980b98942a891b0c396d23d7fbcdcbbc86d51d7f3919a849bfcbeb8ed8f_1711850045897.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<a href="/user/car/detail" class="fw-bold text-dark">포르쉐 파나메라 970 3.64 AWD</a>
-  			<br><br>
-  			<p><span>11년식</span>&nbsp;&nbsp;&nbsp;<span>7.6만km</span>&nbsp;&nbsp;&nbsp;<span>우면동</span></p>
-  			<p class="fw-bold">3,500만원</p> 
+  			<p><span> ${fn:substring(list.carRegDate,2,4) }년식</span>&nbsp;&nbsp;&nbsp;<span>${list.carDistance }만km</span></p>
+  			<p><span>${list.carLoc }</span></p>
+  			<fmt:parseNumber var="carPrice"  value="${list.carPrice}" integerOnly="true"/>
+  			<fmt:formatNumber var="price"  value="${carPrice div 10000 }"  type="number" pattern="#,###" />
+  			<p class="fw-bold">￦ ${price } 만원</p>
+  		</c:forEach>
   		</div>
   		
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/car/articles/195460af999f34f37f3fe9c2b75650398240b0cd217d264edf900972b8380eba_1715685623819.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<a href="/user/car/detail" class="fw-bold text-dark">험머 H2 6.04WD</a>
-  			<br><br>
-  			<p><span>06년식</span>&nbsp;&nbsp;&nbsp;<span>2.7만km</span>&nbsp;&nbsp;&nbsp;<span>우장산동</span></p>
-  			<p class="fw-bold">3,300만원</p> 
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/car/articles/f5aa8d18db3dac8c8fb7c28281c7eb015ed9ba8afb9cda73f4b99805392a1f6a_1708420891524.png?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<a href="/user/car/detail" class="fw-bold text-dark">현대 갤로퍼 M 롱바디 인터쿨러 엑시드</a>
-  			<br><br>
-  			<p><span>97년식</span>&nbsp;&nbsp;&nbsp;<span>26만km</span>&nbsp;&nbsp;&nbsp;<span>은계동</span></p>
-  			<p class="fw-bold">1,300만원</p> 
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/car/articles/910f5980b98942a891b0c396d23d7fbcdcbbc86d51d7f3919a849bfcbeb8ed8f_1711850045897.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<a href="/user/car/detail" class="fw-bold text-dark">벤틀리 컨티넨탈 GT I 6.0 GT (W12) 쿠페</a>
-  			<br><br>
-  			<p><span>07년식</span>&nbsp;&nbsp;&nbsp;<span>6.5만km</span>&nbsp;&nbsp;&nbsp;<span>연산제6동</span></p>
-  			<p class="fw-bold">2,800만원</p> 
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/car/articles/910f5980b98942a891b0c396d23d7fbcdcbbc86d51d7f3919a849bfcbeb8ed8f_1711850045897.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<a href="/user/car/detail" class="fw-bold text-dark">포르쉐 파나메라 970 3.64 AWD</a>
-  			<br><br>
-  			<p><span>11년식</span>&nbsp;&nbsp;&nbsp;<span>7.6만km</span>&nbsp;&nbsp;&nbsp;<span>우면동</span></p>
-  			<p class="fw-bold">3,500만원</p> 
-  		</div>
-  	</div>
-  	<br>
-  	<div class="row">
-  		<div class="col">
-  			<button class="form-control fw-bold h5 btn btn-light" type="button">인기 중고차 더보기</button>		
-  		</div> 
-  	</div>
   
    <br><br>
   	<div class="row">

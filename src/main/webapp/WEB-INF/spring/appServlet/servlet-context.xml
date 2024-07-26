@@ -38,22 +38,47 @@
 <interceptors>
      <interceptor>
           	<mapping path="/admin/main"/>
+          	<mapping path="/admin/product/main"/>
+          	<mapping path="/admin/product/detail"/>
+          	<mapping path="/admin/product/delete"/>
+          	<mapping path="/admin/product/update"/>
           	<mapping path="/admin/store/main"/>
           	<mapping path="/admin/store/detail"/>
+          	<mapping path="/admin/store/detail/update"/>
+          	<mapping path="/admin/job/main"/>
+          	<mapping path="/admin/estate/main"/>
+          	<mapping path="/admin/car/main"/>
+          	<mapping path="/admin/user/main"/>
            <beans:bean id="adminInterceptor" class="com.dailyMarket.www.utils.AdminInterceptor"/>
    	</interceptor>
    	<interceptor>
           	<mapping path="/user/main"/>
           	<mapping path="/user/product/main"/>
           	<mapping path="/user/product/write"/>
+          	<mapping path="/user/product/detail"/>
           	<mapping path="/user/company/main"/>
+          	<mapping path="/user/company/detail"/>
+          	<mapping path="/user/company/product/main"/>
           	<mapping path="/user/job/main"/>
+          	<mapping path="/user/job/write"/>
+          	<mapping path="/user/job/detail"/>
+          	<mapping path="/user/estate/main"/>
+          	<mapping path="/user/estate/writeOne"/>
+          	<mapping path="/user/estate/writeTwo"/>
+          	<mapping path="/user/estate/writeThree"/>
+          	<mapping path="/user/estate/detail"/>
           	<mapping path="/user/car/main"/>
+          	<mapping path="/user/car/regist"/>
+          	<mapping path="/user/car/detail"/>
           	<mapping path="/user/mypage/main"/>
           	<mapping path="/owner/main"/>
           	<mapping path="/owner/company/regist"/>
           	<mapping path="/owner/company/detail"/>
+          	<mapping path="/owner/company/update"/>
+          	<mapping path="/owner/company/delete"/>
           	<mapping path="/owner/company/menu/regist"/>
+          	<mapping path="/owner/mypage/main"/>
+          	<mapping path="/owner/job/regist"/>
            <beans:bean id="userInterceptor" class="com.dailyMarket.www.utils.UserInterceptor"/>
    	</interceptor>
 </interceptors>

@@ -15,9 +15,11 @@ public class ProductVO extends SearchCriteria{
 	private String content;
 	private String location;
 	private String writer;
+	private String TradeYn;
+	private String TradeId;
+	private String TradeDate;
 	private int hitCnt;
 	private int likeCnt;
-	private int reportCnt;
 	private Date regDate;
 	private Date modDate;
 	private Date delDate;
@@ -28,7 +30,7 @@ public class ProductVO extends SearchCriteria{
 
 	//더보기 기능을 위함
 	private int startRow=0;
-	
+
 	public int getRnum() {
 		return rnum;
 	}
@@ -93,6 +95,30 @@ public class ProductVO extends SearchCriteria{
 		this.writer = writer;
 	}
 
+	public String getTradeYn() {
+		return TradeYn;
+	}
+
+	public void setTradeYn(String tradeYn) {
+		TradeYn = tradeYn;
+	}
+
+	public String getTradeId() {
+		return TradeId;
+	}
+
+	public void setTradeId(String tradeId) {
+		TradeId = tradeId;
+	}
+
+	public String getTradeDate() {
+		return TradeDate;
+	}
+
+	public void setTradeDate(String tradeDate) {
+		TradeDate = tradeDate;
+	}
+
 	public int getHitCnt() {
 		return hitCnt;
 	}
@@ -107,14 +133,6 @@ public class ProductVO extends SearchCriteria{
 
 	public void setLikeCnt(int likeCnt) {
 		this.likeCnt = likeCnt;
-	}
-
-	public int getReportCnt() {
-		return reportCnt;
-	}
-
-	public void setReportCnt(int reportCnt) {
-		this.reportCnt = reportCnt;
 	}
 
 	public Date getRegDate() {
@@ -149,9 +167,6 @@ public class ProductVO extends SearchCriteria{
 		this.deleteYn = deleteYn;
 	}
 
-	
-
-
 	public String getProductStoredFileName() {
 		return productStoredFileName;
 	}
@@ -167,9 +182,6 @@ public class ProductVO extends SearchCriteria{
 	public void setStartRow(int startRow) {
 		this.startRow = startRow;
 	}
-
-	
-	
 	
 	
 

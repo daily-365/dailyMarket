@@ -24,8 +24,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.dailyMarket.www.service.OwnerService;
 import com.dailyMarket.www.vo.BusiVO;
+import com.dailyMarket.www.vo.JobVO;
 import com.dailyMarket.www.vo.MenuVO;
 import com.dailyMarket.www.vo.StoreFileVO;
+import com.mysql.cj.Session;
+
 import org.json.simple.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -46,10 +49,8 @@ public class OwnerController {
 		logger.info("GET OWNER MAIN");
 		String userId = (String)session.getAttribute("userId");
 		BusiVO busiVO = ownerService.selectBusiByWriter(userId);
-		
 		//추후 수정 필요  ( 메뉴 등록 과 상세페이지에 임시 사용 )
 		session.setAttribute("busiNo", busiVO.getBusiNo());
-		
 		model.addAttribute("busiVO",busiVO);
 		return "owner/main";
 	}
@@ -347,8 +348,84 @@ public class OwnerController {
 		return "owner/mypage/main";
 	}
 	
-	@RequestMapping(value = "job/main",method = RequestMethod.GET)
+	@RequestMapping(value = "job/regist",method = RequestMethod.GET)
 	public String getOwnerWanted()throws Exception{
-		return "owner/job/main";
+		return "owner/job/regist";
 	}
+	@ResponseBody
+	@RequestMapping(value = "job/regist",method = RequestMethod.POST,produces = "application/text; charset=utf-8")
+	public String postOwnerWanted(
+								@RequestParam(value = "jobCompany" ,required = false)String jobCompany,
+								@RequestParam(value = "jobTitle" ,required = false)String jobTitle,
+								@RequestParam(value = "jobType" ,required = false)String jobType,
+								@RequestParam(value = "jobMoney" ,required = false)String jobMoney,
+								@RequestParam(value = "jobLoc" ,required = false)String jobLoc,
+								@RequestParam(value = "jobLocDetail" ,required = false)String jobLocDetail,
+								@RequestParam(value = "jobWorkDate" ,required = false)String jobWorkDate,
+								@RequestParam(value = "jobWorkTime" ,required = false)String jobWorkTime,
+								@RequestParam(value = "jobLocContent" ,required = false)String jobLocContent,
+								@RequestParam(value = "jobContent" ,required = false)String jobContent,
+								HttpSession session
+								)throws Exception{
+		
+		JobVO jobVO = new JobVO();
+		
+		String userId = (String)session.getAttribute("userId");
+		
+		jobVO.setJobWriter(userId);
+		jobVO.setJobCompany(jobCompany);
+		jobVO.setJobTitle(jobTitle);
+		jobVO.setJobType(jobType);
+		jobVO.setJobMoney(jobMoney);
+		jobVO.setJobLoc(jobLoc);
+		jobVO.setJobLocDetail(jobLocDetail);
+		jobVO.setJobWorkDate(jobWorkDate);
+		jobVO.setJobWorkTime(jobWorkTime);
+		jobVO.setJobLocContent(jobLocContent);
+		jobVO.setJobContent(jobContent);
+		
+		ownerService.insertJob(jobVO);
+		
+		return "등록 되었습니다.";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "job/regist/file" ,method = RequestMethod.POST)
+	public String jobRegistFile(@RequestParam("fileContent")List<MultipartFile> multipartFile,HttpSession session)throws Exception{
+		
+		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
+		Map<String,Object> map = null;
+		
+		String userId = (String)session.getAttribute("userId");
+		
+		if(multipartFile.size()!=0&& !multipartFile.get(0).getOriginalFilename().equals("")) {
+			
+			for(int i=0; i<multipartFile.size(); i++) {
+				map = new HashMap<String, Object>();
+				
+				String originFileName = multipartFile.get(i).getOriginalFilename(); 
+				String extendFileName = originFileName.substring(originFileName.lastIndexOf("."));
+				String storedFileName = UUID.randomUUID()+extendFileName;
+				
+				File targetFile = new File(uploadPath+"job\\"+storedFileName);
+				multipartFile.get(i).transferTo(targetFile);
+				
+				map.put("writer", userId);
+				map.put("originFileName", originFileName);
+				map.put("storedFileName", storedFileName);
+				map.put("fileSize", multipartFile.get(i).getSize());
+			
+				list.add(map);
+			}
+			
+			for(int i=0; i<list.size(); i++){
+				ownerService.insertJobFile(list.get(i));
+				
+			}
+			
+		}
+		return "job Regist File upload Success";
+	}
+	
+	
 }

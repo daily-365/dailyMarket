@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -36,62 +37,18 @@
   	<br><br>
   	<div class="row text-center">
   		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/jobs/article/8142178/1718845223461/job-post-2551321589.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
+  			<c:forEach var="file" items="${file }" begin="0" end="0">
+  				<img  src="/resources/upload/owner/company/job/${file.storedFileName }" style="width: 120px; height: 120px;">
+  			</c:forEach>
   			<br><br>
-  			<a href="/user/job/detail" class="fw-bold text-dark">가정 손 부업 하실분 구합니다.</a>
-  			<p>경상남도 양산시 물금읍</p>
-  			<p class="fw-bold">건방 15원</p>
+	  		<c:forEach var="list" items="${list }">
+	  			<a href="/user/job/detail?jobNo=${list.jobNo }" class="fw-bold text-dark">${list.jobTitle }</a>
+	  			<br><br>
+	  			<p>${list.jobLoc }</p>
+	  			<p class="fw-bold">${list.jobType } ${list.jobMoney }원</p>
+	  		</c:forEach>		
   		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/jobs/article/24244100/1718957976643/job-post-506539948.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<p class="fw-bold">알바 하실 분 구함</p>
-  			<p>부산광역시 사하구 신평동</p>
-  			<p class="fw-bold">시급 1,0000원</p>
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/jobs/article/77569817/1719021513191/job-post-2940472606.png?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<p class="fw-bold">방청객 알바 구합니다.</p>
-  			<p>경기도 화성시 양천읍</p>
-  			<p class="fw-bold">시급 15,000원</p>
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/jobs/article/74980233/1717483668762/job-post-938193881.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<p class="fw-bold">입주 청소 투잡으로 가능해요</p>
-  			<p>인천광역시 서구 원창읍</p>
-  			<p class="fw-bold">건방 80,000원</p>
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/jobs/article/8142178/1718845223461/job-post-2551321589.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<p class="fw-bold">가정 손 부업 하실분 구합니다.</p>
-  			<p>경상남도 양산시 물금읍</p>
-  			<p class="fw-bold">건방 15원</p>
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/jobs/article/24244100/1718957976643/job-post-506539948.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<p class="fw-bold">알바 하실 분 구함</p>
-  			<p>부산광역시 사하구 신평동</p>
-  			<p class="fw-bold">시급 1,0000원</p>
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/jobs/article/77569817/1719021513191/job-post-2940472606.png?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<p class="fw-bold">방청객 알바 구합니다.</p>
-  			<p>경기도 화성시 양천읍</p>
-  			<p class="fw-bold">시급 15,000원</p>
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/jobs/article/74980233/1717483668762/job-post-938193881.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<p class="fw-bold">입주 청소 투잡으로 가능해요</p>
-  			<p>인천광역시 서구 원창읍</p>
-  			<p class="fw-bold">건방 80,000원</p>
-  		</div>
-  	</div>
+  		
   	<br>
   	<div class="row">
   		<div class="col">

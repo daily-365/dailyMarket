@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.dailyMarket.www.dao.OwnerDAO;
 import com.dailyMarket.www.vo.BusiFileVO;
 import com.dailyMarket.www.vo.BusiVO;
+import com.dailyMarket.www.vo.JobVO;
 import com.dailyMarket.www.vo.MenuVO;
 import com.dailyMarket.www.vo.StoreFileVO;
 
@@ -86,6 +87,15 @@ public class OwnerServiceImpl implements OwnerService {
 	public List<MenuVO> selectMenuList(int busiNo) throws Exception {
 		return ownerDAO.selectMenuList(busiNo);
 	}
+	@Override
+	public void insertJob(JobVO jobVO) throws Exception {
+		ownerDAO.insertJob(jobVO);
+	}
+	@Override
+	public void insertJobFile(Map<String, Object> map) throws Exception {
+		ownerDAO.insertJobFile(map);		
+	}
+	
 	
 	
 	

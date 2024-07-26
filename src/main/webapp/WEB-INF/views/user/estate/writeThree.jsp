@@ -32,7 +32,7 @@ border-radius: 5px;
 				</div>
 				<div class="col-2">
 					<label  class="form-label">확인필요</label>
-					<input   type="radio" name="esLoanYn" value="S">
+					<input   type="radio" name="esLoanYn" value="S" checked="checked">
 				</div>	
 				<div class="col-2">
 					<label  class="form-label">가능</label>
@@ -51,15 +51,15 @@ border-radius: 5px;
 				</div>
 				<div class="col-2">
 					<label  class="form-label">확인필요</label>
-					<input   type="radio" name="esAnimalYn " value="S">
+					<input   type="radio" name="esAnimalYn" value="S" checked="checked">
 				</div>	
 				<div class="col-2">
 					<label  class="form-label">가능</label>
-					<input   type="radio" name="esAnimalYn " value="Y">
+					<input   type="radio" name="esAnimalYn" value="Y" >
 				</div>
 				<div class="col-2">
 					<label  class="form-label">불가능</label>
-					<input   type="radio" name="esAnimalYn " value="N">
+					<input   type="radio" name="esAnimalYn" value="N">
 				</div>
 			</div>
 			<hr>
@@ -70,7 +70,7 @@ border-radius: 5px;
 				</div>
 				<div class="col-2">
 					<label  class="form-label">확인필요</label>
-					<input   type="radio" name="esParkingYn" value="S">
+					<input   type="radio" name="esParkingYn" value="S" checked="checked">
 				</div>	
 				<div class="col-2">
 					<label  class="form-label">가능</label>
@@ -94,6 +94,7 @@ border-radius: 5px;
 				<div class="col-3">
 					<label class="form-label">즉시 입주 가능</label>
 					<input type="checkbox"  id="esMoveYn" name="esMoveYn" value="Y">
+					<input type="checkbox"  id="esMoveYn" name="esMoveYn" value="N" checked="checked" style="display: none;">
 				</div>
 			</div>
 			<hr>
@@ -102,50 +103,50 @@ border-radius: 5px;
 				<br><br>
 				<div class="col-2">
 					<label class="form-label">엘리베이터</label>
-					<input type="checkbox" name="esFacility">
+					<input type="checkbox" name="esFacility" value="엘리베이터">
 				</div>
 				<div class="col-1">
 					<label class="form-label">복층</label>
-					<input type="checkbox" name="esFacility">
+					<input type="checkbox" name="esFacility" value="복층">
 				</div>
 				<div class="col-1">
 					<label class="form-label">옥탑</label>
-					<input type="checkbox" name="esFacility">
+					<input type="checkbox" name="esFacility" value="옥탑">
 				</div>
 				
 				<div class="col-1">
 					<label class="form-label">세탁기</label>
-					<input type="checkbox" name="esFacility">
+					<input type="checkbox" name="esFacility" value="세탁기">
 				</div>
 				
 				<div class="col-1">
 					<label class="form-label">냉장고</label>
-					<input type="checkbox" name="esFacility">
+					<input type="checkbox" name="esFacility" value="냉장고">
 				</div>
 				
 				<div class="col-1">
 					<label class="form-label">에어컨</label>
-					<input type="checkbox" name="esFacility">
+					<input type="checkbox" name="esFacility"value="에어컨">
 				</div>
 				
 				<div class="col-1">
 					<label class="form-label">전자렌지</label>
-					<input type="checkbox" name="esFacility">
+					<input type="checkbox" name="esFacility"value="전자렌지">
 				</div>
 				
 				<div class="col-1">
 					<label class="form-label">가스렌지</label>
-					<input type="checkbox" name="esFacility">
+					<input type="checkbox" name="esFacility" value="가스렌지">
 				</div>
 				
 				<div class="col-1">
 					<label class="form-label">인덕션</label>
-					<input type="checkbox" name="esFacility">
+					<input type="checkbox" name="esFacility" value="인덕션">
 				</div>
 				
 				<div class="col-1">
 					<label class="form-label">침대</label>
-					<input type="checkbox" name="esFacility">
+					<input type="checkbox" name="esFacility" value="침대">
 				</div>
 			</div>
 			<hr>
@@ -154,42 +155,42 @@ border-radius: 5px;
 				<br><br>
 				<div class="col-2">
 					<label class="form-label">햇빛이 잘 들어요</label>
-					<input type="checkbox" name="esAdvantage">
+					<input type="checkbox" name="esAdvantage" value="햇빛이 잘 들어요">
 				</div>
 				<div class="col-2">
 					<label class="form-label">교통이 편리해요</label>
-					<input type="checkbox" name="esAdvantage">
+					<input type="checkbox" name="esAdvantage" value="교통이 편리해요">
 				</div>
 				<div class="col-2">
 					<label class="form-label">주변 편의시설이 많아요</label>
-					<input type="checkbox" name="esAdvantage">
+					<input type="checkbox" name="esAdvantage" value="주변 편의시설이 많아요">
 				</div>
 				<div class="col-2">
 					<label class="form-label">전망이 좋아요</label>
-					<input type="checkbox" name="esAdvantage">
+					<input type="checkbox" name="esAdvantage"value="전망이 좋아요">
 				</div>
 				<div class="col-2">
 					<label class="form-label">벌레가 없어요</label>
-					<input type="checkbox" name="esAdvantage">
+					<input type="checkbox" name="esAdvantage" value="벌레가 없어요">
 				</div>
 				<div class="col-2">
 					<label class="form-label">주변보다 저렴해요</label>
-					<input type="checkbox" name="esAdvantage">
+					<input type="checkbox" name="esAdvantage" value="주변보다 저렴해요">
 				</div>
 				<div class="col-2">
 					<label class="form-label">혼자 살아도 안전해요</label>
-					<input type="checkbox" name="esAdvantage">
+					<input type="checkbox" name="esAdvantage" value="혼자 살아도 안전해요">
 				</div>
 				<div class="col-2">
 					<label class="form-label">테라스가 있어요</label>
-					<input type="checkbox" name="esAdvantage">
+					<input type="checkbox" name="esAdvantage" value="테라스가 있어요">
 				</div><div class="col-2">
 					<label class="form-label">집 상태가 깨끗해요</label>
-					<input type="checkbox" name="esAdvantage">
+					<input type="checkbox" name="esAdvantage" value="집 상태가 깨끗해요">
 				</div>
 				<div class="col-2">
 					<label class="form-label">방음이 잘되요</label>
-					<input type="checkbox" name="esAdvantage">
+					<input type="checkbox" name="esAdvantage" value="방음이 잘되요">
 				</div>
 				
 			</div>
@@ -200,29 +201,25 @@ border-radius: 5px;
 				<div class="col-3">
 				</div>
 				<div class="col-6">
-					<textarea class="form-control" name="esHouseIntro"></textarea>
+					<textarea  id="esHouseIntro" class="form-control" name="esHouseIntro"></textarea>
 				</div>
 			</div>
 			<br>
 		</form>
 		<br><br>
 		<div class="row text-center fw-bold" >
-			<div class="col-5">
+			<div class="col-4">
 			</div>
-			<div class="col-1">
-				<button class="form-control btn btn-outline-primary " onclick="javascript:location.href='/user/estate/writeOne'">1</button>
-			</div>
-			<div class="col-1">
-				<button class="form-control btn btn-outline-primary" onclick="javascript:location.href='/user/estate/writeTwo'">2</button>
-			</div>
-			<div class="col-1">
-				<button class="form-control btn btn-outline-primary active" >3</button>
+			<div class="col-4">
+				<button id="estateWriteBtn" type="button" class="btn btn-primary form-control">작성 완료</button>
 			</div>
 		</div>
 		<br><br>
 	</div>
 </main>
-
+<!-- 체크 박스 데이터 저장 -->
+<input type="text" id="esFacility" style="display: none;">
+<input type="text" id="esAdvantage" style="display: none;">
 <%@ include file="/resources/common/user/footer.jsp" %>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
@@ -271,6 +268,63 @@ $(document).ready(function(){
 		
 		}
 	})
+	
+	// checkbox 값 가져오기
+	$("input[name=esFacility]").on("change",function(){
+		var esFacilityList = '';
+		$("input[name=esFacility]:checked").each(function(){
+			esFacilityList+=$(this).val()+" , "
+		});
+		$("#esFacility").val(esFacilityList)
+	});
+	
+	//최대 선택 3개 제한 및 값 가져오기
+	$("input[name=esAdvantage]").on("change",function(e){
+		var esAdvantageList = '';
+		var length =$("input[name=esAdvantage]:checked").length
+		$("input[name=esAdvantage]:checked").each(function(){
+			if(length<=3){
+				esAdvantageList+=$(this).val()+" , "
+			}else{
+				alert("선택은 최대 3개까지만 가능합니다.")
+				$(this).attr("checked",false)
+				return false;
+			}
+		});	console.log(esAdvantageList,length)
+			$("#esAdvantage").val(esAdvantageList)
+	});
+
+	//작성완료
+	$("#estateWriteBtn").on("click",function(){
+		if(!confirm("작성을 완료 하시겠습니까?")){
+			return false;
+		}else {
+			var params = {
+						"esLoanYn": $("input[name=esLoanYn]:checked").val(),
+						"esAnimalYn": $("input[name=esAnimalYn]:checked").val(),
+						"esParkingYn": $("input[name=esParkingYn]:checked").val(),
+						"esMoveYn": $("input[name=esMoveYn]:checked").val(),
+						"esMoveDate": $("#esMoveDate").val(),
+						"esFacility": $("#esFacility").val(),
+						"esAdvantage": $("#esAdvantage").val(),
+						"esHouseIntro": $("#esHouseIntro").val()
+						}
+		
+			$.ajax({
+				url: "/user/estate/writeThree",
+				data: params,
+				type: "post",
+				success:function(result){
+					alert(result)
+					location.href="/user/main"
+				}
+			});
+			
+		
+		
+		}
+	
+	});
 
 });
 

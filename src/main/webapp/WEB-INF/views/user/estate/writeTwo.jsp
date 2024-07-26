@@ -23,41 +23,67 @@ border-radius: 5px;
 		<form id="estateRegistForm" class="form ">
 			<br>
 			<div class="row text-center fw-bold">
+				<p>거래 형태</p>
+				<br><br>
+				<div class="col-3">
+					<label class="form-label">월세</label>
+					<input   type="radio" class="type1" name="esTradeType" value="월세" >
+					<input type="text" class="type1" name="esPrice" placeholder="보증금  / 월세">
+				</div>
+				<div class="col-3">
+					<label class="form-label">전세</label>
+					<input   type="radio" class="type2" name="esTradeType" value="전세" >
+					<input type="text" class="type2" name="esPrice" placeholder="보증금">
+				</div>
+				<div class="col-3">
+					<label class="form-label">매매</label>
+					<input   type="radio" class="type3" name="esTradeType" value="매매" >
+					<input type="text" class="type3" name="esPrice" placeholder="매매가">
+				</div>
+				<div class="col-3">
+					<label class="form-label">단기</label>
+					<input   type="radio" class="type4" name="esTradeType" value="단기" >
+					<input type="text" class="type4" name="esPrice" placeholder="임대료">
+				</div>
+			</div>
+			<br>
+			<hr>
+			<div class="row text-center fw-bold">
 				<p>매물 방향</p>
 				<br><br>
 				<div class="col-3">
 					<label class="form-label">남향</label>
-					<input   type="radio" name=esPosiType value="south" >
+					<input   type="radio" name="esPosiType" value="남향" >
 				</div>
 				<div class="col-3">
 					<label class="form-label">동향</label>
-					<input   type="radio" name="esPosiType" value="east" >
+					<input   type="radio" name="esPosiType" value="동향" >
 				</div>
 				<div class="col-3">
 					<label class="form-label">서향</label>
-					<input   type="radio" name="esPosiType" value="west" >
+					<input   type="radio" name="esPosiType" value="서향" >
 				</div>
 				<div class="col-3">
 					<label class="form-label">북향</label>
-					<input   type="radio" name="esPosiType" value="north" >
+					<input   type="radio" name="esPosiType" value="북향" >
 				</div>
 			</div>
 			<div class="row text-center fw-bold">
 				<div class="col-3">
 					<label class="form-label">남동향</label>
-					<input   type="radio" name="esPosiType" value="sEast" >
+					<input   type="radio" name="esPosiType" value="남동향" >
 				</div>
 				<div class="col-3">
 					<label class="form-label">남서향</label>
-					<input   type="radio" name="esPosiType" value="sWest" >
+					<input   type="radio" name="esPosiType" value="남서향" >
 				</div>
 				<div class="col-3">
 					<label class="form-label">북서향</label>
-					<input   type="radio" name="esPosiType" value="nWest" >
+					<input   type="radio" name="esPosiType" value="북서향" >
 				</div>
 				<div class="col-3">
 					<label class="form-label">북동향</label>
-					<input   type="radio" name="esPosiType" value="nEast" >
+					<input   type="radio" name="esPosiType" value="북동향" >
 				</div>
 			</div>
 			<hr>
@@ -67,12 +93,12 @@ border-radius: 5px;
 				<div class="col-2">
 				</div>
 				<div class="col-4">
-					<label class="form-label">전용면적</label>
-					<span ><input  type="text" name="esSize1"> 평</span>
+					<label class="form-label">공급면적</label>
+					<span><input  type="text"  name="esSize1" > m2</span>
 				</div>
 				<div class="col-4">
-					<label class="form-label">공급면적</label>
-					<span><input  type="text"  name="esSize2" > m2</span>
+					<label class="form-label">전용면적</label>
+					<span ><input  type="text" name="esSize2"> m2</span>
 				</div>
 			</div>
 			<hr>	
@@ -100,7 +126,7 @@ border-radius: 5px;
 				</div>
 				<div class="col-4 esCostTag" >
 					<label class="form-label">관리비</label>
-					<span ><input  type="text" name="esCost"  onkeyup="javascript: this.value = this.value.replace(/[^0-9.]/g, '')"> 원</span>
+					<span ><input  type="text" name="esCost" > 원</span>
 				</div>
 				<div class="col-4">
 					<label class="form-label">관리비 없음</label>
@@ -115,39 +141,39 @@ border-radius: 5px;
 				</div>
 				<div class="col-1" >
 					<label class="form-label">수도료</label>
-					<input  type="checkbox" name="esCostChk">
+					<input  type="checkbox" name="esCostChk" value="수도료">
 				</div>
 				<div class="col-1">
 					<label class="form-label">전기료</label>
-					<input  type="checkbox" name="esCostChk">
+					<input  type="checkbox" name="esCostChk" value="전기료">
 				</div>
 				<div class="col-1" >
 					<label class="form-label">인터넷비</label>
-					<input  type="checkbox" name="esCostChk">
+					<input  type="checkbox" name="esCostChk" value="인터넷비">
 				</div>
 				<div class="col-1" >
 					<label class="form-label">가스비</label>
-					<input  type="checkbox" name="esCostChk">
+					<input  type="checkbox" name="esCostChk" value="가스비">
 				</div>
 				<div class="col-1" >
 					<label class="form-label">청소비</label>
-					<input  type="checkbox" name="esCostChk">
+					<input  type="checkbox" name="esCostChk" value="청소비">
 				</div>
 				<div class="col-1" >
 					<label class="form-label">유선 TV</label>
-					<input  type="checkbox" name="esCostChk">
+					<input  type="checkbox" name="esCostChk" value="유선 TV">
 				</div>
 				<div class="col-1" >
 					<label class="form-label">주차비</label>
-					<input  type="checkbox" name="esCostChk">
+					<input  type="checkbox" name="esCostChk" value="주차비">
 				</div>
 				<div class="col-1" >
 					<label class="form-label">난방비</label>
-					<input  type="checkbox" name="esCostChk">
+					<input  type="checkbox" name="esCostChk" value="난방비">
 				</div>
 				<div class="col-2" >
 					<label class="form-label">승강기 유지비</label>
-					<input  type="checkbox" name="esCostChk">
+					<input  type="checkbox" name="esCostChk" value="승강기 유지비">
 				</div>
 			</div>
 			<hr>
@@ -158,31 +184,31 @@ border-radius: 5px;
 				</div>
 				<div class="col-1" >
 					<label class="form-label">수도료</label>
-					<input  type="checkbox" name="esSeperCostChk">
+					<input  type="checkbox" name="esSeperCostChk" value="수도료">
 				</div>
 				<div class="col-1">
 					<label class="form-label">전기료</label>
-					<input  type="checkbox" name="esSeperCostChk">
+					<input  type="checkbox" name="esSeperCostChk" value="전기료">
 				</div>
 				<div class="col-1" >
 					<label class="form-label">인터넷비</label>
-					<input  type="checkbox" name="esSeperCostChk">
+					<input  type="checkbox" name="esSeperCostChk" value="인터넷비">
 				</div>
 				<div class="col-1" >
 					<label class="form-label">가스비</label>
-					<input  type="checkbox" name="esSeperCostChk">
+					<input  type="checkbox" name="esSeperCostChk" value="가스비">
 				</div>
 				<div class="col-1" >
 					<label class="form-label">청소비</label>
-					<input  type="checkbox" name="esSeperCostChk">
+					<input  type="checkbox" name="esSeperCostChk" value="청소비">
 				</div>
 				<div class="col-1" >
 					<label class="form-label">유선 TV</label>
-					<input  type="checkbox" name="esSeperCostChk">
+					<input  type="checkbox" name="esSeperCostChk" value="유선 TV">
 				</div>
 				<div class="col-1" >
 					<label class="form-label">주차비</label>
-					<input  type="checkbox" name="esSeperCostChk">
+					<input  type="checkbox" name="esSeperCostChk" value="주차비">
 				</div>
 			</div>
 			<hr>
@@ -192,7 +218,7 @@ border-radius: 5px;
 				<div class="col-3">
 				</div>
 				<div class="col-6">
-					<textarea class="form-control" name="esCostContent"></textarea>
+					<textarea class="form-control" id="esCostContent" name="esCostContent"></textarea>
 				</div>
 			</div>
 			
@@ -202,19 +228,18 @@ border-radius: 5px;
 		<div class="row text-center fw-bold" >
 			<div class="col-5">
 			</div>
-			<div class="col-1">
-				<button class="form-control btn btn-outline-primary " onclick="javascript:location.href='/user/estate/writeOne'">1</button>
-			</div>
-			<div class="col-1">
-				<button class="form-control btn btn-outline-primary active" >2</button>
-			</div>
-			<div class="col-1">
-				<button class="form-control btn btn-outline-primary " onclick="javascript:location.href='/user/estate/writeThree'">3</button>
+			<div class="col-2">
+				<svg  id="writeThreebtn" style="color:blue; width: 30px; height: 30px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle-fill" viewBox="0 0 16 16">
+				  <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
+				</svg>
 			</div>
 		</div>
 		<br><br>
 	</div>
 </main>
+<!-- 체크값 인풋에 저장 하기 .. -->
+<input type="text" id="esCostChk" style="display: none;">
+<input type="text" id="esSeperCostChk" style="display: none;">
 
 <%@ include file="/resources/common/user/footer.jsp" %>
 </body>
@@ -233,6 +258,73 @@ $(document).ready(function(){
 		}
 	});
 
+	//해당 금액 keyup시  해당 계약 형태 (월세 칸은 월세 / 전세 칸은 전세 ) 자동 체크.
+	$("input[name=esPrice]").on("keyup",function(){
+		console.log($(this).attr("class"))
+		$('.'+$(this).attr("class")+'').prop("checked",true)
+	
+	});
+	
+	// checkbox값 여러개 가져오기 1 
+	$("input[name=esCostChk]").on("change",function(){
+		var esCostChkList ='';
+		$("input[name=esCostChk]:checked").each(function(){
+			esCostChkList+=$(this).val()+" , "
+		})
+		$("#esCostChk").val(esCostChkList)
+	});
+	
+	// checkbox값 여러개 가져오기 2
+	 $("input[name=esSeperCostChk]").on("change",function(){
+	 	var esSeperCostChkList ='';
+		$("input[name=esSeperCostChk]:checked").each(function(){
+			esSeperCostChkList+=$(this).val()+" , "
+		})
+		$("#esSeperCostChk").val(esSeperCostChkList)
+	});
+		
+	//다음 페이지로 이동
+	$("#writeThreebtn").on("click",function(){
+		if(!$("input[name=esTradeType]").val()||!$("input[name=esPrice]").val()||!$("input[name=esPosiType]").val()||!$("input[name=esSize1]").val()||!$("input[name=esSize2]").val()||!$("input[name=esOption1]").val()||!$("input[name=esOption2]").val()||!$("input[name=esOption3]").val())
+		{
+			alert("해당 사항을 모두 작성해 주세요.")
+			return false;
+		}else{
+			if(!confirm("다음페이지로 이동합니다. 저장하시겠습니까?")){
+				return false;
+			}else{
+				
+				var param= {
+							"esTradeType" : $("input[name=esTradeType]").val(),
+							"esPrice" :  $("input[name=esPrice]").val(),
+							"esPosiType" :  $("input[name=esPosiType]:checked").val(),
+							"esSize1" :  $("input[name=esSize1]").val(),
+							"esSize2" :  $("input[name=esSize2]").val(),
+							"esOption1" :  $("input[name=esOption1]").val(),
+							"esOption2" :  $("input[name=esOption2]").val(),
+							"esOption3" : $("input[name=esOption3]").val(),
+							"esCostYn" : $("input[name=esCostYn]:checked").val(),
+							"esCost" : $("input[name=esCost]").val(),
+							"esCostChk" : $("#esCostChk").val(),
+							"esSeperCostChk" : $("#esSeperCostChk").val(),
+							"esCostContent" : $("#esCostContent").val()
+							 }
+				$.ajax({
+						url:"/user/estate/writeTwo",
+						type:"post",
+						async :false,
+						data : param,
+						success:function(result){
+							alert(result)
+							location.href="/user/estate/writeThree";
+
+						}
+					});
+			
+			}
+		}
+	});
+	
 });
 
 </script>

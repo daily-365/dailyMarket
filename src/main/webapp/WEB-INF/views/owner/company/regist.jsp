@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -172,11 +173,11 @@
 		</div>
 		<div class="col-5 fw-bold">
 			<input type="file" id="uploadFile" multiple="multiple" style="display: none;">
-			<span id="storeFileContent"></span>
 			<button  id="fileAddBtn" type="button" class="btn btn-outline-warning col-4">추가</button>
 			<button id="fileSaveBtn" type="button" class="btn btn-outline-success col-4">저장</button>
 		</div>
 	</div>
+	<div id="storeFileContent" class="row"></div>
 	<br>
 	<div class="row">	
 		<div class="col-4">	
@@ -1215,9 +1216,9 @@ $(document).ready(function(){
 					storeFileContent.push(f)
 				
 					$("#storeFileContent").append(
-												"<div  id='file"+storeFileNum+"' class='fw-bold' >"
-												+"&nbsp;<img src='"+e.target.result+"' style='width:200px; height;200px;' ></img><br><br>"
-												+"&nbsp;<button id='btn"+storeFileNum+"' style='width:200px; height;20px;' type='button' class='btn btn-danger' >X </button>"
+												"<div  id='file"+storeFileNum+"' class='fw-bold col-2' >"
+												+"&nbsp;<img src='"+e.target.result+"'  class='form-control'></img><br><br>"
+												+"&nbsp;<button id='btn"+storeFileNum+"' class='form-control' type='button' class='btn btn-danger' >X </button>"
 												+"<br><br>"
 												+"</div>"
 												)

@@ -10,10 +10,10 @@
       <h5>Category</h5>
       <ul class="list-unstyled text-small">
         <li><a class="link-secondary" href="/user/product/main">중고거래</a></li>
-        <li><a class="link-secondary" href="#">동네업체</a></li>
-        <li><a class="link-secondary" href="#">데일리알바</a></li>
-        <li><a class="link-secondary" href="#">부동산</a></li>
-        <li><a class="link-secondary" href="#">중고차 직거래</a></li>
+        <li><a class="link-secondary" href="/user/company/main">동네업체</a></li>
+        <li><a class="link-secondary" href="/user/job/main">데일리알바</a></li>
+        <li><a class="link-secondary" href="/user/estate/main">부동산</a></li>
+        <li><a class="link-secondary" href="/user/car/main">중고차 직거래</a></li>
       </ul>
     </div>
     <div class="col-6 col-md">

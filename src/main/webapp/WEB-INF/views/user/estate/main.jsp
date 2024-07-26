@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -20,7 +22,7 @@
         						   <pre class="h5">편하게 거래해 보세요.</pre>
        	</p>
         <p>
-          <a href="#" class="btn btn-info my-2" onclick="javascript: location.href='/user/estate/write'">매물 올리기</a>
+          <a href="#" class="btn btn-info my-2" onclick="javascript: location.href='/user/estate/writeOne'">매물 올리기</a>
         </p>
       </div>
     </div>
@@ -34,74 +36,24 @@
  
 <br><br>
   	<div class="row text-center">
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/realty/realty/articles/64c72dedbb25e018123c23a1fe2ed0597f6a4f7fd0e086fcd58d65e12818423b_1661987156388.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<a href="/user/estate/detail" class="fw-bold text-dark">투룸이상 300만원 -인천 광역시 남동구</a>
-  			<br><br>
-  			<p>만수동</p>
-  			<p class="fw-bold">단기 300/1</p> 
+  		<c:forEach var="list" items="${ estate}">
+	  		<div class="col-3">
+		  		<c:forEach var="file" items="${estateFile }" begin="0" end="0">
+	  				<img src="/resources/upload/user/estate/${file.storedFileName }" style="width: 120px; height: 120px;">		
+		  		</c:forEach>
+		  		<br><br>
+		  		<a href="/user/estate/detail?esNo=${list.esNo }" class="fw-bold text-dark">${list.esRoomType } ${list.esPrice } </a>
+		  		<br><br>
+		  		<p class="col-auto"></p>
+		  		<p class="fw-bold col-auto">${list.esLocContent }</p>
+		  		<p class="col-auto">${list.esLoc }</p>
+	  			<p class="fw-bold col-auto">${list.esTradeType } ${list.esPrice }</p>
+  			</div> 
+  		</c:forEach>
   		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/realty/realty/articles/acfb317c1b8a692b60920aae5776d3fd92c7a2dec564051e003ff5f0b6f64209_1662040154700.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<a href="/user/estate/detail" class="fw-bold text-dark">오픈형 원룸 -대잠동</a>
-  			<br><br>
-  			<p>만수동</p>
-  			<p class="fw-bold">월세 200/33</p> 
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/realty/realty/articles/e5d6dff6b8404b57dc7991b5aacb5a97a86083760da225ae16bdeb8dd954bede_1661946322611.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<a href="/user/estate/detail" class="fw-bold text-dark">상가 - 해바라기 옷가게</a>
-  			<br><br>
-  			<p>만수동</p>
-  			<p class="fw-bold">연세 1,000/2,000</p> 
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/realty/realty/articles/94dd9fc22042178f220f68a8a5600fbf5627f67233eb0b60fb61ad3183ee9c9b_1661943112946.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<a href="/user/estate/detail" class="fw-bold text-dark">아파트 매매 - 제주도 서귀포시</a>
-  			<br><br>
-  			<p>만수동</p>
-  			<p class="fw-bold">매매 1억 9,100</p> 
-  		</div>
-  	
-  			<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/realty/realty/articles/64c72dedbb25e018123c23a1fe2ed0597f6a4f7fd0e086fcd58d65e12818423b_1661987156388.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<a href="/user/estate/detail" class="fw-bold text-dark">투룸이상 300만원 -인천 광역시 남동구</a>
-  			<br><br>
-  			<p>만수동</p>
-  			<p class="fw-bold">단기 300/1</p> 
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/realty/realty/articles/acfb317c1b8a692b60920aae5776d3fd92c7a2dec564051e003ff5f0b6f64209_1662040154700.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<a href="/user/estate/detail" class="fw-bold text-dark">오픈형 원룸 -대잠동</a>
-  			<br><br>
-  			<p>만수동</p>
-  			<p class="fw-bold">월세 200/33</p> 
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/realty/realty/articles/e5d6dff6b8404b57dc7991b5aacb5a97a86083760da225ae16bdeb8dd954bede_1661946322611.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<a href="/user/estate/detail" class="fw-bold text-dark">상가 - 해바라기 옷가게</a>
-  			<br><br>
-  			<p>만수동</p>
-  			<p class="fw-bold">연세 1,000/2,000</p> 
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/realty/realty/articles/94dd9fc22042178f220f68a8a5600fbf5627f67233eb0b60fb61ad3183ee9c9b_1661943112946.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<a href="/user/estate/detail" class="fw-bold text-dark">아파트 매매 - 제주도 서귀포시</a>
-  			<br><br>
-  			<p>만수동</p>
-  			<p class="fw-bold">매매 1억 9,100</p> 
-  		</div>
-  	</div>
+  	</div>	
   			
-	<br>
+  	<br>
   	<div class="row">
   		<div class="col">
   			<button class="form-control fw-bold h5 btn btn-light" type="button">인기 매물 더보기</button>		

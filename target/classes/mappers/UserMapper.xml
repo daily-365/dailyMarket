@@ -29,10 +29,10 @@ Insert into productFile(productNo, productOriginFileName,productStoredFileName,p
 </insert>
 
 <select id="selectProductList" resultType="com.dailyMarket.www.vo.ProductVO">
-SELECT rnum,productNo,title,type,price,content,location,writer,hitCnt,likeCnt,reportCnt,regDate,modDate,delDate,deleteYn,productStoredFileName
+SELECT rnum,productNo,title,type,price,content,location,writer,hitCnt,likeCnt,regDate,modDate,delDate,deleteYn,productStoredFileName
 FROM (
 	SELECT 
-		 p.productNo,p.title,p.type,p.price,p.content,p.location,p.writer,p.hitCnt,p.likeCnt,p.reportCnt,p.regDate,p.modDate,p.delDate,p.deleteYn,
+		 p.productNo,p.title,p.type,p.price,p.content,p.location,p.writer,p.hitCnt,p.likeCnt,p.regDate,p.modDate,p.delDate,p.deleteYn,
 		 f.productStoredFileName
 		 ,ROW_NUMBER() OVER (ORDER BY productNo DESC ) AS rnum
 	FROM product p
@@ -49,7 +49,7 @@ LIMIT #{startRow},12
 
 <select id="selectProductDetail" resultType="com.dailyMarket.www.vo.ProductVO">
 SELECT 
-	 p.productNo,p.title,p.type,p.price,p.content,p.location,p.writer,p.hitCnt,p.likeCnt,p.reportCnt,p.regDate,p.modDate,p.delDate,p.deleteYn,
+	 p.productNo,p.title,p.type,p.price,p.content,p.location,p.writer,p.hitCnt,p.likeCnt,p.regDate,p.modDate,p.delDate,p.deleteYn,
 	 f.productStoredFileName
 FROM product p
 LEFT OUTER JOIN productFile f
@@ -95,4 +95,117 @@ WHERE busiNo = #{busiNo}
 and a.deleteYn='N'
 </select>
 
+
+<insert id="insertEstateOne">
+INSERT INTO estate(esWriter,esHumType,esRoomType,esLoc,esLocDetail,esLocContent)
+	VALUES (#{esWriter}, #{esHumType},#{esRoomType},#{esLoc},#{esLocDetail},#{esLocContent})
+</insert>
+<insert id="insertEstateFile">
+Insert Into estateFile (esNo ,originFileName ,storedFileName ,fileSize ,writer )
+		Values ( (SELECT IFNULL(max(esNo)+1,1) FROM estate  )  ,#{originFileName},#{storedFileName},#{fileSize},#{writer})
+</insert>
+<update id="updateEstateTwo">
+UPDATE estate SET esTradeType =#{esTradeType} , esPrice =#{esPrice}, esPosiType =#{esPosiType}
+				, esSize1 =#{esSize1}, esSize2 =#{esSize2}, esOption1 =#{esOption1}, esOption2 =#{esOption2}
+				, esOption3 =#{esOption3}, esCostYn =#{esCostYn}, esCostChk =#{esCostChk}, esSeperCostChk =#{esSeperCostChk}
+				, esCostContent =#{esCostContent}
+				,modDate = now()
+</update>
+<update id="updateEstateThree">
+UPDATE estate SET esLoanYn = #{esLoanYn},esAnimalYn = #{esAnimalYn},esParkingYn = #{esParkingYn}
+				 ,esMoveYn = #{esMoveYn},esMoveDate = #{esMoveDate}
+				 ,esFacility = #{esFacility},esAdvantage = #{esAdvantage},esHouseIntro = #{esHouseIntro}
+				 ,modDate = now()
+</update>
+
+<select id="selectEstateList" resultType="com.dailyMarket.www.vo.EstateVO">
+SELECT esNo,esHumType,esRoomType,esLoc,esLocDetail,esLocContent,esTradeType,esPrice,esPosiType,esTradeYn
+		,esSize1,esSize2,esOption1,esOption2,esOption3,esCostYn,esCost,esCostChk,esSeperCostChk,esCostContent
+		,esLoanYn,esAnimalYn,esParkingYn,esMoveYn,esMoveDate,esFacility,esAdvantage,esHouseIntro,regDate,modDate,delDate,deleteYn
+FROM estate
+WHERE 1=1
+	AND deleteYn='N'
+</select>
+<select id="selectEstateFile" resultType="com.dailyMarket.www.vo.EstateFileVO">
+SELECT fileNo,esNo,originFileName,storedFileName,fileSize,writer,regDate,modDate,delDate,deleteYn
+FROM estatefile
+WHERE 1=1
+	AND deleteYn='N'
+</select>
+<select id="selectEstateDetail" resultType="com.dailyMarket.www.vo.EstateVO">
+SELECT esNo,esHumType,esRoomType,esLoc,esLocDetail,esLocContent,esTradeType,esPrice,esPosiType,esTradeYn
+		,esSize1,esSize2,esOption1,esOption2,esOption3,esCostYn,esCost,esCostChk,esSeperCostChk,esCostContent
+		,esLoanYn,esAnimalYn,esParkingYn,esMoveYn,esMoveDate,esFacility,esAdvantage,esHouseIntro,regDate,modDate,delDate,deleteYn
+FROM estate
+WHERE 1=1
+	AND deleteYn='N'
+	AND esNo=#{esNo}
+</select>
+<select id="selectEstateFileDetail" resultType="com.dailyMarket.www.vo.EstateFileVO">
+SELECT fileNo,esNo,originFileName,storedFileName,fileSize,writer,regDate,modDate,delDate,deleteYn
+FROM estatefile
+WHERE 1=1
+	AND deleteYn='N'
+	AND esNo=#{esNo}
+</select>
+
+<insert id="insertCarRegist">
+Insert Into car (carWriter,carPrice,carType,carManuFacturing,carModel,carRank,carDetailRank,carDiffDate,carRegDate
+			,carDistance,carDisplaceMent,carFuel,carTransMission,carAccidentCnt,carSpecialUseYn
+			,carChangeCnt,carOption1,carOption2,carOption3,carAdditionInfo,carIntro,carLoc)
+	values (#{carWriter},#{carPrice},#{carType},#{carManuFacturing},#{carModel},#{carRank},#{carDetailRank},#{carDiffDate},#{carRegDate},
+			#{carDistance},#{carDisplaceMent},#{carFuel},#{carTransMission},#{carAccidentCnt},#{carSpecialUseYn},
+			#{carChangeCnt},#{carOption1},#{carOption2},#{carOption3},#{carAdditionInfo},#{carIntro},#{carLoc})
+</insert>
+<insert id="insertCarFile">
+Insert Into carFile (writer,carNo,originFileName,storedFileName,fileSize)
+			values (#{writer},( SELECT IFNULL(max(carNo)+1,1) FROM car  ) , #{originFileName},#{storedFileName},#{fileSize})
+</insert>
+<select id="selectCarList" resultType="com.dailyMarket.www.vo.CarVO">
+SELECT carNo,carWriter,carPrice,carTradeYn,carUserId,carType,carManuFacturing,carModel
+		,carRank,carDetailRank,carDiffDate,carRegDate,carDistance,carDisplaceMent
+		,carFuel,carTransMission,carAccidentCnt,carSpecialUseYn,carChangeCnt
+		,carOption1,carOPtion2,carOption3,carAdditionInfo,carIntro,carLoc
+		,regDate,modDate,delDate,deleteYn
+		
+FROM car 
+WHERE deleteYn='N'
+</select>
+<select id="selectCarFile"  resultType="com.dailyMarket.www.vo.CarFileVO" >
+SELECT fileNo,carNo,writer,originFileName,storedFileName,fileSize,regDate,modDate,delDate,deleteYn
+FROM carFile
+WHERE deleteYn='N'
+</select>
+<select id="selectCarVO" resultType="com.dailyMarket.www.vo.CarVO">
+SELECT carNo,carWriter,carPrice,carTradeYn,carUserId,carType,carManuFacturing,carModel
+		,carRank,carDetailRank,carDiffDate,carRegDate,carDistance,carDisplaceMent
+		,carFuel,carTransMission,carAccidentCnt,carSpecialUseYn,carChangeCnt
+		,carOption1,carOPtion2,carOption3,carAdditionInfo,carIntro,carLoc
+		,regDate,modDate,delDate,deleteYn
+		
+FROM car 
+WHERE deleteYn='N'
+	And carNo=#{carNo}
+</select>
+
+<select id="selectJobList" resultType="com.dailyMarket.www.vo.JobVO">
+SELECT jobNo,jobWriter,jobCompany,jobTitle,jobType,jobMoney,jobLoc,jobLocDetail,jobWorkTime,jobLocContent,jobContent,
+			regDate,modDate,delDate,deleteYn
+FROM job
+WHERE deleteYn='N'
+</select>
+<select id="selectJobFile" resultType="com.dailyMarket.www.vo.JobFileVO">
+SELECT fileNo,jobNo,originFileName,storedFileName,fileSize,writer,regDate,modDate,delDate,deleteYn
+FROM jobFile
+WHERE deleteYN='N'
+</select>
+<select id="selectJobByNo" resultType="com.dailyMarket.www.vo.JobVO">
+SELECT jobNo,jobWriter,jobCompany,jobTitle,jobType,jobMoney,jobLoc,jobLocDetail,jobWorkDate,jobWorkTime,jobLocContent,jobContent,
+			regDate,modDate,delDate,deleteYn,
+			TIMESTAMPDIFF(MINUTE,regDate,NOW()) regMinute,TIMESTAMPDIFF(HOUR,regDate,NOW()) regHour ,TIMESTAMPDIFF(DAY ,regDate,NOW()) regDay ,
+			TIMESTAMPDIFF(WEEK ,regDate,NOW())regWeek , TIMESTAMPDIFF(MONTH	,regDate,NOW())regMonth , TIMESTAMPDIFF(YEAR ,regDate,NOW())  regYear
+FROM job
+WHERE deleteYn='N'
+And jobNo=#{jobNo}
+</select>
 </mapper>

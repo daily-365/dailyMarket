@@ -5,6 +5,8 @@ import java.util.Map;
 
 import com.dailyMarket.www.vo.BusiFileVO;
 import com.dailyMarket.www.vo.BusiVO;
+import com.dailyMarket.www.vo.JobFileVO;
+import com.dailyMarket.www.vo.JobVO;
 import com.dailyMarket.www.vo.MenuVO;
 import com.dailyMarket.www.vo.StoreFileVO;
 
@@ -24,4 +26,6 @@ public interface OwnerDAO {
 	public int insertMenuFile(Map<String,Object>map)throws Exception;
 	public int menuFileNoCnt()throws Exception;
 	public List<MenuVO> selectMenuList(int busiNo)throws Exception;
+	public void insertJob(JobVO jobVO)throws Exception;
+	public void insertJobFile(Map<String,Object> map)throws Exception;
 }

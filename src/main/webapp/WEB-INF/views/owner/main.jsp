@@ -113,7 +113,8 @@ h1, h2, h3, h4, h5, h6 {
       <c:if test="${empty busiVO.state }">
       	<a class="p-2 link-primary" href="/owner/company/regist">업체등록</a>
       </c:if>
-      <a class="p-2 link-primary" href="/owner/job/main">알바구인</a>
+      <a class="p-2 link-primary" href="/owner/job/regist">알바구인</a>
+      <a class="p-2 link-primary" href="#">소식등록</a>
       <a class="p-2 link-primary" href="/owner/mypage/main">마이페이지</a>
     </nav>
   </div>

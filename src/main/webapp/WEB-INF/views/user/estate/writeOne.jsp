@@ -22,18 +22,18 @@ border-radius: 10px;
 	<h5 class="text-center fw-bold">매물 정보</h5>
 	<br>
 	<div style="border: 1px solid black; border-radius: 10px; ">
-		<form id="estateRegistForm" class="form ">
+		<form id="esRegistOneForm" class="form ">
 			<br>
 			<div class="row text-center fw-bold">
 				<p>구분</p>
 				<br><br>
 				<div class="col-6">
 					<label  class="form-label">세입자</label>
-					<input   type="radio" name="esHumType" value="tenant" checked="checked">
+					<input   type="radio" name="esHumType" value="세입자" checked="checked">
 				</div>	
 				<div class="col-6">
 					<label class="form-label">집주인</label>
-					<input   type="radio" name="esHumType" value="owner">
+					<input   type="radio" name="esHumType" value="집주인">
 				</div>	
 			</div>
 			<hr>
@@ -58,9 +58,20 @@ border-radius: 10px;
 				<div class="col-4">
 				</div>
 				<div class="col-4">
-					<div id="map"></div>
+					<div id="map" style="width:100%;height:350px;"></div>
 				</div>
 			</div>
+			<br>
+			<div class="row text-center fw-bold">
+				<p>위치 설명</p>
+				<br><br>
+				<div class="col-3">
+				</div>
+				<div class="col-6">
+					<textarea id="esLocContent" name="esLocContent" class="form-control"></textarea>
+				</div>
+			</div>
+			<br>
 			<hr>
 			<div class="row text-center fw-bold">
 				<p>형태</p>
@@ -69,23 +80,23 @@ border-radius: 10px;
 				</div>
 				<div class="col-2">
 					<label  class="form-label">원룸</label>
-					<input   type="radio" name="esRoomType" value="one">
+					<input   type="radio" name="esRoomType" value="원룸">
 				</div>	
 				<div class="col-2">
 					<label class="form-label">빌라 (투룸이상)</label>
-					<input   type="radio" name="esRoomType"  value="villa">
+					<input   type="radio" name="esRoomType"  value="빌라">
 				</div>	
 				<div class="col-2">
 					<label  class="form-label">아파트</label>
-					<input   type="radio" name="esRoomType" value="apartment" >
+					<input   type="radio" name="esRoomType" value="아파트" >
 				</div>	
 				<div class="col-2">
 					<label class="form-label">오피스텔</label>
-					<input   type="radio" name="esRoomType"  value="officetels">
+					<input   type="radio" name="esRoomType"  value="오피스텔">
 				</div>	
 				<div class="col-2">
 					<label class="form-label">상가</label>
-					<input   type="radio" name="esRoomType" value="store" >
+					<input   type="radio" name="esRoomType" value="상가" >
 				</div>
 			</div>
 			<hr>
@@ -93,26 +104,26 @@ border-radius: 10px;
 				<p>매물 사진</p>
 				<br><br>
 				<div class="col-12">
-					<input id="esImgInput" type="file" style="display: none;" >
-					<svg id="esImgPlusBtn" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square-fill" viewBox="0 0 16 16">
+					<input id="esImgInput" name="esImgInput" type="file" style="display: none;" multiple="multiple">
+					<svg style=" width:30px; height: 30px;" id="esImgPlusBtn" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square-fill" viewBox="0 0 16 16">
 					  <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm6.5 4.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 1 0"/>
 					</svg>
-					<img>
+					
 				</div>
+			</div>
+			<br>
+			<div id="fileContent" class="row">
+				<div class="col-1"></div>
 			</div>
 		</form>
 		<br><br>
 		<div class="row text-center fw-bold" >
 			<div class="col-5">
 			</div>
-			<div class="col-1">
-				<button class="form-control btn btn-outline-primary active" >1</button>
-			</div>
-			<div class="col-1">
-				<button class="form-control btn btn-outline-primary " onclick="javascript:location.href='/user/estate/writeTwo'">2</button>
-			</div>
-			<div class="col-1">
-				<button class="form-control btn btn-outline-primary " onclick="javascript:location.href='/user/estate/writeThree'">3</button>
+			<div class="col-2">
+				<svg  id="writeTwobtn" style="color:blue; width: 30px; height: 30px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle-fill" viewBox="0 0 16 16">
+				  <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
+				</svg>
 			</div>
 		</div>
 		<br><br>
@@ -121,17 +132,17 @@ border-radius: 10px;
 
 <%@ include file="/resources/common/user/footer.jsp" %>
 </body>
-
+<!-- 카카오지도 API -->
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7e7eda9c8086805cb16eb9832f3a8b1e&libraries=services,clusterer,drawing"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<!-- 카카오지도 API -->
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7e7eda9c8086805cb16eb9832f3a8b1e&libraries=services"></script>
 <!-- daum 우편번호 api -->
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 
 <script type="text/javascript">
+
 //다음 주소 api
 
 function sample6_execDaumPostcode() {
@@ -187,6 +198,8 @@ function viewEsLocMapFunc(){
 	var address = document.getElementById('esLoc')
 	var addrVal = address.value
 	
+	var addrDetail = document.getElementById('esLocDetail').value
+	
 	var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
 	    mapOption = {
 	        center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
@@ -215,7 +228,7 @@ function viewEsLocMapFunc(){
 	
 	        // 인포윈도우로 장소에 대한 설명을 표시합니다
 	        var infowindow = new kakao.maps.InfoWindow({
-	            content: '<div style="width:150px;text-align:center;padding:6px 0;">'+addrVal+'</div>'
+	            content: '<div style="width:150px;text-align:center;padding:6px 0;">'+addrVal+"  "+addrDetail +'</div>'
 	        });
 	        infowindow.open(map, marker);
 	
@@ -227,19 +240,150 @@ function viewEsLocMapFunc(){
 }
 
 $(document).ready(function(){
-
-	$("#esImgPlusBtn").on("click",function(){
-		$("#esImgInput").click()
-	});
 	
-	
+	// 주소 API 입력 후 카카오 지도 API 호출
 	$("#esLocDetail").on("blur",function(){
 		if($("#esLoc").val() && $(this).val()){
-			//blur 이벤트와 빈값 검증 후 아래 함수 호출
+			//빈값 검증 후  blur 이벤트를 통해 아래 함수 호출
 			viewEsLocMapFunc()
 		}
 	});
 	
+	
+	//저장 후  다음 페이지로 이동
+	$("#writeTwobtn").on("click",function(){
+		if(!$("input[name=esLoc]").val()||!$("input[name=esLocDetail]").val()||!$("#esLocContent").val()||!$("input[name=esRoomType]").val()||!$("input[name=esImgInput]").val() ){
+			alert("해당 사항을 모두 작성해 주세요.")
+			return false;
+		}else{
+		
+			var param = {   
+						"esHumType" : $("input[name=esHumType]").val() ,
+						"esLoc" : $("#esLoc").val() ,
+						"esLocDetail" : $("input[name=esLocDetail]").val(),
+						"esLocContent" : $("#esLocContent").val(),
+						"esRoomType" : $("input[name=esRoomType]:checked").val()
+						}
+		
+			if(!confirm("다음페이지로 이동합니다. 저장하시겠습니까?")){
+				return false;
+			}else{
+				uploadFileFunc()
+				$.ajax({
+					url:"/user/estate/writeOne",
+					type:"post",
+					async :false,
+					data : param,
+					success:function(result){
+						alert(result)
+						location.href="/user/estate/writeTwo";
+					
+					}
+				});
+			}
+		}
+	});
+
+	
+	//파일 업로드
+	
+	$("#esImgPlusBtn").on("click",function(){
+		$("#esImgInput").click()
+	});
+	
+	$("#esImgInput").on("change",fileAddFunc)
+	
+	var fileNum=0;
+	var fileContent = new Array()
+	
+	var fileCnt =0;
+	var totalCnt =5;
+	
+	var fileSize =0;
+	var totalSize = 1024**2*3
+	
+	
+	function fileAddFunc(e){
+		var files = e.target.files
+		var fileArr = Array.prototype.slice.call(files)
+		
+		fileCnt=fileArr.length +fileNum
+		
+		fileArr.forEach(function(f){
+			var reader = new FileReader()
+			var fileExt = f.type.substring(f.type.lastIndexOf("/")).replace("/","")
+		
+			if(fileCnt>totalCnt){
+				alert("파일은 5개까지 등록 가능합니다.")
+				f.preventDefault()
+			
+			}if(fileExt!='jpeg' && fileExt!='jpg' && fileExt!='png' && fileExt!='gif'){
+				alert("파일 형식은 jpeg/jpg/png/gif 형식만 지원합니다.")
+				f.preventDefault()
+			
+			}if(fileSize>totalSize){
+				alert("용량은 3M 이하여야 합니다.")
+				f.preventDefault()
+			}else{
+				reader.onload=function(e){
+					fileNum++;
+					fileSize+=f.size
+					
+					fileContent.push(f)
+				
+					$("#fileContent").append(
+											"<div  id='file"+fileNum+"' class='fw-bold col-2' >"
+											+"<img src='"+e.target.result+"' class='form-control fileImgs' ></img>"
+											+"<br>"
+											+"<button id='btn"+fileNum+"' type='button' class='btn btn-danger form-control' >X </button>"
+											+"</div>"
+											+"<br>"
+											)
+				
+						$("#btn"+fileNum).on("click",function(){
+							fileNum--
+							fileCnt--
+							fileSize-=f.size
+							
+							fileContent.pop(f)
+							$(this).parent('div').remove();
+						});
+					}
+					reader.readAsDataURL(f)
+				}
+		
+			});
+	
+		}
+	
+	//파일업로드 AJAX
+	
+	function uploadFileFunc(){
+		var formData = new FormData()
+		
+		for(var i=0; i<fileContent.length; i++){
+			formData.append("fileContent",fileContent[i])
+		
+		}
+		
+		$.ajax({
+			url: "/user/estate/writeOne/uploadFile",
+			type: "post",
+			data: formData,
+			async:false,
+			processData: false,
+			contentType : false,
+			encType : "multipart/form-data",
+			success:function(result){
+				console.log(result)
+			
+			}
+		
+		})
+	
+	}
+	
+
 
 });
 
