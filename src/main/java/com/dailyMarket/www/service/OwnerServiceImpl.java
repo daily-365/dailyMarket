@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.dailyMarket.www.dao.OwnerDAO;
 import com.dailyMarket.www.vo.BusiFileVO;
 import com.dailyMarket.www.vo.BusiVO;
+import com.dailyMarket.www.vo.JobFileVO;
 import com.dailyMarket.www.vo.JobVO;
 import com.dailyMarket.www.vo.MenuVO;
 import com.dailyMarket.www.vo.StoreFileVO;
@@ -87,6 +88,19 @@ public class OwnerServiceImpl implements OwnerService {
 	public List<MenuVO> selectMenuList(int busiNo) throws Exception {
 		return ownerDAO.selectMenuList(busiNo);
 	}
+	
+	@Override
+	public void updateMenuFile(int fileNo) throws Exception {
+		ownerDAO.updateMenuFile(fileNo);
+	}
+	
+	@Override
+	public void deleteAllMenu(int busiNo) throws Exception {
+		//Servie에서 메뉴 관련 파일 전체 삭제. 2개의 쿼리를 받아 수행.
+		ownerDAO.deleteAllMenu(busiNo);
+		ownerDAO.deleteAllMenuFile(busiNo);
+	}
+	
 	@Override
 	public void insertJob(JobVO jobVO) throws Exception {
 		ownerDAO.insertJob(jobVO);
@@ -95,7 +109,49 @@ public class OwnerServiceImpl implements OwnerService {
 	public void insertJobFile(Map<String, Object> map) throws Exception {
 		ownerDAO.insertJobFile(map);		
 	}
+	@Override
+	public JobVO selectJobByWriter(String writer) throws Exception {
+		return ownerDAO.selectJobByWriter(writer);
+	}
+	@Override
+	public List<JobFileVO> selectJobFile(int jobNo) throws Exception {
+		return ownerDAO.selectJobFile(jobNo);
+	}
+	@Override
+	public void updateJobFile(int fileNo) throws Exception {
+		ownerDAO.updateJobFile(fileNo);
+	}
+	@Override
+	public void updateJob(JobVO jobVO) throws Exception {
+		ownerDAO.updateJob(jobVO);
+	}
 	
+	@Override
+	public void deleteJob(int jobNo) throws Exception {
+		//job과 jobFile 동시 삭제
+		ownerDAO.deleteJob(jobNo);
+		ownerDAO.deleteJobFile(jobNo);
+	}
+	@Override
+	public boolean selectExsitMenuCnt(int busiNo) throws Exception {
+		int res = ownerDAO.selectExsitMenuCnt(busiNo);
+		if(res>0) {
+			return true;
+		}else {
+			return false;
+		}
+	
+	}
+	@Override
+	public boolean selectExsitJobCnt(String writer) throws Exception {
+		int res = ownerDAO.selectExsitJobCnt(writer);
+		if(res>0) {
+			return true;
+		}else {
+			return false;
+		}
+		
+	}
 	
 	
 	

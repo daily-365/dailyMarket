@@ -38,7 +38,19 @@
 					</tr>
 				</thead>
 				<tbody id="menuContent" > 
-					
+					<c:forEach items="${list}" var="list" varStatus="status">
+						<tr>
+							<td>${status.count }</td>
+							<td>${list.name }</td>
+							<td>${list.price }</td>
+							<td>${list.count }</td>
+							<td>${list.content }</td>
+							<td>${list.deleveryYn }</td>
+							<td>${list.deleveryPrice }</td>
+							<td><img src="/resources/upload/owner/company/menu/${list.storedFileName }" style="width: 100px; height: 100px;"></td>
+							<td><button  type='button' value="${list.fileNo }"  class='storedFileBtn btn btn-danger form-control'>X</button></td>
+						</tr>
+					</c:forEach>
 				</tbody>
 			</table>
 		
@@ -49,13 +61,13 @@
 		<div class="col-4">
 		</div>
 		<div class="col-2">
-			<button type="button" id="registBtn" class="btn btn-primary form-control">등록</button>	
+			<button type="button" id="modBtn" class="btn btn-outline-warning form-control">수정</button>
 		</div>
 		<div class="col-2">
-			<button type="button" class="btn btn-danger form-control" 
-			onclick="javascript: if(!confirm('취소하시면 해당 내용은 저장되지않습니다. 그래도 취소하시겠습니까?')){return false}else{ location.reload(true)}">취소</button>	
+			<button type="button" id="delBtn" class="btn btn-outline-danger form-control">삭제</button>	
 		</div>
 	</div>
+	<br><br>
 	<!-- Button trigger modal -->
 <button id="openModalBtn" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" style="display: none;">
 </button>
@@ -99,6 +111,7 @@
     </div>
   </div>
 </div>
+<input type="text" value="${busiVO.busiNo }" id="busiNo" style="display: none;">
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -109,7 +122,6 @@ $(document).ready(function(){
 
 	
 	// modal창 클릭
-	
 	$("#addInputBtn").on("click",function(){
 		$("#openModalBtn").click()	
 		
@@ -126,7 +138,42 @@ $(document).ready(function(){
 	
 	$("#fileInput").on("change",addMenuContentFunc)
 	
-	var fileNum=0;
+	//빈 값 검증
+	$("#addContentBtn").on("click",function(){
+		$("#name").focus()
+		
+		if(!$("#name").val()){	
+			alert("이름을 입력해 주세요")
+			$("#name").focus()
+			return false;
+		}else if(!$("#price").val()){
+			alert("가격을 입력해 주세요")
+			$("#price").focus()
+			return false;
+		}else if(!$("#count").val()){
+			alert("수량을 입력해 주세요")
+			$("#count").focus()
+			return false;
+		}else if(!$("#content").val()){
+			alert("상품 소개 부탁드려요")
+			$("#content").focus()
+			return false;
+		}else if(!$("#deleveryPrice").val()){
+			alert("배달료를 입력해 주세요")
+			$("#deleveryPrice").focus()
+			return false;
+		}else if(!$('#fileInput').val()){
+			alert("파일을 선택해 주세요")
+			return false;
+		}else{
+			$("#closeBtn").click()
+		}
+	
+	})
+	
+	//modal에 입력된 값을 tbody에 추가
+	
+	var fileNum=0; 
 	var menuContent = new Array()
 	var list = new Array()
 	
@@ -195,10 +242,10 @@ $(document).ready(function(){
 		});
 	}
 	
-	//메뉴 정보 등록 함수						
-	$("#registBtn").on("click",function(){
+	//메뉴 정보 수정 함수						
+	$("#modBtn").on("click",function(){
 	
-		if(!confirm("해당사항이 적용됩니다. 저장하시겠습니까?")){
+		if(!confirm("해당사항이 변경됩니다. 변경하시겠습니까?")){
 			return false;
 		}else{
 			regFileFunc() //파일업로드
@@ -213,7 +260,7 @@ $(document).ready(function(){
 				async : false,
 				traditional: true,
 				success:function(result){
-					alert("메뉴가 등록 되었습니다.")
+					alert("수정 되었습니다.")
 					console.log(result.msg)
 					location.reload(true)
 				},error : function(xhr,status,error){
@@ -247,6 +294,47 @@ $(document).ready(function(){
 				}
 			});
 	}
+	
+	
+	
+	//***************regist 에서 해당 파일 삭제 함수 기능 추가 ***********
+	
+	$(".storedFileBtn").on("click",function(){
+		if(!confirm("기존 메뉴 입니다. 삭제하시겠습니까?")){
+			return false;
+		}else{
+			$.ajax({
+				url:"/owner/company/menu/file/delete",
+				type:"post",
+				data: {"fileNo" : Number($(this).val()) },
+				success:function(result){
+					alert(result)
+					location.reload(true)
+				}
+			
+			});
+		}
+	});
+	
+	$("#delBtn").on("click",function(){
+		if(!confirm("해당 내용을 모두 삭제하시겠습니까?")){
+			return false;
+		}else{
+			$.ajax({
+				url:"/owner/company/menu/allDelete",
+				type:"post",
+				data: {"busiNo" : Number($("#busiNo").val() )},
+				success:function(result){
+					alert(result)
+					location.href="/owner/main"
+				}			
+			
+			});
+		}
+	
+	
+	});
+	
 
 });
 

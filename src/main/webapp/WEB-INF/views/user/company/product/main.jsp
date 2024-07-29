@@ -35,7 +35,7 @@
 	<br>
 	<hr>
 	<br>
-	<h1 class="fw-bold text-center" style="font-family: '맑은고딕';  ">MeNu</h1>
+	<h1 class="fw-bold text-center" style="font-family: '맑은고딕';  ">Product</h1>
 	<br>
 	<br>
 	<br>

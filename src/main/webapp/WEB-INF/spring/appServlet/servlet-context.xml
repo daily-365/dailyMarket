@@ -77,8 +77,10 @@
           	<mapping path="/owner/company/update"/>
           	<mapping path="/owner/company/delete"/>
           	<mapping path="/owner/company/menu/regist"/>
+          	<mapping path="/owner/company/menu/detail"/>
           	<mapping path="/owner/mypage/main"/>
           	<mapping path="/owner/job/regist"/>
+          	<mapping path="/owner/job/deatil"/>
            <beans:bean id="userInterceptor" class="com.dailyMarket.www.utils.UserInterceptor"/>
    	</interceptor>
 </interceptors>

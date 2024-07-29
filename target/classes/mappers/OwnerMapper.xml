@@ -67,7 +67,7 @@ INSERT into menu (busiNo,name,price,count,content,deleveryYn,deleveryPrice,regDa
 </insert>
 
 <select id="selectMenuFileNoCnt" resultType="int">
-SELECT IFNULL(max(menuNo),1) FROM menu  
+SELECT IFNULL(max(menuNo)+1,1) FROM menu  
 </select>
 
 <!--  다중 insert Mybatis Foreach 구문 (index 포함 ) --> 
@@ -87,7 +87,20 @@ INNER JOIN menufile b
 ON a.menuNo = b.menuNo
 WHERE busiNo = #{busiNo}
 and a.deleteYn='N'
+and b.deleteYn='N'
 </select>
+<update id="updateMenuFile">
+UPDATE menuFile set  deleteYn='Y' , delDate=now()
+WHERE fileNo = #{fileNo}
+</update>
+<update id="deleteAllMenu">
+UPDATE menu SET deleteYn='Y' , delDate = now()
+WHERE busiNo=#{busiNo}
+</update>
+<update id="deleteAllMenuFile">
+UPDATE menufile SET deleteYn = 'Y' ,delDate =now()
+WHERE menuNo  BETWEEN  ( SELECT MIN(menuNo) FROM menu WHERE busiNo=#{busiNo}) AND  ( SELECT MAX(menuNo) FROM menu WHERE busiNo=#{busiNo})
+</update>
 
 <insert id="insertJob">
 Insert into job (jobWriter,jobCompany,jobTitle,jobType,jobMoney,jobLoc,jobLocDetail,jobWorkDate,jobWorkTime,jobContent,jobLocContent)
@@ -97,6 +110,52 @@ Insert into job (jobWriter,jobCompany,jobTitle,jobType,jobMoney,jobLoc,jobLocDet
 Insert into jobFile(jobNo,writer,originFileName,storedFileName,fileSize)
 	values ( ( SELECT IFNULL(max(jobNo),1) From job )  ,#{writer},#{originFileName},#{storedFileName},#{fileSize})
 </insert>
+
+<select id="selectJobByWriter" resultType="com.dailyMarket.www.vo.JobVO">
+SELECT jobNo,jobWriter,jobCompany,jobTitle,jobType,jobMoney,jobLoc,jobLocDetail,jobWorkDate,jobWorkTime,jobLocContent,jobContent
+		,regDate,modDate,delDate,deleteYn
+FROM job 
+WHERE jobWriter = #{writer}
+AND deleteYn ='N'	
+</select>
+<select id="selectJobFile" resultType="com.dailyMarket.www.vo.JobFileVO">
+SELECT fileNo,jobNo,originFileName,storedFileName,fileSize,regDate,modDate,delDate,deleteYn
+FROM jobFile
+WHERE jobNo=#{jobNo}
+AND deleteYn ='N'
+</select>
+<update id="updateJobFile" >
+UPDATE jobFile SET deleteYn='Y',modDate =now()
+WHERE fileNo=#{fileNo}
+</update>
+<update id="updateJob">
+UPDATE job SET jobCompany=#{jobCompany},jobTitle=#{jobTitle},jobType=#{jobType},jobMoney=#{jobMoney},jobLoc=#{jobLoc},jobLocDetail=#{jobLocDetail}
+			,jobWorkDate=#{jobWorkDate},jobWorkTime=#{jobWorkTime},jobContent=#{jobContent},jobLocContent=#{jobLocContent}
+			,modDate =now()
+WHERE jobNo = #{jobNo}
+</update>
+<update id="deleteJob">
+UPDATE job SET deleteYn ='Y',delDate =now()
+	WHERE jobNo =#{jobNo}
+</update>
+<update id="deleteJobFile">
+UPDATE jobFile set deleteYn='Y',delDate =now()
+	WHERE jobNo=#{jobNo}
+</update>
+
+
+<select id="selectExsitMenuCnt" resultType="int">
+SELECT count(menuNo) 
+FROM menu
+WHERE busiNo =#{busiNo}
+AND deleteYN='N'
+</select>
+<select id="selectExsitJobCnt" resultType="int">
+SELECT count(jobNo) 
+FROM job
+WHERE jobWriter =#{writer}
+AND deleteYN='N'
+</select>
 
 
 </mapper>

@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.dailyMarket.www.service.OwnerService;
 import com.dailyMarket.www.vo.BusiVO;
+import com.dailyMarket.www.vo.JobFileVO;
 import com.dailyMarket.www.vo.JobVO;
 import com.dailyMarket.www.vo.MenuVO;
 import com.dailyMarket.www.vo.StoreFileVO;
@@ -49,9 +50,14 @@ public class OwnerController {
 		logger.info("GET OWNER MAIN");
 		String userId = (String)session.getAttribute("userId");
 		BusiVO busiVO = ownerService.selectBusiByWriter(userId);
-		//추후 수정 필요  ( 메뉴 등록 과 상세페이지에 임시 사용 )
-		session.setAttribute("busiNo", busiVO.getBusiNo());
 		model.addAttribute("busiVO",busiVO);
+		
+		boolean menuExsit = ownerService.selectExsitMenuCnt(busiVO.getBusiNo());
+		boolean jobExsit = ownerService.selectExsitJobCnt(userId);
+		
+		model.addAttribute("menuExsit",menuExsit);
+		model.addAttribute("jobExsit",jobExsit);
+		
 		return "owner/main";
 	}
 	@RequestMapping(value = "company/detail",method = RequestMethod.GET)
@@ -259,13 +265,7 @@ public class OwnerController {
 	
 
 	@RequestMapping(value = "company/menu/regist",method =  RequestMethod.GET)
-	public String getCompanyMenuRegist(Model model,HttpSession session)throws Exception{
-
-		//추후 수정 필요 -!! 세션에 busiNo
-		int busiNo =(int)session.getAttribute("busiNo");
-		
-		List<MenuVO> menuList = ownerService.selectMenuList(busiNo);
-		model.addAttribute("list",menuList);
+	public String getCompanyMenuRegist()throws Exception{
 		
 		return "owner/company/menu/regist";
 	}
@@ -292,7 +292,7 @@ public class OwnerController {
 		}
 		
 		HashMap<String,String> resMap = new HashMap<String, String>();
-		resMap.put("msg","메뉴가 등록 되었습니다.");
+		resMap.put("msg","상품이 등록 되었습니다.");
 		
 		return resMap;
 		
@@ -340,7 +340,30 @@ public class OwnerController {
 		
 		return "파일이 업로드 되었습니다.";
 	}
-	
+	@RequestMapping(value = "company/menu/detail",method =  RequestMethod.GET)
+	public String getCompanyMenuDetail(HttpSession session,Model model)throws Exception{
+
+		String userId = (String)session.getAttribute("userId");
+		BusiVO busiVO = ownerService.selectBusiByWriter(userId);
+		model.addAttribute("busiVO",busiVO);
+		
+		List<MenuVO> menuList = ownerService.selectMenuList(busiVO.getBusiNo());
+		model.addAttribute("list",menuList);
+		
+		return "owner/company/menu/detail";
+	}
+	@ResponseBody
+	@RequestMapping(value = "company/menu/file/delete",method = RequestMethod.POST,produces = "application/text; charset=utf-8;")
+	public String postMenuDelete(@RequestParam("fileNo")int fileNo)throws Exception{
+		ownerService.updateMenuFile(fileNo);
+		return "삭제되었습니다.";
+	}
+	@ResponseBody
+	@RequestMapping(value = "company/menu/allDelete",method = RequestMethod.POST,produces = "application/text; charset=utf-8;")
+	public String postAllMenuDelete(@RequestParam("busiNo")int busiNo)throws Exception{
+		ownerService.deleteAllMenu(busiNo);
+		return "삭제되었습니다.";
+	}
 	
 	
 	@RequestMapping(value = "mypage/main",method = RequestMethod.GET)
@@ -350,6 +373,7 @@ public class OwnerController {
 	
 	@RequestMapping(value = "job/regist",method = RequestMethod.GET)
 	public String getOwnerWanted()throws Exception{
+		
 		return "owner/job/regist";
 	}
 	@ResponseBody
@@ -427,5 +451,71 @@ public class OwnerController {
 		return "job Regist File upload Success";
 	}
 	
+	@RequestMapping(value = "job/detail" ,method = RequestMethod.GET)
+	public String getJobDetail(HttpSession session ,Model model)throws Exception{
+		String writer = (String)session.getAttribute("userId");
+		JobVO jobVO = ownerService.selectJobByWriter(writer);
+		model.addAttribute("jobVO",jobVO);
+		
+		List<JobFileVO> file = ownerService.selectJobFile(jobVO.getJobNo());
+		model.addAttribute("file",file);
+		
+		return "owner/job/detail";
+	}
+	
+	
+	@ResponseBody
+	@RequestMapping(value = "job/storedFileDelete" ,method = RequestMethod.POST ,produces = "application/text; charset=utf-8;")
+	public String postFileUpdate(@RequestParam("fileNo")int fileNo)throws Exception{
+		ownerService.updateJobFile(fileNo);
+		
+		return "삭제되었습니다.";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "job/update" ,method = RequestMethod.POST, produces = "application/text; charset=utf-8;")
+	public String postJObUpdate(
+								@RequestParam(value = "jobNo")int jobNo,
+					
+								@RequestParam(value = "jobCompany" ,required = false)String jobCompany,
+								@RequestParam(value = "jobTitle" ,required = false)String jobTitle,
+								@RequestParam(value = "jobType" ,required = false)String jobType,
+								@RequestParam(value = "jobMoney" ,required = false)String jobMoney,
+								@RequestParam(value = "jobLoc" ,required = false)String jobLoc,
+								@RequestParam(value = "jobLocDetail" ,required = false)String jobLocDetail,
+								@RequestParam(value = "jobWorkDate" ,required = false)String jobWorkDate,
+								@RequestParam(value = "jobWorkTime" ,required = false)String jobWorkTime,
+								@RequestParam(value = "jobLocContent" ,required = false)String jobLocContent,
+								@RequestParam(value = "jobContent" ,required = false)String jobContent
+							)throws Exception{
+		
+		JobVO jobVO = new JobVO();
+		
+		jobVO.setJobNo(jobNo);
+		
+		jobVO.setJobCompany(jobCompany);
+		jobVO.setJobTitle(jobTitle);
+		jobVO.setJobType(jobType);
+		jobVO.setJobMoney(jobMoney);
+		jobVO.setJobLoc(jobLoc);
+		jobVO.setJobLocDetail(jobLocDetail);
+		jobVO.setJobWorkDate(jobWorkDate);
+		jobVO.setJobWorkTime(jobWorkTime);
+		jobVO.setJobLocContent(jobLocContent);
+		jobVO.setJobContent(jobContent);
+		
+		ownerService.updateJob(jobVO);
+		
+		return "정보가 수정되었습니다.";
+		
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "job/delete",method =  RequestMethod.POST,produces = "application/text; charset=utf-8;")
+	public String postJobDelete(@RequestParam("jobNo")int jobNo)throws Exception{
+		ownerService.deleteJob(jobNo);
+		
+		return "삭제 되었습니다.";
+	}
 	
 }

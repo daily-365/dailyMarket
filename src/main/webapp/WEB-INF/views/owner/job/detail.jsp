@@ -18,13 +18,13 @@
 		<div class="col-3 " style="border: 1px solid black;">
 			<br>
 			<label class="form-label fw-bold ">업체이름</label><br><br>
-			<input type="text" class="form-control" id="jobCompany">
+			<input type="text" class="form-control" id="jobCompany" value="${jobVO.jobCompany }">
 			<br><br>
 		</div>
 		<div class="col-3 " style="border: 1px solid black;"> 
 			<br>
 			<label class="form-label fw-bold ">구인글 제목</label><br><br>
-			<input type="text" class="form-control" id="jobTitle" >
+			<input type="text" class="form-control" id="jobTitle" value="${jobVO.jobTitle }">
 			<br><br>
 		</div>
 		<div class="col-3 " style="border: 1px solid black;">
@@ -32,18 +32,18 @@
 			<label class="form-label fw-bold ">지급 형태</label><br><br>
 			<select id="jobType" class="form-control text-center fw-bold" >
 				<option value="">선택</option>
-				<option value="건당" >건당</option>
-				<option value="시급">시급</option>
-				<option value="일급" >일급</option>
-				<option value="월급">월급</option>
-				<option value="연봉" >연봉</option>
+				<option value="건당" <c:if test="${jobVO.jobType eq '건당' }">selected</c:if>>건당</option>
+				<option value="시급" <c:if test="${jobVO.jobType eq '시급' }">selected</c:if>>시급</option>
+				<option value="일급" <c:if test="${jobVO.jobType eq '일급' }">selected</c:if>>일급</option>
+				<option value="월급" <c:if test="${jobVO.jobType eq '월급' }">selected</c:if>>월급</option>
+				<option value="연봉" <c:if test="${jobVO.jobType eq '연봉' }">selected</c:if>>연봉</option>
 			</select>
 			<br><br>
 		</div>
 		<div class="col-3 " style="border: 1px solid black;">
 			<br>
 			<label class="form-label fw-bold ">급여</label><br><br>
-			<input type="text" class="form-control" id="jobMoney"  onkeyup="javascript: $(this).val($(this).val().replace(/\,/g, '').replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,'));">
+			<input type="text" class="form-control" id="jobMoney" value="${jobVO.jobMoney }" onkeyup="javascript: $(this).val($(this).val().replace(/\,/g, '').replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,'));">
 			<br><br>
 		</div>	
 	</div>
@@ -52,29 +52,29 @@
 		<div class="col-4 "style="border: 1px solid black;">
 			<br>
 			<label class="form-label fw-bold ">위치</label><br><br>
-			<input type="text" class="form-control" id="jobLoc" readonly="readonly" onclick="javascript: jobLocFunc()">
+			<input type="text" class="form-control" id="jobLoc" value="${jobVO.jobLoc }" readonly="readonly" onclick="javascript: jobLocFunc()">
 			<br><br>
 		</div>
 		<div class="col-4" style="border: 1px solid black;">
 			<br>
 			<label class="form-label fw-bold ">상세 위치</label><br><br>
-			<input type="text" class="form-control" id="jobLocDetail">
+			<input type="text" class="form-control" id="jobLocDetail" value="${jobVO.jobLocDetail }">
 			<br><br>
 		</div>
 		<div class="col-4 " style="border: 1px solid black;">
 			<br>
 			<label class="form-label fw-bold ">근무 일</label><br><br>
 			&nbsp;&nbsp;
-			<span class="fw-bold">월</span><input type="checkbox" name="jobWorkDate"  value="월"  >
-			<span class="fw-bold">화</span><input type="checkbox" name="jobWorkDate" value="화"  >
-			<span class="fw-bold">수</span><input type="checkbox" name="jobWorkDate" value="수"  >
-			<span class="fw-bold">목</span><input type="checkbox" name="jobWorkDate" value="목"  >
-			<span class="fw-bold">금</span><input type="checkbox" name="jobWorkDate" value="금"  >
-			<span class="fw-bold">토</span><input type="checkbox" name="jobWorkDate" value="토"  >
-			<span class="fw-bold">일</span><input type="checkbox" name="jobWorkDate" value="일"  >
+			<span class="fw-bold">월</span><input type="checkbox" name="jobWorkDate"  value="월" <c:if test="${fn:contains(jobVO.jobWorkDate,'월') }">checked</c:if> >
+			<span class="fw-bold">화</span><input type="checkbox" name="jobWorkDate" value="화" <c:if test="${fn:contains(jobVO.jobWorkDate,'화') }">checked</c:if> >
+			<span class="fw-bold">수</span><input type="checkbox" name="jobWorkDate" value="수" <c:if test="${fn:contains(jobVO.jobWorkDate,'수') }">checked</c:if> >
+			<span class="fw-bold">목</span><input type="checkbox" name="jobWorkDate" value="목" <c:if test="${fn:contains(jobVO.jobWorkDate,'목') }">checked</c:if> >
+			<span class="fw-bold">금</span><input type="checkbox" name="jobWorkDate" value="금" <c:if test="${fn:contains(jobVO.jobWorkDate,'금') }">checked</c:if> >
+			<span class="fw-bold">토</span><input type="checkbox" name="jobWorkDate" value="토" <c:if test="${fn:contains(jobVO.jobWorkDate,'토') }">checked</c:if> >
+			<span class="fw-bold">일</span><input type="checkbox" name="jobWorkDate" value="일" <c:if test="${fn:contains(jobVO.jobWorkDate,'일') }">checked</c:if> >
 			&nbsp;&nbsp;&nbsp;&nbsp;
-			<span class="fw-bold">평일</span><input type="checkbox" name="jobWorkDate" value="평일" >
-			<span class="fw-bold">주말</span><input type="checkbox" name="jobWorkDate" value="주말" >
+			<span class="fw-bold">평일</span><input type="checkbox" name="jobWorkDate" value="평일" <c:if test="${jobVO.jobWorkDate eq '평일' }">checked</c:if>>
+			<span class="fw-bold">주말</span><input type="checkbox" name="jobWorkDate" value="주말" <c:if test="${jobVO.jobWorkDate eq '주말' }">checked</c:if>>
 			<br><br>
 		</div>
 		<div style="border: 1px solid black;">
@@ -83,6 +83,13 @@
 			<div class="row">
 				<div class="col-2 "></div>
 				<div class="col-4">
+				
+				<c:set var="startWorkTime" value="${fn:substring(jobVO.jobWorkTime,0,5) }"/>
+				<c:set var="endWorkTime" value="${fn:substring(jobVO.jobWorkTime,6,11) }"/>
+				<!-- 
+				<c:set value="0:00" var="startWorkTime1" />
+				<c:if test="${startWorkDate eq  startWorkTime1}">selected</c:if>
+				-->
 					<select id="jobWorkStartTime"  class="form-control text-center w-50">
 						<option value="">선택</option>
 						<%for(int i=0; i<24; i++) {
@@ -127,13 +134,13 @@
 		<div class="col-6 "style="border: 1px solid black;">
 			<br>
 			<label class="form-label fw-bold ">위치 설명</label><br><br>
-			<textarea  class="form-control" id="jobLocContent" ></textarea>
+			<textarea  class="form-control" id="jobLocContent" >${jobVO.jobLocContent }</textarea>
 			<br><br>
 		</div>
 		<div class="col-6 "style="border: 1px solid black;">
 			<br>
 			<label class="form-label fw-bold ">상세 설명</label><br><br>
-			<textarea  class="form-control" id="jobContent"></textarea>
+			<textarea  class="form-control" id="jobContent">${jobVO.jobContent }</textarea>
 			<br><br>
 		</div>
 	</div>
@@ -146,7 +153,16 @@
 			<input type="file" id="inputFile" style="display: none;" multiple="multiple">
 			<button id="addFileBtn" type="button" class="btn btn-outline-warning col-2">추가</button>
 			<div id="fileContent" class="row">
-
+				<c:set var="length" value="${fn:length(file)}"/>
+				<c:forEach var="file" items="${file }">
+				 	<input class="storeFileSize" type="text" value="${file.fileSize }" style="display: none;">
+					<div  class='fw-bold col-2' ><br><br>
+						&nbsp;<img src="/resources/upload/owner/company/job/${file.storedFileName } " class='form-control' style='width:200px; height:150px;'></img><br><br>
+						&nbsp;<button  value="${file.fileNo }" type='button' class='storedFileDelBtn btn btn-danger form-control' >X </button>
+					<br><br>
+					</div>
+				
+				</c:forEach>
 			</div>
 			<br><br>
 		</div>
@@ -155,8 +171,11 @@
 	<div class="row">
 		<div class="col-4">
 		</div>
-		<div class="col-4">
-			<button type="button" id="jobRegistBtn" class="btn btn-success form-control">등록</button>
+		<div class="col-2">
+			<button type="button" id="jobModBtn" class="btn btn-outline-primary form-control">수정</button>
+		</div>
+		<div class="col-2">
+			<button type="button" id="jobDelBtn" class="btn btn-outline-danger form-control">삭제</button>
 		</div>
 	</div>
 	<br><br>
@@ -248,6 +267,9 @@ $(document).ready(function(){
 	//파일업로드 
 	$("#inputFile").on("change",fileAddFunc)
 	
+	var storedFileLength =${length}
+	var storedFileSize = $(".storedFileSize")
+	
 	var fileNum =0;
 	var fileContent = new Array()
 	
@@ -309,7 +331,28 @@ $(document).ready(function(){
 			});
 		
 		}
-
+	
+	
+	//기존 파일 삭제 함수
+	$(".storedFileDelBtn").on("click",function(){
+		if(!confirm("기존 파일 입니다. 삭제하시겠습니까?")){
+			return false;
+		}else{
+			$.ajax({
+				url:"/owner/job/storedFileDelete",
+				type:"post",
+				data : {"fileNo":Number($(this).val()) },
+				async:false,
+				success:function(result){
+					alert(result)
+					location.reload(true);
+				}
+			});
+		
+		}
+	
+	});
+	
 	
 	function uploadFileFunc(){
 		var formData = new FormData()
@@ -371,7 +414,67 @@ $(document).ready(function(){
 	});
 
 	
-
+	//정보 업데이트
+	$("#jobModBtn").on("click",function(){
+		if(!confirm("정보를 수정하시겠습니까?")){
+			return false;
+		
+		}else{
+			params ={	"jobNo" : $("#jobNo").val(),
+			
+						"jobCompany" : $("#jobCompany").val(),
+						"jobTitle" : $("#jobTitle").val(),
+						"jobType" : $("#jobType").val(),
+						"jobMoney" : $("#jobMoney").val(),
+						"jobLoc" : $("#jobLoc").val(),
+						"jobLocDetail" : $("#jobLocDetail").val(),
+						"jobWorkDate" : $("#jobWorkDate").val(),
+						"jobWorkTime" : $("#jobWorkTime").val(),
+						"jobLocContent" :$("#jobLocContent").val(),
+						"jobContent" :$("#jobContent").val()
+					}
+			$.ajax({
+				url:"/owner/job/update",
+				type:"post",
+				async:false,
+				data:params,
+				success:function(result){
+					alert(result)
+					location.reload(true)
+				}
+			});
+			
+			//파일업로드 함수 실행
+			uploadFileFunc()
+			
+		}
+	
+	});
+	
+	// 알바 구인 정보 삭제하기.
+	
+	$("#jobDelBtn").on("click",function(){
+		if(!confirm("삭제하시면 해당 구인정보가 모두 삭제됩니다. 그래도 진행하시겠습니까?")){
+			return false;
+		
+		}else{
+			$.ajax({
+				url:"/owner/job/delete",
+				type:"post",
+				data : {"jobNo" : $("#jobNo").val()},
+				success:function(result){
+					alert(result)
+					location.href="/owner/main"
+				}		
+			
+			});
+		
+		}
+	
+	
+	});
+		
+		
 		
 
 });

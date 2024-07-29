@@ -28,4 +28,15 @@ public interface OwnerDAO {
 	public List<MenuVO> selectMenuList(int busiNo)throws Exception;
 	public void insertJob(JobVO jobVO)throws Exception;
 	public void insertJobFile(Map<String,Object> map)throws Exception;
+	public void updateMenuFile(int fileNo)throws Exception;
+	public void deleteAllMenu(int busiNo)throws Exception;
+	public void deleteAllMenuFile(int busiNo)throws Exception;
+	public JobVO selectJobByWriter(String writer)throws Exception;
+	public List<JobFileVO>selectJobFile(int jobNo)throws Exception;
+	public void updateJobFile(int fileNo)throws Exception;
+	public void updateJob(JobVO jobVO)throws Exception;
+	public void deleteJob(int jobNo)throws Exception;
+	public void deleteJobFile(int jobNo)throws Exception;
+	public int selectExsitMenuCnt(int busiNo)throws Exception;
+	public int selectExsitJobCnt(String writer)throws Exception;
 }

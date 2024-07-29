@@ -383,7 +383,7 @@ $(document).ready(function(){
 	
 	//3단 셀렉트 박스 : 2번째
 	$("#busiType1").on("change",function(){
-		
+		$("#busiType3").empty()
 		$("#busiType2").empty()
 		$("#busiType").empty()
 		

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.dailyMarket.www.vo.BusiFileVO;
 import com.dailyMarket.www.vo.BusiVO;
+import com.dailyMarket.www.vo.JobFileVO;
 import com.dailyMarket.www.vo.JobVO;
 import com.dailyMarket.www.vo.MenuVO;
 import com.dailyMarket.www.vo.StoreFileVO;
@@ -25,7 +26,15 @@ public interface OwnerService {
 		public void insertMenuFile(Map<String,Object>map)throws Exception;
 		public int menuFileNoCnt()throws Exception;
 		public List<MenuVO> selectMenuList(int busiNo)throws Exception;
+		public void updateMenuFile(int fileNo)throws Exception;
+		public void deleteAllMenu(int busiNo)throws Exception;
 		public void insertJob(JobVO jobVO)throws Exception;
 		public void insertJobFile(Map<String,Object> map)throws Exception;
-		
+		public JobVO selectJobByWriter(String writer)throws Exception;
+		public List<JobFileVO>selectJobFile(int jobNo)throws Exception;
+		public void updateJobFile(int fileNo)throws Exception;
+		public void updateJob(JobVO jobVO)throws Exception;
+		public void deleteJob(int jobNo)throws Exception;
+		public boolean selectExsitMenuCnt(int busiNo)throws Exception;
+		public boolean selectExsitJobCnt(String writer)throws Exception;		
 }

@@ -90,6 +90,21 @@ public class OwnerDAOImpl implements OwnerDAO {
 	public List<MenuVO> selectMenuList(int busiNo) throws Exception {
 		return sqlSession.selectList("OwnerMapper.selectMenuList",busiNo);
 	}
+	
+	@Override
+	public void deleteAllMenu(int busiNo) throws Exception {
+		sqlSession.update("OwnerMapper.deleteAllMenu",busiNo);
+	}
+	
+	@Override
+	public void deleteAllMenuFile(int busiNo) throws Exception {
+		sqlSession.update("OwnerMapper.deleteAllMenuFile",busiNo);
+	}
+	
+	@Override
+	public void updateMenuFile(int fileNo) throws Exception {
+		sqlSession.update("OwnerMapper.updateMenuFile",fileNo);
+	}
 	@Override
 	public void insertJob(JobVO jobVO) throws Exception {
 		sqlSession.insert("OwnerMapper.insertJob",jobVO);
@@ -98,6 +113,38 @@ public class OwnerDAOImpl implements OwnerDAO {
 	public void insertJobFile(Map<String,Object> map) throws Exception {
 		sqlSession.insert("OwnerMapper.insertJobFile",map);
 		
+	}
+	@Override
+	public JobVO selectJobByWriter(String writer) throws Exception {
+		return sqlSession.selectOne("OwnerMapper.selectJobByWriter",writer);
+	}
+	@Override
+	public List<JobFileVO> selectJobFile(int jobNo) throws Exception {
+		return sqlSession.selectList("OwnerMapper.selectJobFile",jobNo);
+	}
+	@Override
+	public void updateJobFile(int fileNo) throws Exception {
+		sqlSession.update("OwnerMapper.updateJobFile",fileNo);
+	}
+	@Override
+	public void updateJob(JobVO jobVO) throws Exception {
+		sqlSession.update("OwnerMapper.updateJob",jobVO);
+	}
+	@Override
+	public void deleteJob(int jobNo) throws Exception {
+		sqlSession.update("OwnerMapper.deleteJob",jobNo);
+	}
+	@Override
+	public void deleteJobFile(int jobNo) throws Exception {
+		sqlSession.update("OwnerMapper.deleteJobFile",jobNo);
+	}
+	@Override
+	public int selectExsitMenuCnt(int busiNo) throws Exception {
+		return sqlSession.selectOne("OwnerMapper.selectExsitMenuCnt",busiNo);
+	}
+	@Override
+	public int selectExsitJobCnt(String writer) throws Exception {
+		return sqlSession.selectOne("OwnerMapper.selectExsitJobCnt",writer);
 	}
 	
 	
