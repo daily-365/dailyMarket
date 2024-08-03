@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>사장님 마이페이지</title>
+<title>사장님 구인현황</title>
 </head>
 <body>
 

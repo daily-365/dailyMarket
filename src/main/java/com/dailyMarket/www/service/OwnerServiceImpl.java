@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 
 import com.dailyMarket.www.dao.OwnerDAO;
 import com.dailyMarket.www.vo.BusiFileVO;
+import com.dailyMarket.www.vo.BusiNoticeVO;
 import com.dailyMarket.www.vo.BusiVO;
+import com.dailyMarket.www.vo.GetUserJobVO;
 import com.dailyMarket.www.vo.JobFileVO;
 import com.dailyMarket.www.vo.JobVO;
 import com.dailyMarket.www.vo.MenuVO;
@@ -152,6 +154,28 @@ public class OwnerServiceImpl implements OwnerService {
 		}
 		
 	}
+	@Override
+	public void insertCompanyNotice(BusiNoticeVO busiNoticeVO) throws Exception {
+		ownerDAO.insertCompanyNotice(busiNoticeVO);		
+	}
+	@Override
+	public void insertCompanyNoticeFile(Map<String, Object> map) throws Exception {
+		ownerDAO.insertCompanyNoticeFile(map);
+	}
+	
+	@Override
+	public List<GetUserJobVO> selectGetUserJobList(int jobNo) throws Exception {
+		return ownerDAO.selectGetUserJobList(jobNo);
+	}
+	@Override
+	public void updateGetUserJobStatusY(int getUserJobNo) throws Exception {
+		ownerDAO.updateGetUserJobStatusY(getUserJobNo);
+	}
+	@Override
+	public void updateGetUserJobStatusN(int getUserJobNo) throws Exception {
+		ownerDAO.updateGetUserJobStatusN(getUserJobNo);
+	}
+
 	
 	
 	

@@ -532,11 +532,11 @@ $(document).ready(function(){
 			$("#userAddr2").focus()
 			return false;
 		
-		}else if(!$('input[id=userAgree1]').is(":checked")){
+		}else if(!$('input[name=userAgree1]').is(":checked")){
 			alert("이용약관에 동의해 주세요")
 			return false;
 		
-		}else if(!$('input[id=userAgree2]').is(":checked")){
+		}else if(!$('input[name=userAgree2]').is(":checked")){
 			alert("개인정보 수집/이용에 동의해 주세요")
 			return false;
 		

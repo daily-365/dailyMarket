@@ -26,16 +26,22 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.dailyMarket.www.service.UserService;
+import com.dailyMarket.www.vo.BusiNoticeFileVO;
+import com.dailyMarket.www.vo.BusiNoticeVO;
+import com.dailyMarket.www.vo.BusiReviewFileVO;
+import com.dailyMarket.www.vo.BusiReviewVO;
 import com.dailyMarket.www.vo.BusiVO;
 import com.dailyMarket.www.vo.CarFileVO;
 import com.dailyMarket.www.vo.CarVO;
 import com.dailyMarket.www.vo.EstateFileVO;
 import com.dailyMarket.www.vo.EstateVO;
+import com.dailyMarket.www.vo.GetUserJobVO;
 import com.dailyMarket.www.vo.JobFileVO;
 import com.dailyMarket.www.vo.JobVO;
 import com.dailyMarket.www.vo.MenuVO;
 import com.dailyMarket.www.vo.ProductVO;
 import com.dailyMarket.www.vo.StoreFileVO;
+import com.dailyMarket.www.vo.UserJobVO;
 import com.dailyMarket.www.vo.UserVO;
 
 @Controller
@@ -43,9 +49,12 @@ import com.dailyMarket.www.vo.UserVO;
 public class UserController {
 
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+	
 	private static final String productUploadPath ="C:\\eclipse-workspace\\dailyMarket\\src\\main\\webapp\\resources\\upload\\user\\product\\";
 	private static final String estateUploadPath ="C:\\eclipse-workspace\\dailyMarket\\src\\main\\webapp\\resources\\upload\\user\\estate\\";
 	private static final String carUploadPath ="C:\\eclipse-workspace\\dailyMarket\\src\\main\\webapp\\resources\\upload\\user\\car\\";
+	private static final String companyUploadPath ="C:\\eclipse-workspace\\dailyMarket\\src\\main\\webapp\\resources\\upload\\user\\company\\";
+	private static final String userJobUploadPath ="C:\\eclipse-workspace\\dailyMarket\\src\\main\\webapp\\resources\\upload\\user\\job\\";
 	
 	@Autowired
 	private UserService userService;
@@ -159,10 +168,13 @@ public class UserController {
 		List<BusiVO> list = userService.selectBusiList(busiVO);
 		model.addAttribute("list",list);
 		
+		List<BusiReviewVO> review = userService.selectCompanyReviewList();
+		model.addAttribute("review",review);
+		
 		return "user/company/main";
 	}
 	@RequestMapping(value = "company/detail" ,method = RequestMethod.GET)
-	public String getcompanyDetail(@RequestParam("busiNo")int busiNo,Model model)throws Exception{
+	public String getcompanyDetail(@RequestParam("busiNo")int busiNo,Model model,HttpSession session)throws Exception{
 		BusiVO busiVO = userService.selectByBusiNo(busiNo);
 		model.addAttribute("busiVO",busiVO);
 		
@@ -172,6 +184,17 @@ public class UserController {
 		List<MenuVO> menu = userService.selectMenuList(busiNo);
 		model.addAttribute("menu",menu);
 		
+		String userId =(String )session.getAttribute("userId");
+		
+		List<BusiNoticeVO> notice = userService.selectCompanyNoticeList(userId);
+		model.addAttribute("notice",notice);
+		
+		List<BusiNoticeFileVO> file = userService.selectCompanyNoticeFile(userId);
+		model.addAttribute("file",file);	
+		
+		BusiReviewVO review = userService.selectCompanyReviewByBusiNo(busiNo);
+		model.addAttribute("review",review);
+		
 		return "user/company/detail";
 	}
 	
@@ -180,7 +203,106 @@ public class UserController {
 		List<MenuVO> menu = userService.selectMenuList(busiNo);
 		model.addAttribute("menu",menu);
 		
+		//페이지 전환시 파라미터 값을 위함 : 추후 코드 수정 필요
+		BusiReviewVO review = userService.selectCompanyReviewByBusiNo(busiNo);
+		model.addAttribute("review",review);
+		
 		return "user/company/product/main";
+	}
+	
+	@RequestMapping(value = "company/notice/main" ,method = RequestMethod.GET)
+	public String getCompanyNoticeMain(Model model,HttpSession session //추후 수정
+																	,@RequestParam("busiNo")int busiNo)throws Exception{
+		String userId = (String)session.getAttribute("userId");
+		List<BusiNoticeVO> noticeList = userService.selectCompanyNoticeList(userId);
+		List<BusiNoticeFileVO> fileList =userService.selectCompanyNoticeFile(userId);
+		
+		model.addAttribute("noticeList",noticeList);
+		model.addAttribute("fileList",fileList);
+		
+		//페이지 전환시 파라미터 값을 위함 : 추후 코드 수정 필요
+		BusiReviewVO review = userService.selectCompanyReviewByBusiNo(busiNo);
+		model.addAttribute("review",review);
+		
+		return "user/company/notice/main";
+	}
+	@RequestMapping(value = "company/notice/detail" ,method = RequestMethod.GET)
+	public String getCompanyNoticeDetail(@RequestParam("busiNoticeNo")int busiNoticeNo,//추후 수정
+																	@RequestParam("busiNo")int busiNo, Model model)throws Exception{
+		BusiNoticeVO busiNoticeVO = userService.selectCompanyNoticeByNO(busiNoticeNo);
+		List<BusiNoticeFileVO> file = userService.selectCompanyNoticeFileByNo(busiNoticeNo);
+		
+		model.addAttribute("vo",busiNoticeVO);
+		model.addAttribute("file",file);
+		
+		//페이지 전환시 파라미터 값을 위함 : 추후 코드 수정 필요
+		BusiReviewVO review = userService.selectCompanyReviewByBusiNo(busiNo);
+		model.addAttribute("review",review);
+		
+		return "user/company/notice/detail";
+	}
+	
+	@RequestMapping(value = "company/review/write",method = RequestMethod.GET)
+	public String getCompanyReviewWrite()throws Exception{
+		return "user/company/review/write";
+	}
+	
+	@RequestMapping(value = "company/review/write",method = RequestMethod.POST)
+	public String postCompanyReviewWrite(BusiReviewVO busiReviewVO)throws Exception{
+		userService.insertCompanyReview(busiReviewVO);
+		
+		return "redirect:/user/company/main";
+	}
+	
+	@RequestMapping(value = "company/review/main",method = RequestMethod.GET)
+	public String getCompanyReviewMain(@RequestParam("busiNo")int busiNo,
+										@RequestParam("busiReviewNo")int busiReviewNo,
+										Model model )throws Exception{
+		List<BusiReviewVO> list = userService.selectCompanyReviewListByBusiNo(busiNo);
+		model.addAttribute("list",list);
+		
+		List<BusiReviewFileVO> file = userService.selectCompanyReviewFileByBusiViewNo(busiReviewNo);
+		model.addAttribute("file",file);
+		return "user/company/review/main";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "company/review/write/file",method = RequestMethod.POST)
+	public String postCompanyReviewWriteFile(@RequestParam("fileContent")List<MultipartFile> mutipartFile ,HttpSession session)throws Exception{
+		
+		List<Map<String, Object>> list =new ArrayList<Map<String,Object>>();
+		Map<String,Object> map = null;
+		
+		String userId =(String)session.getAttribute("userId");
+		
+		if(mutipartFile.get(0).getSize()!=0 &&! mutipartFile.get(0).getOriginalFilename().equals("")) {
+			
+			for(int i=0; i<mutipartFile.size(); i++) {
+				
+				map = new HashMap<String, Object>();
+				
+				String originFileName = mutipartFile.get(i).getOriginalFilename();
+				String extendFileName =originFileName.substring(originFileName.lastIndexOf("."));
+				String storedFileName = UUID.randomUUID()+extendFileName;
+				
+				File targetFile = new File(companyUploadPath+"review//"+storedFileName);
+				mutipartFile.get(i).transferTo(targetFile);
+				
+				map.put("writer", userId);
+				map.put("originFileName", originFileName);
+				map.put("extendFileName", extendFileName);
+				map.put("storedFileName", storedFileName);
+				map.put("fileSize", mutipartFile.get(i).getSize());
+				
+				list.add(map);
+			}
+		}
+		
+		for(int i=0; i<list.size();i++) {
+			userService.insertCompanyReviewFile(list.get(i));
+		}
+		
+		return "Upload Success";
 	}
 	
 	
@@ -460,6 +582,148 @@ public class UserController {
 		return "user/car/detail";
 	}
 	
+	@RequestMapping(value = "job/write",method = RequestMethod.GET)
+	public String getJobWrite(Model model,HttpSession session)throws Exception{
+		String userId =(String)session.getAttribute("userId");
+		
+		UserJobVO userJobVO = userService.selectUserJobByWriter(userId);
+		model.addAttribute("vo",userJobVO);
+		return "user/job/write";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "job/write",method = RequestMethod.POST ,produces = "application/text; charset=utf-8;")
+	public String postJobWrite(
+								@RequestParam( value ="lastName" ,required = true) String lastName
+							   ,@RequestParam( value ="firstName" ,required = true) String firstName
+							   ,@RequestParam( value ="tel" ,required = true) String tel
+							   ,@RequestParam( value ="gender" ,required = true) String gender
+							   ,@RequestParam( value ="birthYear" ,required = true) String birthYear
+							   ,@RequestParam( value = "careerYn" ,required = false ) String careerYn
+							   ,@RequestParam( value ="careerLoc" ,required = false) String careerLoc
+							   ,@RequestParam( value ="careerWork" ,required = false) String careerWork
+							   ,@RequestParam( value ="careerYear" ,required = false) String careerYear
+							   ,@RequestParam( value ="careerDiff" ,required = false) String careerDiff
+							   ,@RequestParam( value ="advantage" ,required = true) String advantage
+							   ,@RequestParam( value ="introduce" ,required = true) String introduce
+							   ,@RequestParam( value ="addInfo" ,required = false) String addInfo
+							   ,HttpSession session
+								)throws Exception{
+		
+		String userId = (String )session.getAttribute("userId");
+		
+		UserJobVO userJobVO = new UserJobVO();
+		userJobVO.setWriter(userId);
+		userJobVO.setLastName(lastName);
+		userJobVO.setFirstName(firstName);
+		userJobVO.setTel(tel);
+		userJobVO.setGender(gender);
+		userJobVO.setBirthYear(birthYear);
+		userJobVO.setCareerYn(careerYn);
+		userJobVO.setCareerLoc(careerLoc);
+		userJobVO.setCareerWork(careerWork);
+		userJobVO.setCareerYear(careerYear);
+		userJobVO.setCareerDiff(careerDiff);
+		userJobVO.setAdvantage(advantage);
+		userJobVO.setIntroduce(introduce);
+		userJobVO.setAddInfo(addInfo);
+		
+		userService.insertUserJob(userJobVO);
+		
+		return "등록되었습니다.";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "job/write/file",method = RequestMethod.POST)
+	public String postUserJobWriteFile(@RequestParam("fileContent")List<MultipartFile>multipartFile ,HttpSession session
+									)throws Exception{
+		
+		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
+		Map<String,Object> map = null;
+		
+		String userId = (String) session.getAttribute("userId");
+		
+		if(multipartFile.get(0).getSize()!=0 &&!multipartFile.get(0).getOriginalFilename().equals("")) {
+			
+			for(int i=0; i<multipartFile.size(); i++) {
+				map = new HashMap<String, Object>();
+				
+				String originFileName = multipartFile.get(i).getOriginalFilename();
+				String extendFileName = originFileName.substring(originFileName.lastIndexOf("."));
+				String storedFileName = UUID.randomUUID()+extendFileName;
+				
+				File targetFile = new File(userJobUploadPath+storedFileName);
+				multipartFile.get(i).transferTo(targetFile);
+				
+				map.put("writer", userId);
+				map.put("originFileName", originFileName);
+				map.put("storedFileName", storedFileName);
+				map.put("fileSize", multipartFile.get(i).getSize());
+				
+				list.add(map);
+				
+			}
+			
+			for(int i=0; i<list.size(); i++) {
+				userService.insertUserJobFile(list.get(i));
+			}
+		}
+		
+		
+		return "Upload Success";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "job/update",method = RequestMethod.POST ,produces = "application/text; charset=utf-8;")
+	public String postJobUpadate(
+								@RequestParam( value ="lastName" ,required = true) String lastName
+							   ,@RequestParam( value ="firstName" ,required = true) String firstName
+							   ,@RequestParam( value ="tel" ,required = true) String tel
+							   ,@RequestParam( value ="gender" ,required = true) String gender
+							   ,@RequestParam( value ="birthYear" ,required = true) String birthYear
+							   ,@RequestParam( value = "careerYn" ,required = false ) String careerYn
+							   ,@RequestParam( value ="careerLoc" ,required = false) String careerLoc
+							   ,@RequestParam( value ="careerWork" ,required = false) String careerWork
+							   ,@RequestParam( value ="careerYear" ,required = false) String careerYear
+							   ,@RequestParam( value ="careerDiff" ,required = false) String careerDiff
+							   ,@RequestParam( value ="advantage" ,required = true) String advantage
+							   ,@RequestParam( value ="introduce" ,required = true) String introduce
+							   ,@RequestParam( value ="addInfo" ,required = false) String addInfo
+							   ,HttpSession session
+								)throws Exception{
+		
+		String userId = (String )session.getAttribute("userId");
+		
+		UserJobVO userJobVO = new UserJobVO();
+		userJobVO.setWriter(userId);
+		userJobVO.setLastName(lastName);
+		userJobVO.setFirstName(firstName);
+		userJobVO.setTel(tel);
+		userJobVO.setGender(gender);
+		userJobVO.setBirthYear(birthYear);
+		userJobVO.setCareerYn(careerYn);
+		userJobVO.setCareerLoc(careerLoc);
+		userJobVO.setCareerWork(careerWork);
+		userJobVO.setCareerYear(careerYear);
+		userJobVO.setCareerDiff(careerDiff);
+		userJobVO.setAdvantage(advantage);
+		userJobVO.setIntroduce(introduce);
+		userJobVO.setAddInfo(addInfo);
+		
+		userService.updateUserJob(userJobVO);
+		
+		return "수정되었습니다.";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "job/delete",method = RequestMethod.POST,produces = "application/text;charset=utf-8;")
+	public String postUserJobDelete(HttpSession session)throws Exception{
+		String userId = (String)session.getAttribute("userId");
+		userService.deleteUserJob(userId);
+		
+		return "삭제되었습니다.";
+	}
+	
 	@RequestMapping(value = "job/main",method =RequestMethod.GET)
 	public String getJobMain(Model model , JobVO jobVO,JobFileVO jobFileVO)throws Exception{
 		List<JobVO> list = userService.selectJobList(jobVO);
@@ -472,16 +736,37 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "job/detail" ,method = RequestMethod.GET)
-	public String getjobDetail(Model model,@RequestParam("jobNo")int jobNo,JobFileVO jobFileVO)throws Exception{
+	public String getjobDetail(Model model,@RequestParam("jobNo")int jobNo,JobFileVO jobFileVO,HttpSession session)throws Exception{
 		JobVO jobVO = userService.selectJobByNo(jobNo);
 		model.addAttribute("jobVO",jobVO);
 		
 		List<JobFileVO> file =userService.selectJobFile(jobFileVO);
 		model.addAttribute("file",file);
 		
+		//이력서 작성여부
+		String userId = (String)session.getAttribute("userId");
+		boolean jobWriteYn= userService.selectUserJobWrtieYn(userId);
+		model.addAttribute("jobWriteYn",jobWriteYn);
+		
+		//지원 여부
+		boolean getJobYn = userService.selectGetUserJobYn(userId);
+		model.addAttribute("getJobYn",getJobYn);
+		
 		return "user/job/detail";
 	}
 	
+	@ResponseBody
+	@RequestMapping(value = "job/get" ,method =  RequestMethod.POST ,produces = "application/text; charset=utf-8;")
+	public String getUserJobGet(HttpSession session,@RequestParam("jobNo")int jobNo)throws Exception{
+		GetUserJobVO getUserJovVo = new GetUserJobVO();
+		getUserJovVo.setJobNo(jobNo);
+		String userId = (String)session.getAttribute("userId");
+		getUserJovVo.setuserId(userId);
+		
+		userService.insertGetUserJob(getUserJovVo);
+	
+		return "지원이 완료되었습니다.";
+	}
 	
 	@RequestMapping(value = "mypage/main",method =RequestMethod.GET)
 	public String getMypageMain()throws Exception{

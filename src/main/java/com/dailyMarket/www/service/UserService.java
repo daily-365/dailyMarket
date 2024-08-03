@@ -3,16 +3,23 @@ package com.dailyMarket.www.service;
 import java.util.List;
 import java.util.Map;
 
+import com.dailyMarket.www.vo.BusiFileVO;
+import com.dailyMarket.www.vo.BusiNoticeFileVO;
+import com.dailyMarket.www.vo.BusiNoticeVO;
+import com.dailyMarket.www.vo.BusiReviewFileVO;
+import com.dailyMarket.www.vo.BusiReviewVO;
 import com.dailyMarket.www.vo.BusiVO;
 import com.dailyMarket.www.vo.CarFileVO;
 import com.dailyMarket.www.vo.CarVO;
 import com.dailyMarket.www.vo.EstateFileVO;
 import com.dailyMarket.www.vo.EstateVO;
+import com.dailyMarket.www.vo.GetUserJobVO;
 import com.dailyMarket.www.vo.JobFileVO;
 import com.dailyMarket.www.vo.JobVO;
 import com.dailyMarket.www.vo.MenuVO;
 import com.dailyMarket.www.vo.ProductVO;
 import com.dailyMarket.www.vo.StoreFileVO;
+import com.dailyMarket.www.vo.UserJobVO;
 import com.dailyMarket.www.vo.UserVO;
 
 public interface UserService {
@@ -43,5 +50,25 @@ public interface UserService {
 	public List<JobVO>selectJobList(JobVO jobVO)throws Exception;
 	public List<JobFileVO>selectJobFile(JobFileVO jobFileVO)throws Exception;
 	public JobVO selectJobByNo(int jobNo)throws Exception;
+	public List<BusiNoticeVO>selectCompanyNoticeList(String writer)throws Exception;
+	public List<BusiNoticeFileVO>selectCompanyNoticeFile(String writer)throws Exception;
+	public BusiNoticeVO selectCompanyNoticeByNO(int busiNoticeNo)throws Exception;
+	public List<BusiNoticeFileVO> selectCompanyNoticeFileByNo(int busiNoticeNo)throws Exception;
+	public void insertCompanyReview (BusiReviewVO busiReviewVO)throws Exception;
+	public void insertCompanyReviewFile (Map<String,Object> map)throws Exception;
+	public List<BusiReviewVO> selectCompanyReviewList()throws Exception;
+	public BusiReviewVO selectCompanyReviewByBusiNo(int busiNo)throws Exception;
+	public List<BusiReviewVO>selectCompanyReviewListByBusiNo(int busiNo)throws Exception;
+	public List<BusiReviewFileVO>selectCompanyReviewFileByBusiViewNo(int busiReviewNo)throws Exception;
+	public void insertUserJob(UserJobVO userJobVO)throws Exception;
+	public void insertUserJobFile(Map<String, Object> map)throws Exception;
+	public UserJobVO selectUserJobByWriter(String writer)throws Exception;
+	public void updateUserJob(UserJobVO userJobVO)throws Exception;
+	public void deleteUserJob(String writer)throws Exception;
+	public boolean selectUserJobWrtieYn(String writer)throws Exception;
+	public void insertGetUserJob(GetUserJobVO getUserJovVo)throws Exception;
+	public boolean selectGetUserJobYn(String userId)throws Exception;
+	
+
 
 }

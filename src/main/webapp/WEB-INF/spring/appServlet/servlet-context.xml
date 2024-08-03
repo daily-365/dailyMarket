@@ -59,6 +59,10 @@
           	<mapping path="/user/company/main"/>
           	<mapping path="/user/company/detail"/>
           	<mapping path="/user/company/product/main"/>
+          	<mapping path="/user/company/notice/main"/>
+          	<mapping path="/user/company/notice/detail"/>
+          	<mapping path="/user/company/reivew/write"/>
+          	<mapping path="/user/company/review/main"/>
           	<mapping path="/user/job/main"/>
           	<mapping path="/user/job/write"/>
           	<mapping path="/user/job/detail"/>
@@ -81,6 +85,7 @@
           	<mapping path="/owner/mypage/main"/>
           	<mapping path="/owner/job/regist"/>
           	<mapping path="/owner/job/deatil"/>
+          	<mapping path="/owner/notice/write"/>
            <beans:bean id="userInterceptor" class="com.dailyMarket.www.utils.UserInterceptor"/>
    	</interceptor>
 </interceptors>

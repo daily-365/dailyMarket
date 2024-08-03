@@ -23,7 +23,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dailyMarket.www.service.OwnerService;
+import com.dailyMarket.www.vo.BusiNoticeVO;
 import com.dailyMarket.www.vo.BusiVO;
+import com.dailyMarket.www.vo.GetUserJobVO;
 import com.dailyMarket.www.vo.JobFileVO;
 import com.dailyMarket.www.vo.JobVO;
 import com.dailyMarket.www.vo.MenuVO;
@@ -366,9 +368,9 @@ public class OwnerController {
 	}
 	
 	
-	@RequestMapping(value = "mypage/main",method = RequestMethod.GET)
-	public String getOwnerMypage()throws Exception{
-		return "owner/mypage/main";
+	@RequestMapping(value = "job/main",method = RequestMethod.GET)
+	public String getOwnerJobMain()throws Exception{
+		return "owner/job/main";
 	}
 	
 	@RequestMapping(value = "job/regist",method = RequestMethod.GET)
@@ -463,6 +465,14 @@ public class OwnerController {
 		return "owner/job/detail";
 	}
 	
+	@RequestMapping(value = "job/list",method =  RequestMethod.GET)
+	public String getJobDetailList(@RequestParam("jobNo")int jobNo,Model model)throws Exception{
+		
+		List<GetUserJobVO> list = ownerService.selectGetUserJobList(jobNo);
+		model.addAttribute("list",list);
+		
+		return "owner/job/list";
+	}
 	
 	@ResponseBody
 	@RequestMapping(value = "job/storedFileDelete" ,method = RequestMethod.POST ,produces = "application/text; charset=utf-8;")
@@ -517,5 +527,90 @@ public class OwnerController {
 		
 		return "삭제 되었습니다.";
 	}
+
+	@ResponseBody
+	@RequestMapping(value = "job/statusY",method = RequestMethod.POST,produces = "application/text; charset=utf-8;")
+	public String postOwnerJobStatusY(@RequestParam("getUserJobNo")int getUserJobNo)throws Exception{
+		ownerService.updateGetUserJobStatusY(getUserJobNo);
+		return "합격 처리 되었습니다.";
+	}
+	@ResponseBody
+	@RequestMapping(value = "job/statusN",method = RequestMethod.POST,produces = "application/text; charset=utf-8;")
+	public String postOwnerJobStatusN(@RequestParam("getUserJobNo")int getUserJobNo)throws Exception{
+		ownerService.updateGetUserJobStatusN(getUserJobNo);
+		return "불 합격 처리 되었습니다.";
+	}
 	
+	
+	@RequestMapping(value = "notice/write",method = RequestMethod.GET)
+	public String getNoticeWirte(HttpSession session , Model model)throws Exception{
+		String userId = (String)session.getAttribute("userId");
+		BusiVO busiVO = ownerService.selectBusiByWriter(userId);
+		model.addAttribute("busiVO",busiVO);
+		
+		return "owner/company/notice/write";
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "notice/write",method = RequestMethod.POST,produces = "application/text; charset=utf-8;")
+	public String postNoticeWirte(@RequestParam(value = "title")String title,
+									@RequestParam(value = "subTitle" ,required = false)String subTitle,
+									@RequestParam(value = "content")String content,
+									@RequestParam(value = "subContent" ,required = false)String subContent,
+									@RequestParam(value = "busiNo")int busiNo,
+									HttpSession session
+								)throws Exception{
+		
+		String uesrId= (String)session.getAttribute("userId");
+		
+		BusiNoticeVO busiNoticeVO = new BusiNoticeVO();
+		
+		busiNoticeVO.setBusiNo(busiNo);
+		busiNoticeVO.setWriter(uesrId);
+		busiNoticeVO.setTitle(title);
+		busiNoticeVO.setSubTitle(subTitle);
+		busiNoticeVO.setContent(content);
+		busiNoticeVO.setSubContent(subContent);
+		
+		ownerService.insertCompanyNotice(busiNoticeVO);
+		
+		return "작성되었습니다.";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "notice/write/file",method = RequestMethod.POST,produces = "application/text; charest=utf-8;")
+	public String postNoticeWirteFile(@RequestParam("fileContent")List<MultipartFile> multipartFile,HttpSession session )throws Exception{
+		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
+		Map<String,Object> map =null;
+	    String userId = (String)session.getAttribute("userId");
+		
+		if(multipartFile.size()!=0 && !multipartFile.get(0).getOriginalFilename().equals("")) {
+			
+			for(int i=0; i<multipartFile.size(); i++) {
+				
+				String originFileName = multipartFile.get(i).getOriginalFilename();
+				String extendFileName = originFileName.substring(originFileName.lastIndexOf("."));
+				String storedFileName = UUID.randomUUID()+extendFileName;
+				
+				File targetfile = new File(uploadPath+"notice\\"+storedFileName);
+				multipartFile.get(i).transferTo(targetfile);
+				
+				map = new HashMap<String, Object>();
+				
+				map.put("writer",userId);
+				map.put("originFileName",originFileName);
+				map.put("storedFileName", storedFileName);
+				map.put("fileSize",multipartFile.get(i).getSize());
+				
+				list.add(map);
+			}
+			
+		}
+		
+		for(int i=0; i<list.size(); i++) {
+			ownerService.insertCompanyNoticeFile(list.get(i));
+		}
+		
+		return "업로드 완료";
+	}
 }

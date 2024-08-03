@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.dailyMarket.www.vo.BusiFileVO;
+import com.dailyMarket.www.vo.BusiNoticeVO;
 import com.dailyMarket.www.vo.BusiVO;
+import com.dailyMarket.www.vo.GetUserJobVO;
 import com.dailyMarket.www.vo.JobFileVO;
 import com.dailyMarket.www.vo.JobVO;
 import com.dailyMarket.www.vo.MenuVO;
@@ -37,4 +39,10 @@ public interface OwnerService {
 		public void deleteJob(int jobNo)throws Exception;
 		public boolean selectExsitMenuCnt(int busiNo)throws Exception;
 		public boolean selectExsitJobCnt(String writer)throws Exception;		
+		public void insertCompanyNotice(BusiNoticeVO busiNoticeVO)throws Exception;
+		public void insertCompanyNoticeFile(Map<String,Object> map)throws Exception;
+		public List<GetUserJobVO>selectGetUserJobList(int jobNo)throws Exception;
+		public void updateGetUserJobStatusY(int getUserJobNo)throws Exception;
+		public void updateGetUserJobStatusN(int getUserJobNo)throws Exception;
+
 }

@@ -74,7 +74,7 @@
 			<h4 class="fw-bold">${jobVO.jobTitle }</h4>
 			<c:if test="${ jobVO.regMinute ne 0 and jobVO.regMinute lt 60 }"><p>${jobVO.regMinute } 분 전 작성</p></c:if>
 			<c:if test="${ jobVO.regHour ne 0  and jobVO.regHour lt 24 }"><p>${jobVO.regHour } 시간 전 작성</p></c:if>
-			<c:if test="${ jobVO.regDay ne 0 and jobVO.regDay lt 30 }"><p>${jobVO.regDay } 일 전 작성</p></c:if>
+			<c:if test="${ jobVO.regDay ne 0 and jobVO.regDay lt 7 }"><p>${jobVO.regDay } 일 전 작성</p></c:if>
 			<c:if test="${ jobVO.regWeek ne 0 and jobVO.regWeek lt 4}"><p>${jobVO.regWeek } 주 전 작성</p></c:if>
 			<c:if test="${ jobVO.regMonth ne 0 and jobVO.regMonth lt 12 }"><p>${jobVO.regMonth } 달 전 작성</p></c:if>
 			<c:if test="${ jobVO.regYear ne 0 }"><p>${jobVO.regYear } 년</p></c:if>
@@ -158,10 +158,17 @@ ${jobVO.jobContent }
 	<div class="row">
 		<div class="col-2">
 		</div>
-		<div class="col-8">
-			<button class="form-control fw-bold btn btn-outline-secondary" type="button">데일리 알바 지원하기</button>
-		</div>
-	</div>	
+		<c:if test="${getJobYn eq false }">
+			<div class="col-8">
+				<button class="form-control fw-bold btn btn-outline-secondary" type="button" id="getJobBtn">데일리 알바 지원하기</button>
+			</div>
+		</c:if>
+		<c:if test="${getJobYn eq true }">
+			<div class="col-8">
+				<button class="form-control fw-bold btn btn-outline-warning" type="button" >지원 확인하러 가기</button>
+			</div>
+		</c:if>
+	</div>
 	<br>
 	<div class="row">
 		<div class="col-2">
@@ -204,8 +211,15 @@ ${jobVO.jobContent }
 		</div>
 	</div>
 </div>
+
 <input type="text" id="jobLoc" value="${jobVO.jobLoc }" style="display: none;">
 <input type="text" id="jobLocDetail" value="${jobVO.jobLocDetail }" style="display: none;">
+
+<input type="text" value="${jobWriteYn }" id="jobWriteYn" style="display: none;">
+
+<input type="text" value="${param.jobNo }" id="jobNo" style="display: none;">
+
+
 <%@ include file="/resources/common/user/footer.jsp" %>
 </body>
 <!-- 카카오지도 API -->
@@ -258,6 +272,32 @@ geocoder.addressSearch(''+addrVal+'', function(result, status) {
         map.setCenter(coords);
     } 
 });  
+
+$(document).ready(function(){
+	
+	$("#getJobBtn").on("click",function(){
+		//String형식으로 true/false를 받아온다.
+		
+		if($("#jobWriteYn").val()=="false"){
+			alert("아직 이력서가 없네요 - 이력서 작성 페이지로 이동합니다.")
+			location.href='/user/job/write'
+		}else{
+			if(!confirm("지원하시겠습니까?")){
+				return false;
+			}else{
+				$.ajax({
+					url:"/user/job/get",
+					type:"post",
+					data : {"jobNo":$("#jobNo").val()},
+					success:function(result){
+						alert(result)
+					}
+				})
+			}
+		}
+	});
+
+});
 
 </script>
 </html>

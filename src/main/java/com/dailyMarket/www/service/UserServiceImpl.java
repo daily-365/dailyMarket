@@ -7,16 +7,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dailyMarket.www.dao.UserDAO;
+import com.dailyMarket.www.vo.BusiFileVO;
+import com.dailyMarket.www.vo.BusiNoticeFileVO;
+import com.dailyMarket.www.vo.BusiNoticeVO;
+import com.dailyMarket.www.vo.BusiReviewFileVO;
+import com.dailyMarket.www.vo.BusiReviewVO;
 import com.dailyMarket.www.vo.BusiVO;
 import com.dailyMarket.www.vo.CarFileVO;
 import com.dailyMarket.www.vo.CarVO;
 import com.dailyMarket.www.vo.EstateFileVO;
 import com.dailyMarket.www.vo.EstateVO;
+import com.dailyMarket.www.vo.GetUserJobVO;
 import com.dailyMarket.www.vo.JobFileVO;
 import com.dailyMarket.www.vo.JobVO;
 import com.dailyMarket.www.vo.MenuVO;
 import com.dailyMarket.www.vo.ProductVO;
 import com.dailyMarket.www.vo.StoreFileVO;
+import com.dailyMarket.www.vo.UserJobVO;
 import com.dailyMarket.www.vo.UserVO;
 
 @Service
@@ -161,7 +168,111 @@ public class UserServiceImpl implements UserService{
 	public JobVO selectJobByNo(int jobNo) throws Exception {
 		return userDAO.selectJobByNo(jobNo);
 	}
+
+	@Override
+	public List<BusiNoticeVO> selectCompanyNoticeList(String writer) throws Exception {
+		return userDAO.selectCompanyNoticeList(writer);
+	}
+
+	@Override
+	public List<BusiNoticeFileVO> selectCompanyNoticeFile(String writer) throws Exception {
+		return userDAO.selectCompanyNoticeFile(writer);
+	}
+
+	@Override
+	public BusiNoticeVO selectCompanyNoticeByNO(int busiNoticeNo) throws Exception {
+		return userDAO.selectCompanyNoticeByNO(busiNoticeNo);
+	}
+
+	@Override
+	public List<BusiNoticeFileVO> selectCompanyNoticeFileByNo(int busiNoticeNo) throws Exception {
+		return userDAO.selectCompanyNoticeFileByNo(busiNoticeNo);
+	}
+
+	@Override
+	public void insertCompanyReview(BusiReviewVO busiReviewVO) throws Exception {
+		userDAO.insertCompanyReview(busiReviewVO);		
+	}
+
+	@Override
+	public void insertCompanyReviewFile(Map<String, Object> map) throws Exception {
+		userDAO.insertCompanyReviewFile(map);
+	}
+
+	@Override
+	public List<BusiReviewVO> selectCompanyReviewList() throws Exception {
+		return userDAO.selectCompanyReviewList();
+	}
+
+	@Override
+	public BusiReviewVO selectCompanyReviewByBusiNo(int busiNo) throws Exception {
+		return userDAO.selectCompanyReviewByBusiNo(busiNo);
+	}
+
+	@Override
+	public List<BusiReviewVO> selectCompanyReviewListByBusiNo(int busiNo) throws Exception {
+		return userDAO.selectCompanyReviewListByBusiNo(busiNo);
+	}
+
+	@Override
+	public List<BusiReviewFileVO> selectCompanyReviewFileByBusiViewNo(int busiReviewNo) throws Exception {
+		return userDAO.selectCompanyReviewFileByBusiViewNo(busiReviewNo);
+	}
+
+	@Override
+	public void insertUserJob(UserJobVO userJobVO) throws Exception {
+		userDAO.insertUserJob(userJobVO);
+	}
+
+	@Override
+	public void insertUserJobFile(Map<String, Object> map) throws Exception {
+		userDAO.insertUserJobFile(map);
+		userDAO.deleteUserJobFile();
+	}
+
+	@Override
+	public UserJobVO selectUserJobByWriter(String writer) throws Exception {
+		return userDAO.selectUserJobByWriter(writer);
+	}
+
+	@Override
+	public void updateUserJob(UserJobVO userJobVO) throws Exception {
+		userDAO.updateUserJob(userJobVO);
+	}
+
+	@Override
+	public void deleteUserJob(String writer) throws Exception {
+		userDAO.deleteUserJob(writer);
+		userDAO.deleteUserJobFile(writer);
+	}
+
+	@Override
+	public boolean selectUserJobWrtieYn(String writer) throws Exception {
+		int result = userDAO.selectUserJobWrtieYn(writer);
+		if(result>0) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+
+	@Override
+	public void insertGetUserJob(GetUserJobVO getUserJovVo) throws Exception {
+		userDAO.insertGetUserJob(getUserJovVo);
+	}
+
+	@Override
+	public boolean selectGetUserJobYn(String userId) throws Exception {
+		int result = userDAO.selectGetUserJobYn(userId);
+		if(result>0) {
+			return true;
+		}else {
+			return false;
+		}
+
+	}
+
 	
-	
+
 	
 }

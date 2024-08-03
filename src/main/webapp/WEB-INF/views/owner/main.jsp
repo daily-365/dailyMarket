@@ -104,6 +104,7 @@ h1, h2, h3, h4, h5, h6 {
       <c:if test="${busiVO.state eq 'Y' }">
       	<c:if test="${menuExsit eq false  }"><a class="p-2 link-primary" href="/owner/company/menu/regist">메뉴등록</a>	</c:if>
       	<c:if test="${menuExsit eq true  }"><a class="p-2 link-warning" href="/owner/company/menu/detail">메뉴수정</a></c:if>
+      	<a class="p-2 link-warning" href="/owner/notice/write">소식등록</a>
       </c:if>
       <c:if test="${busiVO.state eq 'S' }">
        	<a class="p-2 link-warning" href="/owner/company/detail">업체 등록 대기중</a>
@@ -116,8 +117,6 @@ h1, h2, h3, h4, h5, h6 {
       </c:if>
       <c:if test="${jobExsit eq false }"><a class="p-2 link-primary" href="/owner/job/regist">알바구인</a></c:if>
       <c:if test="${jobExsit eq true }"><a class="p-2 link-warning" href="/owner/job/detail">구인정보수정</a></c:if>
-      <a class="p-2 link-primary" href="#">소식등록</a>
-      <a class="p-2 link-primary" href="/owner/mypage/main">마이페이지</a>
     </nav>
   </div>
 </div>

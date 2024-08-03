@@ -8,9 +8,9 @@ import java.util.Map;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import com.dailyMarket.www.vo.BusiFileVO;
+import com.dailyMarket.www.vo.BusiNoticeVO;
 import com.dailyMarket.www.vo.BusiVO;
+import com.dailyMarket.www.vo.GetUserJobVO;
 import com.dailyMarket.www.vo.JobFileVO;
 import com.dailyMarket.www.vo.JobVO;
 import com.dailyMarket.www.vo.MenuVO;
@@ -146,7 +146,27 @@ public class OwnerDAOImpl implements OwnerDAO {
 	public int selectExsitJobCnt(String writer) throws Exception {
 		return sqlSession.selectOne("OwnerMapper.selectExsitJobCnt",writer);
 	}
-	
+	@Override
+	public void insertCompanyNotice(BusiNoticeVO busiNoticeVO) throws Exception {
+		sqlSession.insert("OwnerMapper.insertCompanyNotice",busiNoticeVO);		
+	}
+	@Override
+	public void insertCompanyNoticeFile(Map<String, Object> map) throws Exception {
+		sqlSession.insert("OwnerMapper.insertCompanyNoticeFile",map);
+	}
+	@Override
+	public List<GetUserJobVO> selectGetUserJobList(int jobNo) throws Exception {
+		return sqlSession.selectList("OwnerMapper.selectGetUserJobList",jobNo);
+	}
+	@Override
+	public void updateGetUserJobStatusY(int getUserJobNo) throws Exception {
+		sqlSession.update("OwnerMapper.updateGetUserJobStatusY",getUserJobNo);
+	}
+	@Override
+	public void updateGetUserJobStatusN(int getUserJobNo) throws Exception {
+		sqlSession.update("OwnerMapper.updateGetUserJobStatusN",getUserJobNo);
+	}
+
 	
 	
 }

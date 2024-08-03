@@ -208,4 +208,155 @@ FROM job
 WHERE deleteYn='N'
 And jobNo=#{jobNo}
 </select>
+
+<select id="selectCompanyNoticeList" resultType="com.dailyMarket.www.vo.BusiNoticeVO"> 
+SELECT busiNoticeNo,busiNo,title,subTitle,content,subContent,regDate,modDate,delDate,deleteYn
+FROM busiNotice
+WHERE writer=#{writer}
+AND deleteYn='N'
+</select>
+<select id="selectCompanyNoticeFile" resultType="com.dailyMarket.www.vo.BusiNoticeFileVO">
+SELECT fileNo,busiNoticeNo,originFileName,storedFileName,fileSize,writer,regDate,modDate,delDate,deleteYn
+FROM busiNoticeFile
+WHERE writer=#{writer}
+AND deleteYn='N'
+</select>
+
+<select id="selectCompanyNoticeByNO" resultType="com.dailyMarket.www.vo.BusiNoticeVO"> 
+SELECT busiNoticeNo,busiNo,title,subTitle,content,subContent,regDate,modDate,delDate,deleteYn
+FROM busiNotice
+WHERE busiNoticeNo=#{busiNoticeNo}
+AND deleteYn='N'
+</select>
+<select id="selectCompanyNoticeFileByNo" resultType="com.dailyMarket.www.vo.BusiNoticeFileVO">
+SELECT fileNo,busiNoticeNo,originFileName,storedFileName,fileSize,writer,regDate,modDate,delDate,deleteYn
+FROM busiNoticeFile
+WHERE busiNoticeNo=#{busiNoticeNo}
+AND deleteYn='N'
+</select>
+
+
+<insert id="insertCompanyReview">
+Insert into busiReview (busiNo,title,content,writer)
+	values(#{busiNo},#{title},#{content},#{writer})
+</insert>
+
+<insert id="insertCompanyReviewFile">
+Insert into busiReviewFile (busiReviewNo, originFileName,storedFileName,fileSize,writer)
+	values( (SELECT IFNULL(max(busiReviewNo),1) FROM busiReview ) ,   #{originFileName},#{storedFileName},#{fileSize},#{writer})
+</insert>
+
+<select id="selectCompanyReviewList" resultType="com.dailyMarket.www.vo.BusiReviewVO">
+SELECT a.busiReviewNo,a.busiNo,a.title,a.content,a.writer,a.regDate,a.modDate,a.delDate,a.deleteYn
+		,b.storedFileName
+		,c.busiName
+		,d.userAddr1
+From busireview a
+INNER JOIN busireviewfile b
+ON a.busiReviewNo = b.busiReviewNo
+INNER JOIN busi c
+ON a.busiNo =c.busiNo
+INNER JOIN user d
+ON a.writer = d.userId
+GROUP BY busiReviewNo
+ORDER BY hitCnt DESC 
+</select>
+
+<select id="selectCompanyReviewByBusiNo" resultType="com.dailyMarket.www.vo.BusiReviewVO">
+SELECT a.busiReviewNo,a.busiNo,a.title,a.content,a.writer,a.regDate,a.modDate,a.delDate,a.deleteYn,max(a.hitCnt) as hitCnt
+		 ,TIMESTAMPDIFF(MINUTE, a.regDate,NOW()) regMinute,TIMESTAMPDIFF(HOUR, a.regDate,NOW()) regHour,TIMESTAMPDIFF(DAY , a.regDate,NOW()) regDay
+		 ,TIMESTAMPDIFF(WEEK  , a.regDate,NOW()) regWeek,TIMESTAMPDIFF(MONTH  , a.regDate,NOW()) regMonth,TIMESTAMPDIFF(YEAR, a.regDate,NOW()) regYear
+		,b.storedFileName
+		,c.busiName
+		,d.userAddr1
+From busireview a
+INNER JOIN busireviewfile b
+ON a.busiReviewNo = b.busiReviewNo
+INNER JOIN busi c
+ON a.busiNo =c.busiNo
+INNER JOIN user d
+ON a.writer = d.userId
+WHERE a.busiNo = #{busiNo}
+GROUP BY busiReviewNo
+</select>
+
+<select id="selectCompanyReviewListByBusiNo" resultType="com.dailyMarket.www.vo.BusiReviewVO">
+SELECT a.busiReviewNo,a.busiNo,a.title,a.content,a.writer,a.regDate,a.modDate,a.delDate,a.deleteYn, hitCnt
+		 ,TIMESTAMPDIFF(MINUTE, a.regDate,NOW()) regMinute,TIMESTAMPDIFF(HOUR, a.regDate,NOW()) regHour,TIMESTAMPDIFF(DAY , a.regDate,NOW()) regDay
+		 ,TIMESTAMPDIFF(WEEK  , a.regDate,NOW()) regWeek,TIMESTAMPDIFF(MONTH  , a.regDate,NOW()) regMonth,TIMESTAMPDIFF(YEAR, a.regDate,NOW()) regYear
+		,b.busiName
+		,c.userAddr1
+From busireview a
+INNER JOIN busi b
+ON a.busiNo =b.busiNo
+INNER JOIN user c
+ON a.writer = c.userId
+WHERE a.busiNo = #{busiNo}
+AND a.deleteYn='N'
+</select>
+<select id="selectCompanyReviewFileByBusiViewNo" resultType="com.dailyMarket.www.vo.BusiReviewFileVO">
+SELECT fileNo,busiReviewNo,originFileName,storedFileName,fileSize,writer,regDate,modDate,delDate,deleteYn
+FROM busiReviewFile
+WHERE busiReviewNo = #{busiReviewNo}
+AND deleteYn='N'
+</select>
+
+<insert id="insertUserJob">
+Insert into userJob (writer,lastName,firstName,tel,gender,birthYear
+					,careerYn,careerLoc,careerWork,careerYear,careerDiff,advantage,introduce,addInfo)
+		values (#{writer},#{lastName},#{firstName},#{tel},#{gender},#{birthYear}
+				,#{careerYn},#{careerLoc},#{careerWork},#{careerYear},#{careerDiff},#{advantage},#{introduce},#{addInfo})
+</insert>
+<insert id="insertUserJobFile">
+Insert Into userJobFile ( userJobNo,originFileName,storedFileName,fileSize,writer )
+	values ( (select IFNULL(max(userJobNo),1) from userJob   ) , #{originFileName}, #{storedFileName}, #{fileSize}, #{writer}   )
+</insert>
+<select id="selectUserJobByWriter" resultType="com.dailyMarket.www.vo.UserJobVO">
+SELECT a.userJobNo,a.writer,a.lastName,a.firstName,a.tel,a.gender,a.birthYear,a.careerYn,a.careerLoc,a.careerWork,a.careerYear,a.careerDiff
+		,a.advantage,a.introduce,a.addInfo,a.regDate,a.modDate,a.delDate,a.deleteYn
+		,b.storedFIleName
+FROM userjob a
+INNER JOIN userjobfile b
+ON a.userJobNo =b.userJobNo
+WHERE a.writer = #{writer}
+AND a.deleteYn ='N'
+AND b.deleteYn ='N'
+</select>
+<update id="updateUserJob">
+UPDATE userJob set writer=#{writer},lastName=#{lastName},firstName=#{firstName},tel=#{tel},gender=#{gender},birthYear=#{birthYear}
+				,careerYn=#{careerYn},careerLoc=#{careerLoc},careerWork=#{careerWork},careerYear=#{careerYear},careerDiff=#{careerDiff}
+				,advantage=#{advantage},introduce=#{introduce},addInfo=#{addInfo}
+	WHERE writer =#{writer}
+</update>
+<update id="updateUserJobFile">
+UPDATE userJobFile set delDate = now(), deleteYn='Y'
+WHERE fileNo != (SELECT MAX(fileNo) AS fileNo FROM userjobfile)
+</update>
+<update id="deleteUserJob">
+UPDATE userJob set delDate = now() ,deleteYn='Y'
+	WHERE writer=#{writer}
+</update>
+<update id="deleteUserJobFile">
+UPDATE userJobFile set delDate = now() ,deleteYn='Y'
+	WHERE writer=#{writer}
+</update>
+<select id="selectUserJobWrtieYn" resultType="int">
+SELECT COUNT(userJobNo)
+FROM userjob
+WHERE writer =#{writer}
+</select>
+
+<!-- 알바 지원 -->
+<insert id="insertGetUserJob">
+Insert Into getUserJob (jobNo,userId,status)
+	Values (#{jobNo},#{userId},'S')	
+</insert>
+<!-- 로그인한 사용자가 해당 업체에 지원했는지 여부 -->
+<select id="selectGetUserJobYn" resultType="int">
+SELECT COUNT(getUserJobNo)
+FROM getUserJob
+WHERE userId = #{uesrId}
+</select>
+
+
 </mapper>

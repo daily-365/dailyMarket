@@ -142,91 +142,30 @@
 		<h5 class="text-dark fw-bold text-center">동네 이웃이 남긴 후기를 찾아보세요</h5>
 		<div class="row">
 			
+			<c:forEach var="review" items="${review }">
 			<div class="col">
-		 	<br><br>
-	  		<div class="col-2" style="border: 2px solid black; border-radius: 30px; width: 300px; height: 500px;">
+		 		<div class="col-2" style=" width: 300px; height: 500px;">
 	  			<br>
 	  			<div class="text-center">
-			  		<img style="width: 100px; height: 100px;" class="rounded-circle" src="/resources/img/책.jpg">
-			  		<p class="fw-bold h5 text-dark"> ${userId }</p>
-			  		<span class="fw-bold">삼산동 </span><span> ( 인증 8회 )</span> 
-	  			</div><br><br>
-	  			<img class="img-thumbnail" style="width: 100px; height: 100px;" src="/resources/img/mainImg1.jpg"><span class="fw-bold"> 다이어트뷰티카페 미타임</span>
-	  			<br>
-	  			<p class="fw-bold"><span >후기 0 &nbsp;</span><span>&nbsp;단골 0 &nbsp;</span><span>&nbsp; 카페</span></p>
-	  			<br>
-	  			<div>사장님 센스 덕분에 즐겁고 재밌게 놀고 맛있게 먹고 갔습니다. 다음에 또 와보고 싶어요
-	  				즐거운 일 , 즐거운 기억 가지고 가요-~~ 다음엔 꼭 ...	
+				<img style="width: 100px; height: 100px;" class="rounded-circle bg-secondary" >
+				<p class="fw-bold h5 text-dark"> ${userId }</p>
+		  		<span class="fw-bold">${fn:substring(review.userAddr1,3,6) }</span><span> ( 조회수 0회 )</span>
+		  		</div><br>
+		  		<p class="fw-bold text-center h5">${review.busiName }</p><br>
+	  			<img class="img-thumbnail" style="margin-left:50px; width: 200px; height: 150px;" src="/resources/upload/user/company/review/${review.storedFileName }">
+	  			<br><br>
+	  			<p class="fw-bold text-center">${review.title }</p>
+		  		<div> 
+		  		${fn:substring(review.content,0,90)}...
 	  			</div>
 	  		</div>
 	  		<br>
 	  		</div>
+			</c:forEach>
 	  		
-	  		
-	  		<div class="col">
-	  		<br><br>
-	  		<div class="col-2" style="border: 2px solid black; border-radius: 30px; width: 300px; height: 500px;">
-	  			<br>
-	  			<div class="text-center">
-			  		<img style="width: 100px; height: 100px;" class="rounded-circle" src="/resources/img/피아노.jpg">
-			  		<p class="fw-bold h5 text-dark"> ${userId }</p>
-			  		<span class="fw-bold">삼산동 </span><span> ( 인증 8회 )</span> 
-	  			</div><br><br>
-	  			<img class="img-thumbnail" style="width: 100px; height: 100px;" src="/resources/img/mainImg2.jpg"><span class="fw-bold"> 다이어트뷰티카페 미타임</span>
-	  			<br>
-	  			<p class="fw-bold"><span >후기 0 &nbsp;</span><span>&nbsp;단골 0 &nbsp;</span><span>&nbsp; 카페</span></p>
-	  			<br>
-	  			<div>사장님 센스 덕분에 즐겁고 재밌게 놀고 맛있게 먹고 갔습니다. 다음에 또 와보고 싶어요
-	  				즐거운 일 , 즐거운 기억 가지고 가요-~~ 다음엔 꼭 ...	
-	  			</div>
-	  		</div>
-	  		<br>
-	  		</div>
-	  		
-	  		
-	  		<div class="col">
-	  		<br><br>
-	  		<div class="col-2" style="border: 2px solid black; border-radius: 30px; width: 300px; height: 500px;">
-	  			<br>
-	  			<div class="text-center">
-			  		<img style="width: 100px; height: 100px;" class="rounded-circle" src="/resources/img/커피머신.jpg">
-			  		<p class="fw-bold h5 text-dark"> ${userId }</p>
-			  		<span class="fw-bold">삼산동 </span><span> ( 인증 8회 )</span> 
-	  			</div><br><br>
-	  			<img class="img-thumbnail" style="width: 100px; height: 100px;" src="/resources/img/mainImg3.jpg"><span class="fw-bold"> 다이어트뷰티카페 미타임</span>
-	  			<br>
-	  			<p class="fw-bold"><span >후기 0 &nbsp;</span><span>&nbsp;단골 0 &nbsp;</span><span>&nbsp; 카페</span></p>
-	  			<br>
-	  			<div>사장님 센스 덕분에 즐겁고 재밌게 놀고 맛있게 먹고 갔습니다. 다음에 또 와보고 싶어요
-	  				즐거운 일 , 즐거운 기억 가지고 가요-~~ 다음엔 꼭 ...	
-	  			</div>
-	  		</div>
-	  		<br>
-  			</div>
-  			
-  			
-  			<div class="col">
-	  		<br><br>
-	  		<div class="col-2" style="border: 2px solid black; border-radius: 30px; width: 300px; height: 500px;">
-	  			<br>
-	  			<div class="text-center">
-			  		<img style="width: 100px; height: 100px;" class="rounded-circle" src="/resources/img/침대.jpg">
-			  		<p class="fw-bold h5 text-dark"> ${userId }</p>
-			  		<span class="fw-bold">삼산동 </span><span> ( 인증 8회 )</span> 
-	  			</div><br><br>
-	  			<img class="img-thumbnail" style="width: 100px; height: 100px;" src="/resources/img/market4.jpg"><span class="fw-bold"> 다이어트뷰티카페 미타임</span>
-	  			<br>
-	  			<p class="fw-bold"><span >후기 0 &nbsp;</span><span>&nbsp;단골 0 &nbsp;</span><span>&nbsp; 카페</span></p>
-	  			<br>
-	  			<div>사장님 센스 덕분에 즐겁고 재밌게 놀고 맛있게 먹고 갔습니다. 다음에 또 와보고 싶어요
-	  				즐거운 일 , 즐거운 기억 가지고 가요-~~ 다음엔 꼭 ...	
-	  			</div>
-	  		</div>
-	  		<br>
-	  		</div>
-  		</div>
-  	</div>
-  	
+	  	</div>
+	 </div>	  	
+	 <br><br><br>
 	<div class="container bg-light">
 		<br><br>
 		<div class="text-center">

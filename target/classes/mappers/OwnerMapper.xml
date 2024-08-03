@@ -157,5 +157,35 @@ WHERE jobWriter =#{writer}
 AND deleteYN='N'
 </select>
 
+<insert id="insertCompanyNotice">
+Insert Into busiNotice (busiNo,title,subTitle,content,subContent,writer)
+	values (#{busiNo}, #{title},#{subTitle},#{content},#{subContent},#{writer})
+</insert>
+<insert id="insertCompanyNoticeFile">
+Insert Into busiNoticeFile (busiNoticeNo,originFileName,storedFileName,fileSize,writer)
+	values ((SELECT IFNULL(max(busiNoticeNo),1) FROM busiNotice ) ,#{originFileName},#{storedFileName},#{fileSize},#{writer})
+</insert>
+<!-- 사업자 구인정보 현황 확인 -->
+<select id="selectGetUserJobList" resultType="com.dailyMarket.www.vo.GetUserJobVO">
+SELECT a.getUserJobNo,a.jobNo,a.userId,a.status,a.regDate,a.modDate,a.delDate,a.deleteYn
+		,b.userJobNo,b.writer,b.lastName,b.firstName,b.tel,b.gender,b.birthYear,b.careerYn
+		,b.careerLoc,b.careerWork,b.careerYear,b.careerDiff,b.advantage,b.introduce,b.addInfo,b.regDate,b.modDate,b.delDate,b.deleteYn
+		,c.storedFileName
+FROM getUserJob a
+INNER JOIN userjob b
+ON a.userId = b.writer
+INNER JOIN userjobfile c
+ON b.userJobNo =c.userJobNo
+WHERE a.jobNo = #{jobNo}
+</select>
+<!-- 합격 / 불합격 처리 -->
+<update id="updateGetUserJobStatusY">
+Update getUSerJob set status ='Y' , modDate =now()
+Where getUserJobNo = #{getUserJobNo}
+</update>
+<update id="updateGetUserJobStatusN">
+Update getUSerJob set status ='N' , modDate =now()
+Where getUserJobNo = #{getUserJobNo}
+</update>
 
 </mapper>

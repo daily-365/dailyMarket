@@ -32,7 +32,6 @@
 <body class="container-fluid">
 <%@ include file="/resources/common/user/header.jsp" %>	
 <div class="container">
-	<main>
 		<br><br>
 		<div class="topCard cycle-slideshow  " 
 			data-cycle-fx="carousel"
@@ -147,11 +146,11 @@
 			<br>
 			<p class="fw-bold text-dark">채팅문의</p>
 		</div>
-		<div class="col-3">
+		<div class="col-3" onclick="javascript: location.href='/user/company/review/write?busiNo=${param.busiNo}&busiNoticeNo=${param.busiNoticeNo}';">
 			<svg class="svg" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
   				<path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
 			</svg>
-			<p class="fw-bold text-dark">후기작성</p>
+			<p class="fw-bold text-dark" >후기작성</p>
 		</div>
 	</div>
 	<br>
@@ -161,16 +160,16 @@
 		<div class="col-3">
 		</div>
 		<div class="col-2">
-			<a href="/user/company/detail?busiNo=${param.busiNo}" class="text-dark fw-bold h5 ">홈</a>
+			<a href="/user/company/detail?busiNo=${param.busiNo}&busiNoticeNo=${param.busiNoticeNo}&busiReviewNo=${param.busiReviewNo}" class="text-dark fw-bold h5 ">홈</a>
 		</div>
 		<div class="col-2">
-			<a href="#" class="text-dark fw-bold h5">소식</a>
+			<a href="/user/company/notice/main?busiNo=${param.busiNo}&busiNoticeNo=${param.busiNoticeNo}&busiReviewNo=${param.busiReviewNo}" class="text-dark fw-bold h5">소식</a>
 		</div>
 		<div class="col-2">
-			<a href="/user/company/product/main?busiNo=${param.busiNo}" class="text-dark fw-bold h5">상품</a>
+			<a href="/user/company/product/main?busiNo=${param.busiNo}&busiNoticeNo=${param.busiNoticeNo}&busiReviewNo=${param.busiReviewNo}" class="text-dark fw-bold h5">상품</a>
 		</div>
 		<div class="col-3">
-			<a href="#" class="text-dark fw-bold h5">후기</a>
+			<a href="/user/company/review/main?busiNo=${param.busiNo}&busiNoticeNo=${param.busiNoticeNo}&busiReviewNo=${review.busiReviewNo }" class="text-dark fw-bold h5">후기</a>
 		</div>
 	</div>
 	<br>
@@ -246,6 +245,7 @@
 			</c:forEach>
 		</div>
 	</div>
+	<br>
 	<div class="row">
 		<div class="col-2">
 		</div>
@@ -253,42 +253,47 @@
 			<h4 class="fw-bold text-secondary">후기</h4>
 		</div>
 	</div>
-	<br><br>
+	<br>
 	<div class="row">
 		<div class="col-2">
 		</div>
 		<div class="col">
 			<img  class="bg-secondary rounded-circle" style="padding: 25px;">
 			<br><br>
-			<p class="fw-bold">매너당근</span><span class="fw-bold h5 text-dark">( 단골 )</p>
-			<p>가락2동 인증 30회 ∙ 6일</p>
+			<p class="fw-bold">${userId }<span class="fw-bold h5 text-dark"> ( 단골 ) </span></p>
+			<p class="fw-bold">${fn:substring(review.userAddr1,3,6) }  ∙ 조회수 ${review.hitCnt }회 ∙ 
+			<c:if test="${review.regMinute ne 0 and review.regMinute lt 60 }">${review.regMinute }분 전</c:if>
+			<c:if test="${review.regHour ne 0 and review.regHour lt 24 }">${review.regHour }시간 전</c:if>
+			<c:if test="${review.regDay ne 0 and review.regDay lt 7 }">${review.regDay }일 전</c:if>
+			<c:if test="${review.regWeek ne 0 and review.regWeek lt 4 }">${review.regWeek }주 전</c:if>
+			<c:if test="${review.regMonth ne 0 and review.regMonth lt 12 }">${review.regMonth }월 전</c:if>
+			<c:if test="${review.regYear ne 0 }">${review.regYear }년 전</c:if>
+			</p>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-2">
 		</div>
-		<img src="https://dnvefa72aowie.cloudfront.net/business_review/business_review/undefined/1987705/1718976333510/SU1HXzI5MzguanBlZw==.jpeg" style="width: 350px; height: 350px;">
+		<img src="/resources/upload/user/company/review/${review.storedFileName }" style="width: 350px; height: 350px;">
 	</div>
 	<div class="row">
 		<div class="col-2"></div>
 <pre class="col-6">
 <br>
-사진이 꽃을 못담네요. 
-제가 좋아하는 색감과 질감의 꽃들로 심지어 싱싱한 친구들인데 가격이 너무 좋아요🧡
-전부터 주변 추천했었는데 더 많이 확장해주세요~ 
-아침에 가면 싱싱한 꽃내음으로 가게가 어디에 있는지 한번에 알 수 있더라구요 
-가는 길이 행복했어요
+${review.content }
 <br>
 </pre>
 	</div>
 	</div>
-	<br>
+	
 	<div class="row">
 		<div class="col-2"></div>
 		<div class="col form-control text-center fw-bold">후기 더보기</div>
 		<div class="col-2"></div>
 	</div>
 	<br>
+	
+	
 	<div class="row">
 		<div class="col-2">
 		</div>
@@ -298,51 +303,24 @@
 	</div>
 	<br>
 	<div class="row">
-		<div class="col-2">
-		</div>
-		<div class="col">
-			<img style="width: 100px; height: 100px;" src="https://dnvefa72aowie.cloudfront.net/businessPlatform/bizPlatform/profile/center_biz_557497/1719369834410/1b107083bbd763f2cb24f781bd458cb8423cea9a2ced044e552951320299a55c.jpeg?q=95&s=1440x1440&t=inside" class="img-thumbnail" >
-<span class="col-4 fw-bold text-secondary">
-<br>
-저희 가게의 다양한 소식을 만나실 수 있어요.
-저렴한 가격에 좋은 물건을 드려요-~!!
-</span>
-		</div>
-		<div class="col">
-			<img style="width: 100px; height: 100px;" src="https://dnvefa72aowie.cloudfront.net/businessPlatform/bizPlatform/profile/center_biz_557497/1719203679529/15e5796c2bd54ea2485c593b01e1f0e22852c09b0f121617c7d751b80c4d8421.jpeg?q=95&s=1440x1440&t=inside" class="img-thumbnail" >
-<span class="col-4 fw-bold text-secondary">
-<br>
-저희 가게의 다양한 소식을 만나실 수 있어요.
-저렴한 가격에 좋은 물건을 드려요-~!!
-</span>
-		</div>
-		<div class="col">
-			<img style="width: 100px; height: 100px;" src="https://dnvefa72aowie.cloudfront.net/businessPlatform/bizPlatform/profile/center_biz_557497/1718951389294/55ee527fc867c0af9d6e6a43cb6e864f440bdff5406e3b231e662d2b9af364ca.jpeg?q=95&s=1440x1440&t=inside" class="img-thumbnail" >
-<span class="col-4 fw-bold text-secondary">
-<br>
-저희 가게의 다양한 소식을 만나실 수 있어요.
-저렴한 가격에 좋은 물건을 드려요-~!!
-</span>
-		</div>
-		<div class="col">
-			<img style="width: 100px; height: 100px;" src="https://dnvefa72aowie.cloudfront.net/businessPlatform/bizPlatform/profile/center_biz_557497/1718765425156/c32329a25fc9cd418d3000227f78d7971bca56c2cd405d4294082dd2525cf786.jpeg?q=95&s=1440x1440&t=inside" class="img-thumbnail" >
-<span class="col-4 fw-bold text-secondary">
-<br>
-저희 가게의 다양한 소식을 만나실 수 있어요.
-저렴한 가격에 좋은 물건을 드려요-~!!
-<br><br><br>
-</span>
-		</div>
-		
+	<div class="col-2"></div>
+	<c:forEach var="notice" items="${notice }">
+		<c:forEach var="file" items="${file }" begin="0" end="0">
+			<div class="col-2">
+				<img style=" width: 100px; height: 100px; margin-left: 25px;"  src="/resources/upload/owner/company/notice/${file.storedFileName }" class="img-thumbnail" >
+				<br>
+				<a href="/user/company/notice/main?busiNo=${param.busiNo}&busiNoticeNo=${param.busiNoticeNo}"  class="fw-bold text-dark">${notice.title }</a>
+			</div>
+		</c:forEach>	
+	</c:forEach>
+	</div>
+	<br>
 	<div class="row">
 			<div class="col-2"></div>
 		<div class="col form-control text-center fw-bold bg-light">소식 더보기</div>
 		<div class="col-2"></div>
 	</div>
 	<br>
-	</div>
-	</main>
-</div>
 <%@ include file="/resources/common/user/footer.jsp" %>	
 </body>
 

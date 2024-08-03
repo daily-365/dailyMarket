@@ -20,16 +20,16 @@
 		<div class="col-3">
 		</div>
 		<div class="col-2">
-			<a href="/user/company/detail?busiNo=${param.busiNo}" class="text-dark fw-bold h5 ">홈</a>
+			<a href="/user/company/detail?busiNo=${param.busiNo}&busiNoticeNo=${param.busiNoticeNo}&busiReviewNo=${param.busiReviewNo}" class="text-dark fw-bold h5 ">홈</a>
 		</div>
 		<div class="col-2">
-			<a href="#" class="text-dark fw-bold h5">소식</a>
+			<a href="/user/company/notice/main?busiNo=${param.busiNo}&busiNoticeNo=${param.busiNoticeNo}&busiReviewNo=${param.busiReviewNo}" class="text-dark fw-bold h5">소식</a>
 		</div>
 		<div class="col-2">
-			<a href="/user/company/product/main?busiNo=${param.busiNo}" class="text-dark fw-bold h5">상품</a>
+			<a href="/user/company/product/main?busiNo=${param.busiNo}&busiNoticeNo=${param.busiNoticeNo}&busiReviewNo=${param.busiReviewNo}" class="text-dark fw-bold h5">상품</a>
 		</div>
 		<div class="col-3">
-			<a href="#" class="text-dark fw-bold h5">후기</a>
+			<a href="/user/company/review/main?busiNo=${param.busiNo}&busiNoticeNo=${param.busiNoticeNo}&busiReviewNo=${review.busiReviewNo}" class="text-dark fw-bold h5">후기</a>
 		</div>
 	</div>
 	<br>
@@ -41,7 +41,7 @@
 	<br>
 	<div class="row">
 		<c:forEach var="menu" items="${menu }" varStatus="status">
-			<div class="col-2">
+			<div class="col-3">
 				<span >
 					<svg style="width: 20px; height:20px; " xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart-plus" viewBox="0 0 16 16">
 					  <path d="M9 5.5a.5.5 0 0 0-1 0V7H6.5a.5.5 0 0 0 0 1H8v1.5a.5.5 0 0 0 1 0V8h1.5a.5.5 0 0 0 0-1H9z"/>

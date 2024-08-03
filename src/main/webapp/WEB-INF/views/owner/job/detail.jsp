@@ -15,6 +15,12 @@
 	<h5 class="text-center fw-bold">알바 구인 정보</h5>
 	<br><br>
 	<div class="row">
+		<div class="col-4 offset-md-4" >
+			<button type="button" class="btn btn-outline-success form-control" onclick="javascript: location.href='/owner/job/list?jobNo=${jobVO.jobNo}'">구인정보 현황</button>
+		</div>
+	</div>
+	<br><br>
+	<div class="row">
 		<div class="col-3 " style="border: 1px solid black;">
 			<br>
 			<label class="form-label fw-bold ">업체이름</label><br><br>
