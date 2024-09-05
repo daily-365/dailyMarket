@@ -24,6 +24,8 @@ public interface OwnerDAO {
 	public List<StoreFileVO> selectStoreFile(int busiNo)throws Exception;
 	public void deleteStoreFile(int busiNo)throws Exception;
 	public void deleteStoreFileByFileNo(int fileNo)throws Exception;
+	public int selectMenuExist(int busiNo)throws Exception;
+	public int selectJobExist (String userId)throws Exception;
 	public void insertMenu(Map<String,Object>map)throws Exception;
 	public int insertMenuFile(Map<String,Object>map)throws Exception;
 	public int menuFileNoCnt()throws Exception;
@@ -39,8 +41,6 @@ public interface OwnerDAO {
 	public void updateJob(JobVO jobVO)throws Exception;
 	public void deleteJob(int jobNo)throws Exception;
 	public void deleteJobFile(int jobNo)throws Exception;
-	public int selectExsitMenuCnt(int busiNo)throws Exception;
-	public int selectExsitJobCnt(String writer)throws Exception;
 	public void insertCompanyNotice(BusiNoticeVO busiNoticeVO)throws Exception;
 	public void insertCompanyNoticeFile(Map<String,Object> map)throws Exception;
 	public List<GetUserJobVO>selectGetUserJobList(int jobNo)throws Exception;

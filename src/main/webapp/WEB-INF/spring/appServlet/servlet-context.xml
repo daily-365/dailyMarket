@@ -20,10 +20,12 @@
 <annotation-driven/>
 <!--  Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory  -->
 <resources mapping="/resources/**" location="/resources/"/>
+
 <!--  Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory  -->
 <beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 <beans:property name="prefix" value="/WEB-INF/views/"/>
 <beans:property name="suffix" value=".jsp"/>
+
 </beans:bean>
 
 <context:component-scan	base-package="com.dailyMarket.www.controller" />
@@ -75,6 +77,10 @@
           	<mapping path="/user/car/regist"/>
           	<mapping path="/user/car/detail"/>
           	<mapping path="/user/mypage/main"/>
+          	<mapping path="/user/mypage/profile"/>
+          	<mapping path="/user/mypage/profile/modpass"/>
+          	<mapping path="/user/mypage/account"/>
+          	<mapping path="/user/mypage/location"/>
           	<mapping path="/owner/main"/>
           	<mapping path="/owner/company/regist"/>
           	<mapping path="/owner/company/detail"/>

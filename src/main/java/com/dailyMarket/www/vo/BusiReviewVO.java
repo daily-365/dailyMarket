@@ -27,6 +27,13 @@ public class BusiReviewVO extends BusiReviewFileVO{
 	private long regMonth;
 	private long regYear;
 	
+	//더보기
+	private int endRow;
+	
+	//이미지
+	private String reviewStoredFileName;
+	private String userStoredFileName;
+	
 	
 	public int getBusiReviewNo() {
 		return busiReviewNo;
@@ -136,6 +143,24 @@ public class BusiReviewVO extends BusiReviewFileVO{
 	}
 	public void setRegYear(long regYear) {
 		this.regYear = regYear;
+	}
+	public int getEndRow() {
+		return endRow;
+	}
+	public void setEndRow(int endRow) {
+		this.endRow = endRow;
+	}
+	public String getReviewStoredFileName() {
+		return reviewStoredFileName;
+	}
+	public void setReviewStoredFileName(String reviewStoredFileName) {
+		this.reviewStoredFileName = reviewStoredFileName;
+	}
+	public String getUserStoredFileName() {
+		return userStoredFileName;
+	}
+	public void setUserStoredFileName(String userStoredFileName) {
+		this.userStoredFileName = userStoredFileName;
 	}
 
 	

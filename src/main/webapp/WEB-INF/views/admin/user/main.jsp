@@ -18,13 +18,13 @@
 <br><br>
 <section class="container">
 	<form id="excelForm" class="form" method="post">
+	
 		<div class="row">
 			<div class="col-2">
 				<span class="h5 fw-bold text-dark">※ 총 ${pageMaker.totalCount }건</span>
 			</div>
 			<div class="col-2">
 				<select id="pagePerNum" name="pagePerNum" class="form-control">
-					<option value=5 <c:if test="${param.pagePerNum eq 5 }">selected='selected'</c:if>>5개씩보기</option>		
 					<option value=10 <c:if test="${param.pagePerNum eq 10 }">selected='selected'</c:if>>10개씩보기</option>
 					<option value=20 <c:if test="${param.pagePerNum eq 20 }">selected='selected'</c:if>>20개씩보기</option>
 					<option value=30 <c:if test="${param.pagePerNum eq 30 }">selected='selected'</c:if>>30개씩보기</option>
@@ -38,13 +38,13 @@
 				<input id="endDate" name="endDate" type="text" readonly="readonly" class="form-control" placeholder="끝 날짜" value="${param.endDate }">
 			</div>
 			<div class="col-1">
-				<button type="button" id="oneMonthBtn" class="btn btn-secondary form-control">1개월</button>
+				<button type="button" id="oneMonthBtn" class="btn btn-dark form-control">1개월</button>
 			</div>
 			<div class="col-1">
-				<button type="button"  id="threeMonthBtn" class="btn btn-secondary form-control">3개월</button>
+				<button type="button"  id="threeMonthBtn" class="btn btn-dark form-control">3개월</button>
 			</div>
 			<div class="col-1">
-				<button type="button"  id="sixMonthBtn" class="btn btn-secondary form-control">6개월</button>
+				<button type="button"  id="sixMonthBtn" class="btn btn-dark form-control">6개월</button>
 			</div>
 		</div>
 		<br><br>
@@ -52,24 +52,26 @@
 			<div class="col-2">
 				<select id="searchType" name="searchType" class="form-control">
 					<option value="all" <c:if test="${param.searchType eq 'all' }">selected='selected'</c:if>>전체</option>
-					<option value="busiNum" <c:if test="${param.searchType eq 'busiNum' }">selected='selected'</c:if>> 사업자 번호</option>
-					<option value="writer"  <c:if test="${param.searchType eq 'writer' }">selected='selected'</c:if>>사업자 아이디</option>
-					<option value="ownerName"  <c:if test="${param.searchType eq 'ownerName' }">selected='selected'</c:if>>사업자 이름</option>
-					<option value="busiName"  <c:if test="${param.searchType eq 'busiName' }">selected='selected'</c:if>>사업장 명</option>
-					<option value="state"  <c:if test="${param.searchType eq 'state' }">selected='selected'</c:if>>승인 상태  (입점완료 / 입점대기 / 반려 및 재검수 요청) &nbsp;</option>
+					<option value="id" <c:if test="${param.searchType eq 'id' }">selected='selected'</c:if>>아이디</option>
+					<option value="name"  <c:if test="${param.searchType eq 'name' }">selected='selected'</c:if>>이름</option>
+					<option value="nick"  <c:if test="${param.searchType eq 'nick' }">selected='selected'</c:if>>닉네이</option>
+					<option value="mail"  <c:if test="${param.searchType eq 'mail' }">selected='selected'</c:if>>이메일</option>
+					<option value="tel"  <c:if test="${param.searchType eq 'tel' }">selected='selected'</c:if>>연락처</option>
+					<option value="birth"  <c:if test="${param.searchType eq 'birth' }">selected='selected'</c:if>>생년월일</option>
+					<option value="loc"  <c:if test="${param.searchType eq 'loc' }">selected='selected'</c:if>>주소</option>
 				</select>
 			</div>
 			<div class="col-3">
 				<input name="keyword" value="${param.keyword }" id="keyword" type="text" class="form-control">	
 			</div>&nbsp;&nbsp;
 			<div class="col-2">
-				<button id="searchBtn"  type="button" class="form-control btn btn-outline-secondary">검색</button>
+				<button id="searchBtn"  type="button" class="form-control btn btn-outline-dark">검색</button>
 			</div>
 			<div class="col-2">
-				<button type="button" class="form-control btn btn-secondary" id="excelDown">엑셀 다운</button>
+				<button type="button" class="form-control btn btn-dark" id="excelDown">엑셀 다운</button>
 			</div>
 			<div class="col-2">
-				<button onclick="javascript: self.location='/admin/store/main'" type="button" class="form-control btn btn-outline-secondary">검색 초기화</button>
+				<button onclick="javascript: self.location='/admin/user/main'" type="button" class="form-control btn btn-outline-dark">검색 초기화</button>
 			</div>
 		</div>
 	</form>
@@ -79,44 +81,46 @@
 	<br>
 	<h4 class="text-center">입점 현황</h4>
 	<br>
-	<table class="table table-hover table-bordered">
+	<table class="table table-hover table-bordered fw-bold">
 		<tr>
 			<th>#</th>
-			<th>번호</th>
-			<th>사업자번호</th>
-			<th>사업자 아이디</th>
-			<th>사업자 이름</th>
-			<th>사업장 명</th>
-			<th>승인 상태</th>
-			<th>신청일</th>
+			<th>아이디</th>
+			<th>이름</th>
+			<th>닉네임</th>
+			<th>이메일</th>
+			<th>연락처</th>
+			<th>생년월일</th>
+			<th>주소</th>
+			<th>등록일</th>
 		</tr>
-		<c:forEach var="list" items="${list }">		
+		<c:forEach var="list" items="${list }" varStatus="status">		
 		<tr>
 			<td>${list.rnum }</td>
-			<td>${list.busiNo }</td>
-			<td><a href="/admin/store/detail?busiNo=${list.busiNo}">${list.busiNum}</a></td>
-			<td>${list.writer}</td>
-			<td>${list.ownerName}</td>
-			<td>${list.busiName }</td>
-			<td class="fw-bold">${list.state }</td>
-			<td><fmt:formatDate value="${list.regDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+			<td>${list.userId }</td>
+			<td><a href="/admin/user/detail?userId=${list.userId}">${list.userName}</a></td>
+			<td>${list.userNick}</td>
+			<td>${list.userMail}</td>
+			<td>${list.userTel }</td>
+			<td>${list.userBirth}</td>
+			<td>${list.userAddr1 } ( ${list.userAddr2 } )</td>
+			<td>${list.regDate}</td>
 		</tr>
 		</c:forEach>
 		
 	</table>
 <br><br>
 	<div class="text-center">
-		<a class="btn btn-primary" href="${pageMaker.makeSearch(1) }">&laquo;&laquo;</a>
+		<a class="btn btn-dark" href="${pageMaker.makeSearch(1) }">&laquo;&laquo;</a>
 		<c:if test="${pageMaker.prev }">
-			<a class="btn btn-outline-primary" href="${pageMaker.makeSearch(pageMaker.startPage-1) }">&laquo;</a>
+			<a class="btn btn-outline-dark" href="${pageMaker.makeSearch(pageMaker.startPage-1) }">&laquo;</a>
 		</c:if>
 		<c:forEach var="idx" begin="${pageMaker.startPage }" end="${pageMaker.endPage}"  >
-			<a class="btn btn-outline-primary <c:if test="${param.page eq idx}">active</c:if>"  href="${pageMaker.makeSearch(idx) }">${idx}</a>
+			<a class="btn btn-outline-dark <c:if test="${param.page eq idx}">active</c:if>"  href="${pageMaker.makeSearch(idx) }">${idx}</a>
 		</c:forEach>
 		<c:if test="${pageMaker.next && pageMaker.endPage>0}">
-			<a class="btn btn-outline-primary" href="${pageMaker.makeSearch(pageMaker.endPage+1)}">&raquo;</a>
+			<a class="btn btn-outline-dark" href="${pageMaker.makeSearch(pageMaker.endPage+1)}">&raquo;</a>
 		</c:if>
-		<a class="btn btn-primary" href="${pageMaker.makeSearch(pageMaker.maxPage) }">&raquo;&raquo;</a>
+		<a class="btn btn-dark" href="${pageMaker.makeSearch(pageMaker.maxPage)}">&raquo;&raquo;</a>
 	</div>
 </main>
 </body>
@@ -177,12 +181,12 @@ $(document).ready(function(){
  
     //검색
     $("#searchBtn").on("click",function(){
-    	self.location="/admin/store/main?keyword="+$("#keyword").val()+"&searchType="+$("#searchType").val()+"&startDate="+$("#startDate").val()+"&endDate="+$("#endDate").val()+"&pagePerNum="+$("#pagePerNum").val()
+    	self.location="/admin/user/main?keyword="+$("#keyword").val()+"&searchType="+$("#searchType").val()+"&startDate="+$("#startDate").val()+"&endDate="+$("#endDate").val()+"&pagePerNum="+$("#pagePerNum").val()
     });
     
     //엑셀 다운로드
     $("#excelDown").on("click",function(){
-    	$("#excelForm").attr("action","/admin/excelDown")
+    	$("#excelForm").attr("action","/admin/user/excelDown")
 		$("#excelForm").submit();
     
     });

@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,21 +21,31 @@ svg {
 <div class="wrap">
 	<br><br>
 	<span>
-		<svg style="width: 100px; height: 100px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
-	  		<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
-	  		<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
-		</svg>
+		<c:if test="${ empty profileFile }">
+			<svg style="width: 100px; height: 100px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+		  		<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+		  		<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+			</svg>
+		</c:if>
+		<c:if test="${not empty profileFile }">
+			<img  id="fileDefaultIcon"  style="width: 100px; height: 100px;" src="/resources/upload/user/profile/${profileFile.storedFileName}"  class="rounded-circle">
+		</c:if>
 	</span>
 	&nbsp;&nbsp; 
 	<span class="h4 fw-bold">${userId }</span>
-	&nbsp;&nbsp; <button type="button" class="btn btn-secondary col-2" >프로필 보기</button>
+	&nbsp;&nbsp; <button type="button" class="btn btn-secondary col-2" onclick="javascript: location.href='/user/mypage/profile'">프로필 보기</button>
 	<br><br><br>
-	<div class="text-center" style="border: 1px solid black; width: 500px; height: 200px;">
+	<div class="text-center" style="border: 1px solid black; width: 500px; height: 300px;">
 		<br>
 		<span class="fw-bold">Daily Pay</span>
 		<br><br>
 		<span class="fw-bold">매일 새로운 방법, 데일리 페이</span><br><br>
-		<button type="button" class="btn btn-light">
+		<p class="fw-bold">데일리 머니</p>
+		<c:forEach var="account" items="${account }">
+			<p class="fw-bold">${account.tradeBank } ${account.accountNum } ( ￦<fmt:formatNumber type="number" maxFractionDigits="3" value="${account.saveMoney }" />원 )</p>
+		</c:forEach>
+		
+		<button type="button" class="btn btn-light" onclick="javascript:location.href='/user/mypage/account';">
 		<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
   			<path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
 		</svg>충전
@@ -49,13 +61,13 @@ svg {
 	<hr style="width:500px;">
 	<p class="fw-bold text-dark h5">나의 거래</p>
 	<hr style="width:500px;">
-	<p >
-	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
+	<p onclick="javascript: location.href='/user/mypage/like';" >
+	<svg  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
   		<path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
 	</svg>
 	관심목록
 	</p>
-	<p >
+	<p onclick="javascript:location.href='/user/mypage/sales';">
 	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-text" viewBox="0 0 16 16">
   		<path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5M5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1z"/>
  		<path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1"/>
@@ -78,13 +90,13 @@ svg {
 	<hr style="width:500px;">
 	<p class="fw-bold text-dark h5">데일리 소식</p>
 	<hr style="width:500px;">
-	<p >
+	<p onclick="javascript:location.href='/user/mypage/event';">
 	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16">
   		<path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/>
 	</svg>
 	진행 중인 이벤트
 	</p>
-	<p >
+	<p onclick="javascript:location.href='/user/mypage/notice/main';" >
 	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-text" viewBox="0 0 16 16">
   		<path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5M5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1z"/>
  		<path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1"/>
@@ -106,7 +118,7 @@ svg {
 	<hr style="width:500px;">
 	<p class="fw-bold text-dark h5">나의 비즈니스</p>
 	<hr style="width:500px;">
-	<p >
+	<p onclick="javascript:location.href='/owner/main';">
 	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-door" viewBox="0 0 16 16">
   		<path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4z"/>
 	</svg>
@@ -122,7 +134,7 @@ svg {
 	<hr style="width:500px;">
 	<p class="fw-bold text-dark h5">기타</p>
 	<hr style="width:500px;">
-	<p >
+	<p onclick="javascript: location.href='/user/mypage/location'">
 	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
   		<path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/>
   		<path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>

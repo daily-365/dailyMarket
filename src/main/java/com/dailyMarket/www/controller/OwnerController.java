@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.dailyMarket.www.service.OwnerService;
 import com.dailyMarket.www.vo.BusiNoticeVO;
@@ -51,16 +52,27 @@ public class OwnerController {
 	public String getOwnerMain(HttpSession session,Model model)throws Exception{
 		logger.info("GET OWNER MAIN");
 		String userId = (String)session.getAttribute("userId");
+		
 		BusiVO busiVO = ownerService.selectBusiByWriter(userId);
 		model.addAttribute("busiVO",busiVO);
 		
-		boolean menuExsit = ownerService.selectExsitMenuCnt(busiVO.getBusiNo());
-		boolean jobExsit = ownerService.selectExsitJobCnt(userId);
+		boolean menuExist = ownerService.selectMenuExist(busiVO.getBusiNo());
+		boolean jobExsit= ownerService.selectJobExist(userId);
 		
-		model.addAttribute("menuExsit",menuExsit);
+		model.addAttribute("menuExist",menuExist);
 		model.addAttribute("jobExsit",jobExsit);
 		
+		System.out.println(menuExist);
+		System.out.println(jobExsit);
 		return "owner/main";
+	}
+	
+	@RequestMapping(value = "logout",method = {RequestMethod.GET,RequestMethod.POST})
+		public String postOwnerLogout(HttpSession session)throws Exception{
+			session.invalidate();
+			
+		return "redirect:/user/main";
+		
 	}
 	@RequestMapping(value = "company/detail",method = RequestMethod.GET)
 	public String getCompanyDetail(HttpSession session,Model model)throws Exception{
@@ -96,6 +108,7 @@ public class OwnerController {
 								,@RequestParam("ownerName")String ownerName
 								,@RequestParam("busiTel")String busiTel
 								,@RequestParam("busiName")String busiName
+								,@RequestParam("busiType")String busiType
 								,@RequestParam("busiType1")String busiType1
 								,@RequestParam("busiType2")String busiType2
 								,@RequestParam("busiType3")String busiType3
@@ -117,6 +130,7 @@ public class OwnerController {
 		busiVO.setOwnerName(ownerName);
 		busiVO.setBusiTel(busiTel);
 		busiVO.setBusiName(busiName);
+		busiVO.setBusiType(busiType);
 		busiVO.setBusiType1(busiType1);
 		busiVO.setBusiType2(busiType2);
 		busiVO.setBusiType3(busiType3);
@@ -206,12 +220,13 @@ public class OwnerController {
 	
 	@ResponseBody
 	@RequestMapping(value = "company/storeFileUpload", method = RequestMethod.POST,produces = "application/text; charset=UTF-8;")
-	public String postStoreFileUpload(@RequestParam("storeFiles")List<MultipartFile> multipartFile,HttpSession session)throws Exception{
+	public String postStoreFileUpload(@RequestParam("storeFiles")List<MultipartFile> multipartFile,@RequestParam("busiNo")int busiNo,HttpSession session
+									)throws Exception{
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 		Map<String,Object> map = null;
 		
 		String userId = (String)session.getAttribute("userId");
-		
+
 		if(multipartFile.size()>0 && !multipartFile.get(0).getOriginalFilename().equals("")) {
 			
 			for(int i=0; i<multipartFile.size(); i++) {
@@ -224,6 +239,7 @@ public class OwnerController {
 				File file = new File(uploadPath+storedFileName);
 				multipartFile.get(i).transferTo(file);
 				
+				map.put("busiNo", busiNo);
 				map.put("originFileName", originFileName);
 				map.put("storedFileName", storedFileName);
 				map.put("fileSize", multipartFile.get(i).getSize());

@@ -1,5 +1,8 @@
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="java.util.Date"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,6 +18,7 @@ border-radius: 5px;
 </head>
 <body>
 <%@ include file="/resources/common/user/header.jsp" %>
+
 <main class="container">
 	<br>
 	<h5 class="text-center fw-bold">매물 정보</h5>
@@ -28,22 +32,22 @@ border-radius: 5px;
 				<div class="col-3">
 					<label class="form-label">월세</label>
 					<input   type="radio" class="type1" name="esTradeType" value="월세" >
-					<input type="text" class="type1" name="esPrice" placeholder="보증금  / 월세">
+					<input type="text" class="type1" name="esPrice" placeholder="보증금  / 월세" onkeyup=" this.value = this.value.replace(/\B(?=(\d{3})+(?!\d))/g,",");' >
 				</div>
 				<div class="col-3">
 					<label class="form-label">전세</label>
 					<input   type="radio" class="type2" name="esTradeType" value="전세" >
-					<input type="text" class="type2" name="esPrice" placeholder="보증금">
+					<input type="text" class="type2" name="esPrice" placeholder="보증금"  onkeyup='this.value = this.value.replace(/[^0-9]/g,""); this.value = this.value.replace(/\B(?=(\d{3})+(?!\d))/g,",");' >
 				</div>
 				<div class="col-3">
 					<label class="form-label">매매</label>
 					<input   type="radio" class="type3" name="esTradeType" value="매매" >
-					<input type="text" class="type3" name="esPrice" placeholder="매매가">
+					<input type="text" class="type3" name="esPrice" placeholder="매매가"  onkeyup='this.value = this.value.replace(/[^0-9]/g,""); this.value = this.value.replace(/\B(?=(\d{3})+(?!\d))/g,",");' >
 				</div>
 				<div class="col-3">
 					<label class="form-label">단기</label>
 					<input   type="radio" class="type4" name="esTradeType" value="단기" >
-					<input type="text" class="type4" name="esPrice" placeholder="임대료">
+					<input type="text" class="type4" name="esPrice" placeholder="임대료"  onkeyup='this.value = this.value.replace(/[^0-9]/g,""); this.value = this.value.replace(/\B(?=(\d{3})+(?!\d))/g,",");'>
 				</div>
 			</div>
 			<br>
@@ -126,7 +130,7 @@ border-radius: 5px;
 				</div>
 				<div class="col-4 esCostTag" >
 					<label class="form-label">관리비</label>
-					<span ><input  type="text" name="esCost" > 원</span>
+					<span ><input  type="text" name="esCost"  onkeyup='this.value = this.value.replace(/[^0-9]/g,""); this.value = this.value.replace(/\B(?=(\d{3})+(?!\d))/g,",");'> 원</span>
 				</div>
 				<div class="col-4">
 					<label class="form-label">관리비 없음</label>
@@ -238,9 +242,15 @@ border-radius: 5px;
 	</div>
 </main>
 <!-- 체크값 인풋에 저장 하기 .. -->
+<input type="text" id="esCostYn" value='Y' style="display: none;">
+<input type="text" id="esPrice" style="display: none;" >
+<input type="text" id="esCost" style="display: none;" >
 <input type="text" id="esCostChk" style="display: none;">
 <input type="text" id="esSeperCostChk" style="display: none;">
-
+<% Date date = new Date();
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	String now = sdf.format(date);
+%>
 <%@ include file="/resources/common/user/footer.jsp" %>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
@@ -252,17 +262,26 @@ $(document).ready(function(){
 
 	$("#esCostYnChk").on("click",function(){
 		$(".esCostTag").hide()
+		$("#esCostYn").val('N')
 		
 		if(!$("#esCostYnChk").is(":checked")){
 			$(".esCostTag").show()
+			$("#esCostYn").val('Y')
+			
 		}
+	});
+	
+	//해당 esCost blur시 천단위 컴마 없애기.  
+	$("input[name=esCost]").on("blur",function(){
+		$("#esCost").val( $(this).val().replace(",","") )
+		
 	});
 
 	//해당 금액 keyup시  해당 계약 형태 (월세 칸은 월세 / 전세 칸은 전세 ) 자동 체크.
 	$("input[name=esPrice]").on("keyup",function(){
-		console.log($(this).attr("class"))
 		$('.'+$(this).attr("class")+'').prop("checked",true)
-	
+		$("#esPrice").val( $(this).val() )
+		
 	});
 	
 	// checkbox값 여러개 가져오기 1 
@@ -285,8 +304,8 @@ $(document).ready(function(){
 		
 	//다음 페이지로 이동
 	$("#writeThreebtn").on("click",function(){
-		if(!$("input[name=esTradeType]").val()||!$("input[name=esPrice]").val()||!$("input[name=esPosiType]").val()||!$("input[name=esSize1]").val()||!$("input[name=esSize2]").val()||!$("input[name=esOption1]").val()||!$("input[name=esOption2]").val()||!$("input[name=esOption3]").val())
-		{
+		if(!$("input[name=esTradeType]:checked").val()||!$("#esPrice").val()||!$("input[name=esPosiType]:checked").val()||!$("input[name=esSize1]").val()||!$("input[name=esSize2]").val()||!$("input[name=esOption1]").val()||!$("input[name=esOption2]").val()||!$("input[name=esOption3]").val())
+		{	console.log($("#esPrice").val())
 			alert("해당 사항을 모두 작성해 주세요.")
 			return false;
 		}else{
@@ -295,16 +314,16 @@ $(document).ready(function(){
 			}else{
 				
 				var param= {
-							"esTradeType" : $("input[name=esTradeType]").val(),
-							"esPrice" :  $("input[name=esPrice]").val(),
+							"esTradeType" : $("input[name=esTradeType]:checked").val(),
+							"esPrice" :  $("#esPrice").val(),
 							"esPosiType" :  $("input[name=esPosiType]:checked").val(),
 							"esSize1" :  $("input[name=esSize1]").val(),
 							"esSize2" :  $("input[name=esSize2]").val(),
 							"esOption1" :  $("input[name=esOption1]").val(),
 							"esOption2" :  $("input[name=esOption2]").val(),
 							"esOption3" : $("input[name=esOption3]").val(),
-							"esCostYn" : $("input[name=esCostYn]:checked").val(),
-							"esCost" : $("input[name=esCost]").val(),
+							"esCostYn" : $("#esCostYn").val(),
+							"esCost" : $("#esCost").val(),
 							"esCostChk" : $("#esCostChk").val(),
 							"esSeperCostChk" : $("#esSeperCostChk").val(),
 							"esCostContent" : $("#esCostContent").val()

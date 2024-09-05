@@ -59,11 +59,11 @@
 	<br><br>
 	<div class="row">
 		<div class="col d-flex justify-content-center">
-			<img style="padding: 30px;" class="rounded-circle bg-secondary" src="">
+			<img style="width: 100px; height: 100px;" class="rounded-circle bg-secondary" src="/resources/upload/user/profile/${carVO.storedFileName }">
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<p class="fw-bold">${userId }</p>
+			<p class="fw-bold">${carVO.carWriter }</p>
 			&nbsp;&nbsp;&nbsp;
-			<p>${fn:substring(carVO.carLoc ,0,2)}</p>
+			<p>${fn:substring(carVO.carLoc ,0,6)}</p>
 		</div>
 	</div>	
 	<hr>

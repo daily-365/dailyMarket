@@ -93,8 +93,8 @@ border-radius: 5px;
 				</div>
 				<div class="col-3">
 					<label class="form-label">즉시 입주 가능</label>
-					<input type="checkbox"  id="esMoveYn" name="esMoveYn" value="Y">
-					<input type="checkbox"  id="esMoveYn" name="esMoveYn" value="N" checked="checked" style="display: none;">
+					<input type="checkbox"  id="esMoveYn" name="esMoveYn" value="Y">가능
+					<input type="checkbox"  id="esMoveYn" name="esMoveYn" value="N" >확인필요
 				</div>
 			</div>
 			<hr>
@@ -259,7 +259,6 @@ $(document).ready(function(){
 
 
 	$("#esMoveYn").on("click",function(){
-		$("#esMoveDate").datepicker("setDate","today")
 		$("#esMoveDate").attr("disabled",true)
 		
 		if(!$("#esMoveYn").is(":checked")){
@@ -282,16 +281,15 @@ $(document).ready(function(){
 	$("input[name=esAdvantage]").on("change",function(e){
 		var esAdvantageList = '';
 		var length =$("input[name=esAdvantage]:checked").length
-		$("input[name=esAdvantage]:checked").each(function(){
-			if(length<=3){
-				esAdvantageList+=$(this).val()+" , "
-			}else{
-				alert("선택은 최대 3개까지만 가능합니다.")
-				$(this).attr("checked",false)
-				return false;
-			}
-		});	console.log(esAdvantageList,length)
-			$("#esAdvantage").val(esAdvantageList)
+		if(length<=3){
+			esAdvantageList+=$(this).val()+" , "
+		}else{
+			alert("선택은 최대 3개까지만 가능합니다.")
+			$(this).attr("checked",false)
+			return false;
+		}
+		console.log(esAdvantageList,length)
+		$("#esAdvantage").val(esAdvantageList)
 	});
 
 	//작성완료
@@ -316,7 +314,7 @@ $(document).ready(function(){
 				type: "post",
 				success:function(result){
 					alert(result)
-					location.href="/user/main"
+					location.href="/user/estate/main"
 				}
 			});
 			

@@ -51,8 +51,7 @@
 		<property name="maxLifetime" value="400000" />
 		<property name="maximumPoolSize" value="300" />
 		<property name="minimumIdle" value="20" />
-		<property name="driverClassName"
-			value="com.mysql.cj.jdbc.Driver" />
+		<property name="driverClassName"	value="com.mysql.cj.jdbc.Driver" />		
 		<property name="jdbcUrl" value="jdbc:mysql://127.0.0.1:3306/dailymarket"/>
 		<property name="username" value="root"/>
 		<property name="password" value="1234"/>

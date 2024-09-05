@@ -8,6 +8,7 @@
 <title>알바 지원하기</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<%@ include file="/resources/common/datepicker.jsp" %>
 </head>
 <body class="container-fluid">
 <main class="container">
@@ -88,12 +89,7 @@
 	</div>
 	<div class="row g-3 d-flex justify-content-center">
 		<div class="col-4">
-			<select class="form-control text-center fw-bold" id="birthYear">
-					<option value="">선택</option>
-					<%for(int i=2024; i>=1950; i--) {%>
-					<option value="<%=i%>"><%=i%></option>
-					<%} %>
-			</select>
+			<input type="text" id="birthYear" readonly="readonly" placeholder="선택" class="form-control text-center fw-bold" value="${vo.birthYear }">
 		</div>
 	</div>
 	<br>
@@ -128,12 +124,7 @@
 			<label class="form-label fw-bold ">일한 연도</label>
 		</div>
 		<div class="col-4 ">
-			<select class="form-control text-center fw-bold" id="careerYear">
-				<option value="">선택</option>
-				<%for(int i=2024; i>=2000; i--) {%>
-				<option value="<%=i%>"><%=i%></option>
-				<%} %>
-			</select>
+			<input type="text" id="careerYear" readonly="readonly" placeholder="선택" value="${vo.careerYear }" class="form-control text-center fw-bold">
 		</div>
 	</div>
 	<br>
@@ -157,6 +148,7 @@
 	<div class="row g-3 d-flex justify-content-center">
 		<div class="col-auto">
 			<input type="checkbox" <c:if test="${vo.careerYn eq 'N' }">checked</c:if> name="careerYn" value="N">&nbsp;&nbsp;&nbsp;<span class="fw-bold text-secondary">아르바이트나 직무 경험이 없어요.</span>
+			<input type="hidden"  name="careerYn" value="Y">
 		</div>
 	</div>
 	<br>
@@ -323,6 +315,29 @@
 <script type="text/javascript">
 $(document).ready(function(){
 
+//모든 datepicker에 대한 공통 옵션 설정
+      	$.datepicker.setDefaults({
+          dateFormat: 'yy' //Input Display Format 변경
+          ,showOtherMonths: true //빈 공간에 현재월의 앞뒤월의 날짜를 표시
+          ,showMonthAfterYear:true //년도 먼저 나오고, 뒤에 월 표시
+          ,changeYear: true //콤보박스에서 년 선택 가능
+          ,changeMonth: true //콤보박스에서 월 선택 가능                
+          ,showOn: "both" //button:버튼을 표시하고,버튼을 눌러야만 달력 표시 ^ both:버튼을 표시하고,버튼을 누르거나 input을 클릭하면 달력 표시  
+          ,buttonImage: "http://jqueryui.com/resources/demos/datepicker/images/calendar.gif" //버튼 이미지 경로
+          ,buttonImageOnly: true //기본 버튼의 회색 부분을 없애고, 이미지만 보이게 함
+          ,buttonText: "선택" //버튼에 마우스 갖다 댔을 때 표시되는 텍스트                
+          ,yearSuffix: "년" //달력의 년도 부분 뒤에 붙는 텍스트
+          ,monthNamesShort: ['1','2','3','4','5','6','7','8','9','10','11','12'] //달력의 월 부분 텍스트
+          ,monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'] //달력의 월 부분 Tooltip 텍스트
+          ,dayNamesMin: ['일','월','화','수','목','금','토'] //달력의 요일 부분 텍스트
+          ,dayNames: ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'] //달력의 요일 부분 Tooltip 텍스트
+		  ,minDate: '-100y' // 현재날짜로부터 100년이전까지 년을 표시한다
+		  ,maxDate : 'today' // 최대 오늘 날짜까지만 지정.
+		  ,yearRange: 'c-100:c+0' // 년도 선택 셀렉트박스를 현재 년도에서 이전, 이후로 얼마의 범위를 표시할것인가.
+     	 });
+	$("#birthYear").datepicker()
+	$("#careerYear").datepicker()
+
 	var advantageArr =''
 	$(".advantage").on("click",function(){
 		advantageArr+=$(this).val()+" "
@@ -352,6 +367,8 @@ $(document).ready(function(){
 	
 	var fileContent = new Array()
 	
+	var extError = false;
+	
 	function fileAddFunc(e){
 		var files = e.target.files
 		var fileArr = Array.prototype.slice.call(files)
@@ -362,9 +379,10 @@ $(document).ready(function(){
 			var fileExt = f.type.substring(f.type.lastIndexOf("/")).replace("/","")
 			
 			if(fileExt!='jpeg' &&fileExt!='jpg' &&fileExt!='png' &&fileExt!='gif' ){
-				alert("지원하지 않는 파일 형식입니다.")
-				f.preventDefault()
+				extError=true
+				return false;
 			}else{
+				extError=false
 				reader.onload=function(e){
 				
 					fileContent.push(f)
@@ -377,6 +395,10 @@ $(document).ready(function(){
 				reader.readAsDataURL(f)
 			}
 		});
+		
+		if(extError){
+			alert("지원하지 않는 파일 형식입니다.")
+		}
 	}
 	
 	
@@ -451,18 +473,18 @@ $(document).ready(function(){
 	}
 	
 	
-	var regBtn ="userJobRegBtn"
-	var regUrl ="/user/job/write"
-	var regMsg = "작성을 마치시겠습니까?"
-	
-	jobRegModFunc(regBtn,regUrl,regMsg)
+
 	
 	// =============== 수정 / 삭제 =========================
+	
+	var regBtn ="userJobRegBtn"
+	var	regUrl ="/user/job/write"
+	var regMsg = "작성을 마치시겠습니까?"
+	jobRegModFunc(regBtn,regUrl,regMsg)
 	
 	var modBtn = "userJobModBtn"
 	var modUrl = "/user/job/update"
 	var modMsg ="수정하시겠습니까?"
-	
 	jobRegModFunc(modBtn,modUrl,modMsg)
 	
 	$("#userJobDelBtn").on("click",function(){

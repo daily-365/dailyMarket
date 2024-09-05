@@ -24,7 +24,6 @@
 			</div>
 			<div class="col-2">
 				<select id="pagePerNum" name="pagePerNum" class="form-control">
-					<option value=5 <c:if test="${param.pagePerNum eq 5 }">selected='selected'</c:if>>5개씩보기</option>		
 					<option value=10 <c:if test="${param.pagePerNum eq 10 }">selected='selected'</c:if>>10개씩보기</option>
 					<option value=20 <c:if test="${param.pagePerNum eq 20 }">selected='selected'</c:if>>20개씩보기</option>
 					<option value=30 <c:if test="${param.pagePerNum eq 30 }">selected='selected'</c:if>>30개씩보기</option>
@@ -56,7 +55,7 @@
 					<option value="writer"  <c:if test="${param.searchType eq 'writer' }">selected='selected'</c:if>>사업자 아이디</option>
 					<option value="ownerName"  <c:if test="${param.searchType eq 'ownerName' }">selected='selected'</c:if>>사업자 이름</option>
 					<option value="busiName"  <c:if test="${param.searchType eq 'busiName' }">selected='selected'</c:if>>사업장 명</option>
-					<option value="state"  <c:if test="${param.searchType eq 'state' }">selected='selected'</c:if>>승인 상태  (입점완료 / 입점대기 / 반려 및 재검수 요청) &nbsp;</option>
+					<option value="status"  <c:if test="${param.searchType eq 'status' }">selected='selected'</c:if>>승인 상태  (입점완료 / 입점대기 / 반려 및 재검수 요청) &nbsp;</option>
 				</select>
 			</div>
 			<div class="col-3">
@@ -79,7 +78,7 @@
 	<br>
 	<h4 class="text-center">입점 현황</h4>
 	<br>
-	<table class="table table-hover table-bordered">
+	<table class="table table-hover table-bordered fw-bold">
 		<tr>
 			<th>#</th>
 			<th>번호</th>
@@ -98,7 +97,12 @@
 			<td>${list.writer}</td>
 			<td>${list.ownerName}</td>
 			<td>${list.busiName }</td>
-			<td class="fw-bold">${list.state }</td>
+			<c:choose>
+				<c:when test="${list.status eq'입점대기' }"><td class="fw-bold text-warning">${list.status }</td></c:when>
+				<c:when test="${list.status eq'입점완료' }"><td class="fw-bold text-success">${list.status }</td></c:when>
+				<c:otherwise><td class="fw-bold text-dager">${list.status }</td></c:otherwise>
+			</c:choose>
+			
 			<td><fmt:formatDate value="${list.regDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 		</tr>
 		</c:forEach>
@@ -106,19 +110,20 @@
 	</table>
 <br><br>
 	<div class="text-center">
-		<a class="btn btn-primary" href="${pageMaker.makeSearch(1) }">&laquo;&laquo;</a>
+		<a class="btn btn-success" href="${pageMaker.makeSearch(1) }">&laquo;&laquo;</a>
 		<c:if test="${pageMaker.prev }">
-			<a class="btn btn-outline-primary" href="${pageMaker.makeSearch(pageMaker.startPage-1) }">&laquo;</a>
+			<a class="btn btn-outline-success" href="${pageMaker.makeSearch(pageMaker.startPage-1) }">&laquo;</a>
 		</c:if>
 		<c:forEach var="idx" begin="${pageMaker.startPage }" end="${pageMaker.endPage}"  >
-			<a class="btn btn-outline-primary <c:if test="${param.page eq idx}">active</c:if>"  href="${pageMaker.makeSearch(idx) }">${idx}</a>
+			<a class="btn btn-outline-success <c:if test="${param.page eq idx}">active</c:if>"  href="${pageMaker.makeSearch(idx) }">${idx}</a>
 		</c:forEach>
 		<c:if test="${pageMaker.next && pageMaker.endPage>0}">
-			<a class="btn btn-outline-primary" href="${pageMaker.makeSearch(pageMaker.endPage+1)}">&raquo;</a>
+			<a class="btn btn-outline-success" href="${pageMaker.makeSearch(pageMaker.endPage+1)}">&raquo;</a>
 		</c:if>
-		<a class="btn btn-primary" href="${pageMaker.makeSearch(pageMaker.maxPage) }">&raquo;&raquo;</a>
+		<a class="btn btn-success" href="${pageMaker.makeSearch(pageMaker.maxPage)}">&raquo;&raquo;</a>
 	</div>
 </main>
+<br><br>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -182,10 +187,15 @@ $(document).ready(function(){
     
     //엑셀 다운로드
     $("#excelDown").on("click",function(){
-    	$("#excelForm").attr("action","/admin/excelDown")
-		$("#excelForm").submit();
+    	$("#excelForm").attr("action","/admin/busi/excelDown")
+		$("#excelForm").submit()
+			
     
     });
+    
+    
+    
+    
     
 });
 

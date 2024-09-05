@@ -26,7 +26,6 @@
 			</div>
 			<div class="col-2">
 				<select id="pagePerNum" name="pagePerNum" class="form-control">
-					<option value=5 <c:if test="${param.pagePerNum eq 5 }">selected='selected'</c:if>>5개씩보기</option>		
 					<option value=10 <c:if test="${param.pagePerNum eq 10 }">selected='selected'</c:if>>10개씩보기</option>
 					<option value=20 <c:if test="${param.pagePerNum eq 20 }">selected='selected'</c:if>>20개씩보기</option>
 					<option value=30 <c:if test="${param.pagePerNum eq 30 }">selected='selected'</c:if>>30개씩보기</option>
@@ -54,11 +53,13 @@
 			<div class="col-2">
 				<select id="searchType" name="searchType" class="form-control">
 					<option value="all" <c:if test="${param.searchType eq 'all' }">selected='selected'</c:if>>전체</option>
-					<option value="title" <c:if test="${param.searchType eq 'title' }">selected='selected'</c:if>>제목</option>
-					<option value="type"  <c:if test="${param.searchType eq 'type' }">selected='selected'</c:if>>판매/나눔</option>
-					<option value="price"  <c:if test="${param.searchType eq 'price' }">selected='selected'</c:if>>가격</option>
-					<option value="location"  <c:if test="${param.searchType eq 'location' }">selected='selected'</c:if>>위치</option>
-					<option value="writer"  <c:if test="${param.searchType eq 'writer' }">selected='selected'</c:if>>등록자</option>
+					<option value="writer" <c:if test="${param.searchType eq 'writer' }">selected='selected'</c:if>>작성자</option>
+					<option value="type" <c:if test="${param.searchType eq 'type' }">selected='selected'</c:if>>차종</option>
+					<option value="company"  <c:if test="${param.searchType eq 'company' }">selected='selected'</c:if>>제조사</option>
+					<option value="name"  <c:if test="${param.searchType eq 'name' }">selected='selected'</c:if>>이름</option>
+					<option value="fuel"  <c:if test="${param.searchType eq 'fuel' }">selected='selected'</c:if>>연료</option>
+					<option value="distance"  <c:if test="${param.searchType eq 'distance' }">selected='selected'</c:if>>주행거리km</option>
+					<option value="loc"  <c:if test="${param.searchType eq 'loc' }">selected='selected'</c:if>>위치</option>
 				</select>
 			</div>
 			<div class="col-3">
@@ -71,7 +72,7 @@
 				<button type="button" class="form-control btn btn-info" id="excelDown">엑셀 다운</button>
 			</div>
 			<div class="col-2">
-				<button onclick="javascript: self.location='/admin/product/main'" type="button" class="form-control btn btn-outline-info">검색 초기화</button>
+				<button onclick="javascript: self.location='/admin/car/main'" type="button" class="form-control btn btn-outline-info">검색 초기화</button>
 			</div>
 		</div>
 	</form>
@@ -81,26 +82,44 @@
 	<br>
 	<h4 class="text-center">입점 현황</h4>
 	<br>
-	<table class="table table-hover table-bordered">
+	<table class="table table-hover table-bordered fw-bold">
 		<tr>
 			<th>#</th>
 			<th>번호</th>
-			<th>재목</th>
-			<th>판매/나눔</th>
-			<th>가격</th>
-			<th>위치</th>
 			<th>작성자</th>
+			<th>판매상태</th>
+			<th>차종</th>
+			<th>제조사</th>
+			<th>이름</th>
+			<th>등급</th>
+			<th>마력</th>
+			<th>연료</th>
+			<th>변속기</th>
+			<th>배기량cc</th>
+			<th>주행거리Km</th>
+			<th>위치</th>
 			<th>등록일</th>
 		</tr>
-		<c:forEach var="list" items="${list }">		
+		<c:forEach var="list" items="${list }" varStatus="status">		
 		<tr>
 			<td>${list.rnum }</td>
-			<td>${list.productNo }</td>
-			<td><a href="/admin/product/detail?productNo=${list.productNo}">${list.title}</a></td>
-			<td>${list.type}</td>
-			<td>${list.price}</td>
-			<td>${list.location }</td>
-			<td>${list.writer }</td>
+			<td>${list.carNo }</td>
+			<td><a href="/admin/car/detail?carNo=${list.carNo}">${list.carWriter}</a></td>
+			<td>
+				<c:if test="${list.carTradeYn eq 'S'}">판매중</c:if>
+				<c:if test="${list.carTradeYn eq 'N'}">판매취소</c:if>
+				<c:if test="${list.carTradeYn eq 'Y'}">판매완료</c:if>
+			</td>
+			<td>${list.carType}</td>
+			<td>${list.carManuFacturing }</td>
+			<td>${list.carModel}</td>
+			<td>${list.carRank }</td>
+			<td>${list.carDetailRank }</td>
+			<td>${list.carFuel }</td>
+			<td>${list.carTransMission }</td>
+			<td>${list.carDisplaceMent }</td>
+			<td>${list.carDistance }</td>
+			<td>${list.carLoc }</td>
 			<td><fmt:formatDate value="${list.regDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 		</tr>
 		</c:forEach>
@@ -118,9 +137,10 @@
 		<c:if test="${pageMaker.next && pageMaker.endPage>0}">
 			<a class="btn btn-outline-info" href="${pageMaker.makeSearch(pageMaker.endPage+1)}">&raquo;</a>
 		</c:if>
-		<a class="btn btn-info" href="${pageMaker.makeSearch(pageMaker.maxPage) }">&raquo;&raquo;</a>
+		<a class="btn btn-info" href="${pageMaker.makeSearch(pageMaker.maxPage)}">&raquo;&raquo;</a>
 	</div>
 </main>
+<br><br>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -180,12 +200,12 @@ $(document).ready(function(){
  
     //검색
     $("#searchBtn").on("click",function(){
-    	self.location="/admin/product/main?keyword="+$("#keyword").val()+"&searchType="+$("#searchType").val()+"&startDate="+$("#startDate").val()+"&endDate="+$("#endDate").val()+"&pagePerNum="+$("#pagePerNum").val()
+    	self.location="/admin/car/main?keyword="+$("#keyword").val()+"&searchType="+$("#searchType").val()+"&startDate="+$("#startDate").val()+"&endDate="+$("#endDate").val()+"&pagePerNum="+$("#pagePerNum").val()
     });
     
     //엑셀 다운로드
     $("#excelDown").on("click",function(){
-    	$("#excelForm").attr("action","/admin/excelDown")
+    	$("#excelForm").attr("action","/admin/car/excelDown")
 		$("#excelForm").submit();
     
     });

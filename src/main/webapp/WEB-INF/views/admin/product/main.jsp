@@ -26,7 +26,6 @@
 			</div>
 			<div class="col-2">
 				<select id="pagePerNum" name="pagePerNum" class="form-control">
-					<option value=5 <c:if test="${param.pagePerNum eq 5 }">selected='selected'</c:if>>5개씩보기</option>		
 					<option value=10 <c:if test="${param.pagePerNum eq 10 }">selected='selected'</c:if>>10개씩보기</option>
 					<option value=20 <c:if test="${param.pagePerNum eq 20 }">selected='selected'</c:if>>20개씩보기</option>
 					<option value=30 <c:if test="${param.pagePerNum eq 30 }">selected='selected'</c:if>>30개씩보기</option>
@@ -81,7 +80,7 @@
 	<br>
 	<h4 class="text-center">입점 현황</h4>
 	<br>
-	<table class="table table-hover table-bordered">
+	<table class="table table-hover table-bordered fw-bold">
 		<tr>
 			<th>#</th>
 			<th>번호</th>
@@ -89,6 +88,7 @@
 			<th>판매/나눔</th>
 			<th>가격</th>
 			<th>위치</th>
+			<th>거래상태</th>
 			<th>작성자</th>
 			<th>등록일</th>
 		</tr>
@@ -98,8 +98,20 @@
 			<td>${list.productNo }</td>
 			<td><a href="/admin/product/detail?productNo=${list.productNo}">${list.title}</a></td>
 			<td>${list.type}</td>
-			<td>${list.price}</td>
+			<td><c:choose>
+					<c:when test="${list.price eq 0}">
+						무료나눔
+					</c:when>
+					<c:otherwise>
+						${list.price}
+					</c:otherwise>
+				</c:choose>
+			</td>
 			<td>${list.location }</td>
+			<td><c:if test="${list.tradeYn eq 'S' }"><span class="text-primary">판매중</span></c:if>
+				<c:if test="${list.tradeYn eq 'Y' }"><span class="text-success">판매완료</span></c:if>
+				<c:if test="${list.tradeYn eq 'N' }"><span class="text-danger">판매취소</span></c:if>
+			</td>
 			<td>${list.writer }</td>
 			<td><fmt:formatDate value="${list.regDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 		</tr>
@@ -118,9 +130,10 @@
 		<c:if test="${pageMaker.next && pageMaker.endPage>0}">
 			<a class="btn btn-outline-primary" href="${pageMaker.makeSearch(pageMaker.endPage+1)}">&raquo;</a>
 		</c:if>
-		<a class="btn btn-primary" href="${pageMaker.makeSearch(pageMaker.maxPage) }">&raquo;&raquo;</a>
+		<a class="btn btn-primary" href="${pageMaker.makeSearch(pageMaker.maxPage)}">&raquo;&raquo;</a>
 	</div>
 </main>
+<br><br>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -185,7 +198,7 @@ $(document).ready(function(){
     
     //엑셀 다운로드
     $("#excelDown").on("click",function(){
-    	$("#excelForm").attr("action","/admin/excelDown")
+    	$("#excelForm").attr("action","/admin/product/excelDown")
 		$("#excelForm").submit();
     
     });

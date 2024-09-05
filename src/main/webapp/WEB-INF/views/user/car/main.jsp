@@ -35,114 +35,148 @@
   		</div>
   	</div>
 	<br><br>
-	<div class="row text-center">
-  		<div class="col-3">
-  		<c:forEach var="file" items="${file }" begin="0" end="0">
-  			<img src="/resources/upload/user/car/${file.storedFileName }" style="width:120px; height: 120px;">
+	<div class="row justify-content-center text-center" id="moreHitCarWrap" >
+		<c:forEach var="hitCar" items="${hitCar }">
+	  		<div class="col-3">
+	  			<img src="/resources/upload/user/car/${hitCar.storedFileName }" style="width:120px; height: 120px;">
+	  			<br><br>
+	  			<a href="/user/car/detail?carNo=${hitCar.carNo}" class="fw-bold text-dark">${hitCar.carModel }</a>
+	  			<br><br>
+	  			<p><span class="fw-bold"> ${fn:substring(hitCar.carRegDate,2,4) }년식</span>&nbsp;&nbsp;&nbsp;
+	  				<span class="fw-bold">${hitCar.carDistance }만km</span>
+	  			</p>
+	  			<p><span class="fw-bold">${fn:substring(hitCar.carLoc,0,6 )}</span></p>
+	  			<fmt:parseNumber var="carPrice"  value="${hitCar.carPrice}" integerOnly="true"/>
+	  			<fmt:formatNumber var="price"  value="${carPrice div 10000 }"  type="number" pattern="#,###" />
+	  			<p class="fw-bold">￦ ${price } 만원</p>
+			</div>
   		</c:forEach>
-  		<c:forEach var="list" items="${list }">
-  			<br><br>
-  			<a href="/user/car/detail?carNo=${list.carNo}" class="fw-bold text-dark">${list.carType }</a>
-  			<br><br>
-  			<p><span> ${fn:substring(list.carRegDate,2,4) }년식</span>&nbsp;&nbsp;&nbsp;<span>${list.carDistance }만km</span></p>
-  			<p><span>${list.carLoc }</span></p>
-  			<fmt:parseNumber var="carPrice"  value="${list.carPrice}" integerOnly="true"/>
-  			<fmt:formatNumber var="price"  value="${carPrice div 10000 }"  type="number" pattern="#,###" />
-  			<p class="fw-bold">￦ ${price } 만원</p>
-  		</c:forEach>
-  		</div>
-  		
-  
-   <br><br>
+  			<br>
+  	</div>
+  	<div class="row">
+  		<div class="col">
+  			<button id="moreHitCarBtn" class="form-control fw-bold h5 btn btn-light" type="button">인기 중고차 더보기</button>		
+  		</div> 
+  	</div>
+  	<br><br> <br><br>
   	<div class="row">
   		<div class="col text-center">
   			<h4 class="fw-bold">내 근처 중고차</h4>
   		</div>
   	</div>
   	<br><br>
-  	<div class="row text-center">
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/car/articles/910f5980b98942a891b0c396d23d7fbcdcbbc86d51d7f3919a849bfcbeb8ed8f_1711850045897.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<a href="/user/car/detail" class="fw-bold text-dark">르노코리아 뉴 SM5 신형 L43 2.0 CVTC Ⅱ LE</a>
-  			<br><br>
-  			<p><span>10년식</span>&nbsp;&nbsp;&nbsp;<span>13.7만km</span>&nbsp;&nbsp;&nbsp;<span>목3동</span></p>
-  			<p class="fw-bold">260만원</p>
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/car/articles/910f5980b98942a891b0c396d23d7fbcdcbbc86d51d7f3919a849bfcbeb8ed8f_1711850045897.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<a href="/user/car/detail" class="fw-bold text-dark">르노코리아 뉴 SM5 신형 L43 2.0 CVTC Ⅱ LE</a>
-  			<br><br>
-  			<p><span>10년식</span>&nbsp;&nbsp;&nbsp;<span>13.7만km</span>&nbsp;&nbsp;&nbsp;<span>목3동</span></p>
-  			<p class="fw-bold">260만원</p>
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/car/articles/910f5980b98942a891b0c396d23d7fbcdcbbc86d51d7f3919a849bfcbeb8ed8f_1711850045897.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<a href="/user/car/detail" class="fw-bold text-dark">르노코리아 뉴 SM5 신형 L43 2.0 CVTC Ⅱ LE</a>
-  			<br><br>
-  			<p><span>10년식</span>&nbsp;&nbsp;&nbsp;<span>13.7만km</span>&nbsp;&nbsp;&nbsp;<span>목3동</span></p>
-  			<p class="fw-bold">260만원</p>
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/car/articles/910f5980b98942a891b0c396d23d7fbcdcbbc86d51d7f3919a849bfcbeb8ed8f_1711850045897.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<a href="/user/car/detail" class="fw-bold text-dark">르노코리아 뉴 SM5 신형 L43 2.0 CVTC Ⅱ LE</a>
-  			<br><br>
-  			<p><span>10년식</span>&nbsp;&nbsp;&nbsp;<span>13.7만km</span>&nbsp;&nbsp;&nbsp;<span>목3동</span></p>
-  			<p class="fw-bold">260만원</p>
-  		</div>
-  		
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/car/articles/910f5980b98942a891b0c396d23d7fbcdcbbc86d51d7f3919a849bfcbeb8ed8f_1711850045897.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<a href="/user/car/detail" class="fw-bold text-dark">르노코리아 뉴 SM5 신형 L43 2.0 CVTC Ⅱ LE</a>
-  			<br><br>
-  			<p><span>10년식</span>&nbsp;&nbsp;&nbsp;<span>13.7만km</span>&nbsp;&nbsp;&nbsp;<span>목3동</span></p>
-  			<p class="fw-bold">260만원</p>
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/car/articles/910f5980b98942a891b0c396d23d7fbcdcbbc86d51d7f3919a849bfcbeb8ed8f_1711850045897.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<a href="/user/car/detail" class="fw-bold text-dark">르노코리아 뉴 SM5 신형 L43 2.0 CVTC Ⅱ LE</a>
-  			<br><br>
-  			<p><span>10년식</span>&nbsp;&nbsp;&nbsp;<span>13.7만km</span>&nbsp;&nbsp;&nbsp;<span>목3동</span></p>
-  			<p class="fw-bold">260만원</p>
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/car/articles/910f5980b98942a891b0c396d23d7fbcdcbbc86d51d7f3919a849bfcbeb8ed8f_1711850045897.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<a href="/user/car/detail" class="fw-bold text-dark">르노코리아 뉴 SM5 신형 L43 2.0 CVTC Ⅱ LE</a>
-  			<br><br>
-  			<p><span>10년식</span>&nbsp;&nbsp;&nbsp;<span>13.7만km</span>&nbsp;&nbsp;&nbsp;<span>목3동</span></p>
-  			<p class="fw-bold">260만원</p>
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/car/articles/910f5980b98942a891b0c396d23d7fbcdcbbc86d51d7f3919a849bfcbeb8ed8f_1711850045897.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<a href="/user/car/detail" class="fw-bold text-dark">르노코리아 뉴 SM5 신형 L43 2.0 CVTC Ⅱ LE</a>
-  			<br><br>
-  			<p><span>10년식</span>&nbsp;&nbsp;&nbsp;<span>13.7만km</span>&nbsp;&nbsp;&nbsp;<span>목3동</span></p>
-  			<p class="fw-bold">260만원</p>
-  		</div>
+  	<div class="row justify-content-center text-center" id="moreLocCarWrap">
+  		<c:forEach var="locCar" items="${locCar }">
+	  		<div class="col-3">
+	  			<img src="/resources/upload/user/car/${locCar.storedFileName }" style="width:120px; height: 120px;">
+	  			<br><br>
+	  			<a href="/user/car/detail?carNo=${locCar.carNo}" class="fw-bold text-dark">${locCar.carModel }</a>
+	  			<br><br>
+	  			<p><span class="fw-bold"> ${fn:substring(locCar.carRegDate,2,4) }년식</span>&nbsp;&nbsp;&nbsp;
+	  				<span class="fw-bold">${locCar.carDistance }만km</span>
+	  			</p>
+	  			<p><span class="fw-bold">${fn:substring(locCar.carLoc,0,6 )}</span></p>
+	  			<fmt:parseNumber var="carPrice"  value="${locCar.carPrice}" integerOnly="true"/>
+	  			<fmt:formatNumber var="price"  value="${carPrice div 10000 }"  type="number" pattern="#,###" />
+	  			<p class="fw-bold">￦ ${price } 만원</p>
+			</div>
+  		</c:forEach>
   	</div>
-  	  		
   	<br>
   	<div class="row">
   		<div class="col">
-  			<button class="form-control fw-bold h5 btn btn-secondary" type="button">내 근처 중고차 더보기</button>		
+  			<button id="moreLocCarBtn" class="form-control fw-bold h5 btn btn-secondary" type="button">내 근처 중고차 더보기</button>		
   		</div> 
   	</div>
 </div>
 <%@ include file="/resources/common/user/footer.jsp" %>
+<input type="hidden" id="hitCarEndRow">
+<input type="hidden" id="locCarEndRow">
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script type="text/javascript">
+$(document).ready(function(){
+	
+	var count =8;
+	
+	$("#moreHitCarBtn").on("click",function(){
+		count+=8;
+		$("#hitCarEndRow").val(count)
+		
+		$.ajax({
+			url : "/user/car/main/hit",
+			type :"post",
+			data: {"endRow" : $("#hitCarEndRow").val()},
+			success:function(result){
+				
+				var moreHitCarContent='';
+			
+				result.forEach(function(item){
+					moreHitCarContent+='<div class="col-3">'
+		  			moreHitCarContent+='<img src="/resources/upload/user/car/'+item.storedFileName+'" style="width:120px; height: 120px;">'
+		  			moreHitCarContent+='<br><br>'
+		  			moreHitCarContent+='<a href="/user/car/detail?carNo='+item.carNo+'" class="fw-bold text-dark">'+item.carModel+'</a>'
+		  			moreHitCarContent+='<br><br>'
+		  			moreHitCarContent+='<p><span class="fw-bold">'+ item.carRegDate.substring(2,4) +'년식</span>&nbsp;&nbsp;&nbsp;&nbsp;'
+		  			moreHitCarContent+='<span class="fw-bold">'+item.carDistance +'만km</span>'
+		  			moreHitCarContent+='</p>'
+		  			moreHitCarContent+='<p><span class="fw-bold">'+item.carLoc.substring(0,6)+'</span></p>'
+		  			moreHitCarContent+='<p class="fw-bold">￦ '+(Number(item.carPrice.replaceAll(",",""))/10000).toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,",") +' 만원</p>'
+					moreHitCarContent+='</div>'
+					
+					$("#moreHitCarWrap").html(moreHitCarContent)
+				});
+			}
+		
+		})
+	
+	});
+	
+	$("#moreLocCarBtn").on("click",function(){
+		
+		count +=8;
+		$("#locCarEndRow").val(count)
+		
+		var carLoc = localStorage.getItem("roadNameAddr").substring(6,8)
 
+		$.ajax({
+			url :"/user/car/main/loc",
+			type:"post",
+			data : {"endRow" : $("#locCarEndRow").val(),
+					"carLoc" :carLoc},
+			success:function(result){
+				
+				var moreLocCarContent =''
+				
+				result.forEach(function(item){
+				
+					moreLocCarContent+='<div class="col-3">'
+		  			moreLocCarContent+='<img src="/resources/upload/user/car/'+item.storedFileName+'" style="width:120px; height: 120px;">'
+		  			moreLocCarContent+='<br><br>'
+		  			moreLocCarContent+='<a href="/user/car/detail?carNo='+item.carNo+'" class="fw-bold text-dark">'+item.carModel+'</a>'
+		  			moreLocCarContent+='<br><br>'
+		  			moreLocCarContent+='<p><span class="fw-bold">'+ item.carRegDate.substring(2,4) +'년식</span>&nbsp;&nbsp;&nbsp;&nbsp;'
+		  			moreLocCarContent+='<span class="fw-bold">'+item.carDistance +'만km</span>'
+		  			moreLocCarContent+='</p>'
+		  			moreLocCarContent+='<p><span class="fw-bold">'+item.carLoc.substring(0,6)+'</span></p>'
+		  			moreLocCarContent+='<p class="fw-bold">￦ '+Number(item.carPrice.replaceAll(',','')/10000).toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,",") +' 만원</p>'
+					moreLocCarContent+='</div>'
+					
+					$("#moreLocCarWrap").html(moreLocCarContent)
+				
+				});
+			
+			}
+		
+		});
+	
+	});
+	
+
+});
 
 </script>
 </html>

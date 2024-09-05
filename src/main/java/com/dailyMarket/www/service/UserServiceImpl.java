@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dailyMarket.www.dao.UserDAO;
+import com.dailyMarket.www.utils.SearchCriteria;
 import com.dailyMarket.www.vo.BusiFileVO;
 import com.dailyMarket.www.vo.BusiNoticeFileVO;
 import com.dailyMarket.www.vo.BusiNoticeVO;
@@ -17,13 +18,20 @@ import com.dailyMarket.www.vo.CarFileVO;
 import com.dailyMarket.www.vo.CarVO;
 import com.dailyMarket.www.vo.EstateFileVO;
 import com.dailyMarket.www.vo.EstateVO;
+import com.dailyMarket.www.vo.EventVO;
 import com.dailyMarket.www.vo.GetUserJobVO;
 import com.dailyMarket.www.vo.JobFileVO;
 import com.dailyMarket.www.vo.JobVO;
 import com.dailyMarket.www.vo.MenuVO;
+import com.dailyMarket.www.vo.NoticeFileVO;
+import com.dailyMarket.www.vo.NoticeVO;
+import com.dailyMarket.www.vo.ProductFileVO;
 import com.dailyMarket.www.vo.ProductVO;
 import com.dailyMarket.www.vo.StoreFileVO;
+import com.dailyMarket.www.vo.UserAccountVO;
 import com.dailyMarket.www.vo.UserJobVO;
+import com.dailyMarket.www.vo.UserProfileFileVO;
+import com.dailyMarket.www.vo.UserTradeVO;
 import com.dailyMarket.www.vo.UserVO;
 
 @Service
@@ -48,6 +56,13 @@ public class UserServiceImpl implements UserService{
 		}
 	}
 
+	
+	
+	@Override
+	public UserVO selectUserByUserId(String userId) throws Exception {
+		return userDAO.selectUserByUserId(userId);
+	}
+
 	@Override
 	public void insertUserProduct(ProductVO productVO) throws Exception {
 		userDAO.insertUserProduct(productVO);
@@ -66,8 +81,18 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public List<ProductVO> selectProductDetail(int productNo) throws Exception {
+	public void updateProductHitCnt(int productNo) throws Exception {
+		userDAO.updateProductHitCnt(productNo);
+	}
+
+	@Override
+	public ProductVO selectProductDetail(int productNo) throws Exception {
 		return userDAO.selectProductDetail(productNo);
+	}
+	
+	@Override
+	public List<ProductFileVO> selectProductFile(int productNo) throws Exception {
+		return userDAO.selectProductFile(productNo);
 	}
 
 	@Override
@@ -78,6 +103,16 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public BusiVO selectByBusiNo(int busiNo) throws Exception {
 		return userDAO.selectByBusiNo(busiNo);
+	}
+	
+	@Override
+	public BusiFileVO selectBusiFile(int busiNo) throws Exception {
+		return userDAO.selectBusiFile(busiNo);
+	}
+
+	@Override
+	public int updateBusiHitCnt(int busiNo) throws Exception {
+		return userDAO.updateBusiHitCnt(busiNo);
 	}
 
 	@Override
@@ -108,7 +143,6 @@ public class UserServiceImpl implements UserService{
 	public void updateEstateThree(EstateVO estateVO) throws Exception {
 		userDAO.updateEstateThree(estateVO);
 	}
-
 	@Override
 	public List<EstateVO> selectEstateList(EstateVO estateVO) throws Exception {
 		return userDAO.selectEstateList(estateVO);
@@ -127,6 +161,11 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public List<EstateFileVO> selectEstateFileDetail(int esNo) throws Exception {
 		return userDAO.selectEstateFileDetail(esNo);
+	}
+
+	@Override
+	public void updateEstateHitCnt(int esNo) throws Exception {
+		userDAO.updateEstateHitCnt(esNo);
 	}
 
 	@Override
@@ -153,6 +192,11 @@ public class UserServiceImpl implements UserService{
 	public CarVO selectCarVO(int carNo) throws Exception {
 		return userDAO.selectCarVO(carNo);
 	}
+	
+	@Override
+	public void updateCarHitCnt(int carNo) throws Exception {
+		userDAO.updateCarHitCnt(carNo);
+	}
 
 	@Override
 	public List<JobVO> selectJobList(JobVO jobVO) throws Exception {
@@ -170,14 +214,15 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public List<BusiNoticeVO> selectCompanyNoticeList(String writer) throws Exception {
-		return userDAO.selectCompanyNoticeList(writer);
+	public void updateJobHitCnt(int jobNo) throws Exception {
+		userDAO.updateCarHitCnt(jobNo);
 	}
 
 	@Override
-	public List<BusiNoticeFileVO> selectCompanyNoticeFile(String writer) throws Exception {
-		return userDAO.selectCompanyNoticeFile(writer);
+	public List<BusiNoticeVO> selectCompanyNoticeList(BusiNoticeVO busiNoticeVO ) throws Exception {
+		return userDAO.selectCompanyNoticeList(busiNoticeVO);
 	}
+
 
 	@Override
 	public BusiNoticeVO selectCompanyNoticeByNO(int busiNoticeNo) throws Exception {
@@ -187,6 +232,11 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public List<BusiNoticeFileVO> selectCompanyNoticeFileByNo(int busiNoticeNo) throws Exception {
 		return userDAO.selectCompanyNoticeFileByNo(busiNoticeNo);
+	}
+
+	@Override
+	public void updateNoticeHitCnt(int busiNoticeNo) throws Exception {
+		userDAO.updateNoticeHitCnt(busiNoticeNo);
 	}
 
 	@Override
@@ -205,18 +255,23 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public BusiReviewVO selectCompanyReviewByBusiNo(int busiNo) throws Exception {
-		return userDAO.selectCompanyReviewByBusiNo(busiNo);
+	public BusiReviewVO selectReviewByReviewNo(int busiReviewNo)throws Exception {
+		return userDAO.selectReviewByReviewNo(busiReviewNo);
 	}
 
 	@Override
-	public List<BusiReviewVO> selectCompanyReviewListByBusiNo(int busiNo) throws Exception {
-		return userDAO.selectCompanyReviewListByBusiNo(busiNo);
+	public List<BusiReviewVO> selectCompanyReviewByBusiNo(BusiReviewVO busiReviewVO) throws Exception {
+		return userDAO.selectCompanyReviewByBusiNo(busiReviewVO);
 	}
 
 	@Override
 	public List<BusiReviewFileVO> selectCompanyReviewFileByBusiViewNo(int busiReviewNo) throws Exception {
 		return userDAO.selectCompanyReviewFileByBusiViewNo(busiReviewNo);
+	}
+
+	@Override
+	public void updateReviewHitCnt(int busiReviewNo) throws Exception {
+		userDAO.updateReviewHitCnt(busiReviewNo);
 	}
 
 	@Override
@@ -262,14 +317,136 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public boolean selectGetUserJobYn(String userId) throws Exception {
-		int result = userDAO.selectGetUserJobYn(userId);
+	public boolean selectGetUserJobYn(GetUserJobVO getUserJobVO) throws Exception {
+		int result = userDAO.selectGetUserJobYn(getUserJobVO);
 		if(result>0) {
 			return true;
 		}else {
 			return false;
 		}
 
+	}
+
+	@Override
+	public UserVO selectUserByWriter(String userId) throws Exception {
+		return userDAO.selectUserByWriter(userId);
+	}
+
+	@Override
+	public boolean selectUserPassChk(UserVO userVO) throws Exception {
+		int result = userDAO.selectUserPassChk(userVO);
+		
+		if(result>0) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+
+	@Override
+	public void updateUserInfo(UserVO userVO) throws Exception {
+		userDAO.updateUserInfo(userVO);
+	}
+
+	@Override
+	public void insertUserPofileFile(Map<String, Object> map) throws Exception {
+		userDAO.insertUserPofileFile(map);
+	}
+
+	@Override
+	public UserProfileFileVO selectUserProfileYn(String userId) throws Exception {
+		return userDAO.selectUserProfileYn(userId);
+	}
+
+	@Override
+	public void deleteUserProfileFile(int fileNo) throws Exception {
+		userDAO.deleteUserProfileFile(fileNo);
+	}
+	
+	@Override
+	public List<UserProfileFileVO> selectUserProfileFileList() throws Exception {
+		return userDAO.selectUserProfileFileList();
+	}
+
+	@Override
+	public UserVO selectPrevPassChk(String userId) throws Exception {
+		return userDAO.selectPrevPassChk(userId);
+	}
+
+	@Override
+	public void updateModPass(UserVO userVO) throws Exception {
+		userDAO.updateModPass(userVO);
+		
+	}
+
+	@Override
+	public void insertAccount(UserAccountVO userAccountVO) throws Exception {
+		userDAO.insertAccount(userAccountVO);
+	}
+
+	@Override
+	public List<UserAccountVO> selectAccount(String userId) throws Exception {
+		return userDAO.selectAccount(userId);
+	}
+
+	@Override
+	public void insertUserTrade(UserTradeVO userTradeVO) throws Exception {
+		userDAO.insertUserTrade(userTradeVO);
+	}
+
+	@Override
+	public void updateUserLike(int productNo) throws Exception {
+		userDAO.updateUserLike(productNo);
+	}
+
+	@Override
+	public ProductVO selectProductByNo(int productNo) throws Exception {
+		return userDAO.selectProductByNo(productNo);
+	}
+
+	@Override
+	public void updateUserLikeCancle(int productNo) throws Exception {
+		userDAO.updateUserLikeCancle(productNo);		
+	}
+	
+
+	@Override
+	public List<UserTradeVO> selectLikeList(String userId) throws Exception {
+		return userDAO.selectLikeList(userId);
+	}
+
+	@Override
+	public List<ProductVO> selectProductSalesList(String userId) throws Exception {
+		return userDAO.selectProductSalesList(userId);
+	}
+	@Override
+	public List<EventVO> selectEventList(SearchCriteria scri) throws Exception {
+		return userDAO.selectEventList(scri);
+	}
+	@Override
+	public List<NoticeVO> selectNoticeList(SearchCriteria scri) throws Exception {
+		return userDAO.selectNoticeList(scri);
+	}
+
+	@Override
+	public int selectEventTotalCnt(SearchCriteria scri) throws Exception {
+		return userDAO.selectEventTotalCnt(scri);
+	}
+	@Override
+	public int selectNoticeTotalCnt(SearchCriteria scri) throws Exception {
+		return userDAO.selectNoticeTotalCnt(scri);
+	}
+	@Override
+	public NoticeVO selectNoticeByNo(int noticeNo) throws Exception {
+		return userDAO.selectNoticeByNo(noticeNo);
+	}
+	@Override
+	public List<NoticeFileVO> selectNoticeFile(int noticeNo) throws Exception {
+		return userDAO.selectNoticeFile(noticeNo);
+	}
+	@Override
+	public Map<String, Object> selectNoticeFileByNo(Map<String, Object> map) throws Exception {
+		return userDAO.selectNoticeFileByNo(map);
 	}
 
 	

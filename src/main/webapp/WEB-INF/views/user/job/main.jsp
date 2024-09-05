@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -22,41 +23,37 @@
         						   <pre class="h5">동네 알바들 여기 다 있어요.</pre>
        	</p>
         <p>
-          <a href="#" class="btn btn-warning my-2" onclick="javascript: location.href='/owner/job/main'">공고 올리기</a>
+          <a href="#" class="btn btn-warning my-2" onclick="javascript: location.href='/owner/job/regist'">공고 올리기</a>
         </p>
       </div>
     </div>
   </section>
   
-  <div class="container">
+<div class="container">
   	<div class="row">
   		<div class="col text-center">
   			<h4 class="fw-bold">인기 데일리 알바</h4>
   		</div>
   	</div>
   	<br><br>
-  	<div class="row text-center">
-  		<div class="col-3">
-  			<c:forEach var="file" items="${file }" begin="0" end="0">
-  				<img  src="/resources/upload/owner/company/job/${file.storedFileName }" style="width: 120px; height: 120px;">
-  			</c:forEach>
-  			<br><br>
-	  		<c:forEach var="list" items="${list }">
-	  			<a href="/user/job/detail?jobNo=${list.jobNo }" class="fw-bold text-dark">${list.jobTitle }</a>
+  	<div id="hitListWrap" class="row justify-content-center text-center">
+  		<c:forEach var="hitList" items="${hitList }">
+	  		<div class="col-3">
+  				<img  src="/resources/upload/owner/company/job/${hitList.storedFileName }" style="width: 120px; height: 120px;">
+  				<br><br>
+	  			<a href="/user/job/detail?jobNo=${hitList.jobNo }" class="fw-bold text-dark">${hitList.jobTitle }</a>
 	  			<br><br>
-	  			<p>${list.jobLoc }</p>
-	  			<p class="fw-bold">${list.jobType } ${list.jobMoney }원</p>
-	  		</c:forEach>		
-  		</div>
-  		
+	  			<p>${fn:substring(hitList.jobLoc,0,6) }</p>
+	  			<p class="fw-bold">${hitList.jobType } ${hitList.jobMoney }원</p>
+	  		</div>
+  		</c:forEach>		
+  	</div>
   	<br>
   	<div class="row">
   		<div class="col">
-  			<button class="form-control fw-bold h5 btn btn-warning" type="button">인기 알바 더보기</button>		
+  			<button id="jobHitMoreBtn" class="form-control fw-bold h5 btn btn-warning" type="button">인기 알바 더보기</button>		
   		</div> 
   	</div>
-  	
-  	
   	<br><br>
   	<div class="row">
   		<div class="col text-center">
@@ -64,74 +61,27 @@
   		</div>
   	</div>
   	<br><br>
-  	<div class="row text-center">
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/jobs/article/8142178/1718845223461/job-post-2551321589.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<p class="fw-bold">가정 손 부업 하실분 구합니다.</p>
-  			<p>목3동</p>
-  			<p class="fw-bold">건방 15원</p>
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/jobs/article/24244100/1718957976643/job-post-506539948.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<p class="fw-bold">알바 하실 분 구함</p>
-  			<p>목3동</p>
-  			<p class="fw-bold">시급 1,0000원</p>
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/jobs/article/77569817/1719021513191/job-post-2940472606.png?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<p class="fw-bold">방청객 알바 구합니다.</p>
-  			<p>목3동</p>
-  			<p class="fw-bold">시급 15,000원</p>
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/jobs/article/74980233/1717483668762/job-post-938193881.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<p class="fw-bold">입주 청소 투잡으로 가능해요</p>
-  			<p>목3동</p>
-  			<p class="fw-bold">건방 80,000원</p>
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/jobs/article/8142178/1718845223461/job-post-2551321589.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<p class="fw-bold">가정 손 부업 하실분 구합니다.</p>
-  			<p>목3동</p>
-  			<p class="fw-bold">건방 15원</p>
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/jobs/article/24244100/1718957976643/job-post-506539948.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<p class="fw-bold">알바 하실 분 구함</p>
-  			<p>목3동</p>
-  			<p class="fw-bold">시급 1,0000원</p>
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/jobs/article/77569817/1719021513191/job-post-2940472606.png?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<p class="fw-bold">방청객 알바 구합니다.</p>
-  			<p>목3동</p>
-  			<p class="fw-bold">시급 15,000원</p>
-  		</div>
-  		<div class="col-3">
-  			<img src="https://dnvefa72aowie.cloudfront.net/jobs/article/74980233/1717483668762/job-post-938193881.jpeg?q=95&s=1440x1440&t=inside" style="width: 120px; height: 120px;">		
-  			<br><br>
-  			<p class="fw-bold">입주 청소 투잡으로 가능해요</p>
-  			<p>목3동</p>
-  			<p class="fw-bold">건방 80,000원</p>
-  		</div>
+  	<div id="locListWrap" class="row justify-content-center text-center">
+		<c:forEach var="locList" items="${locList }">
+ 				<div class="col-3">
+ 					<img  src="/resources/upload/owner/company/job/${locList.storedFileName }" style="width: 120px; height: 120px;">
+ 					<br><br>
+  				<a href="/user/job/detail?jobNo=${locList.jobNo }" class="fw-bold text-dark">${locList.jobTitle }</a>
+  				<br><br>
+  				<p>${fn:substring(locList.jobLoc,0,6) }</p>
+  				<p class="fw-bold">${locList.jobType } ${locList.jobMoney }원</p>
+  			</div>
+		</c:forEach>
   	</div>
   	<br>
   	<div class="row">
   		<div class="col">
-  			<button class="form-control fw-bold h5 btn btn-success" type="button">내 근처 알바 더보기</button>		
+  			<button id="jobLocMoreBtn" class="form-control fw-bold h5 btn btn-success" type="button">내 근처 알바 더보기</button>		
   		</div> 
   	</div>
   </div>
-
 </main>
-
+<input type="hidden" id="endRow">
 <%@ include file="/resources/common/user/footer.jsp" %>
 
 </body>
@@ -140,7 +90,75 @@
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script type="text/javascript">
+$(document).ready(function(){
 
+	var count =8;
+	
+	$("#jobHitMoreBtn").on("click",function(){
+		count +=8;
+		$("#endRow").val(count)
+		
+		$.ajax({
+			url :"/user/job/main/hit",
+			type: "post",
+			data : {"endRow" :$("#endRow").val() },
+			success:function(result){
+				
+				var hitMoreContent =''
+				
+				result.forEach(function(item){
+				
+					hitMoreContent+='<div class="col-3">'
+  					hitMoreContent+='<img  src="/resources/upload/owner/company/job/'+item.storedFileName +'" style="width: 120px; height: 120px;">'
+  					hitMoreContent+='<br><br>'
+	  				hitMoreContent+='<a href="/user/job/detail?jobNo='+item.jobNo +'" class="fw-bold text-dark">'+item.jobTitle+'</a>'
+	  				hitMoreContent+='<br><br>'
+	  				hitMoreContent+='<p>'+item.jobLoc.substring(0,6)+'</p>'
+	  				hitMoreContent+='<p class="fw-bold">'+item.jobType+' '+item.jobMoney +'원</p>'
+	  				hitMoreContent+='</div>'
+				
+					$("#hitListWrap").html(hitMoreContent)
+					
+				});
+			
+			}
+		
+		});
+	});
+	
+	$("#jobLocMoreBtn").on("click",function(){
+		count +=8;
+		$("#endRow").val(count)
+		
+		var location = localStorage.getItem("roadNameAddr").substring(6,8)
+					
+		$.ajax({
+			url :"/user/job/main/loc",
+			type: "post",
+			data : {"endRow" :$("#endRow").val(),
+					"jobLoc" :location },
+			success:function(result){
+				
+			var locMoreContent =''
+			
+				result.forEach(function(item){
+			
+					locMoreContent+='<div class="col-3">'
+  					locMoreContent+='<img  src="/resources/upload/owner/company/job/'+item.storedFileName +'" style="width: 120px; height: 120px;">'
+  					locMoreContent+='<br><br>'
+	  				locMoreContent+='<a href="/user/job/detail?jobNo='+item.jobNo +'" class="fw-bold text-dark">'+item.jobTitle+'</a>'
+	  				locMoreContent+='<br><br>'
+	  				locMoreContent+='<p>'+item.jobLoc.substring(0,6)+'</p>'
+	  				locMoreContent+='<p class="fw-bold">'+item.jobType+' '+item.jobMoney +'원</p>'
+	  				locMoreContent+='</div>'
+				
+					$("#locListWrap").html(locMoreContent)
+				
+				});
+			}
+		});
+	});
+});
 
 </script>
 </html>

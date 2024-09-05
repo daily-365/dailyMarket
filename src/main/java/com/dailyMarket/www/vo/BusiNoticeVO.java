@@ -2,7 +2,7 @@ package com.dailyMarket.www.vo;
 
 import java.util.Date;
 
-public class BusiNoticeVO {
+public class BusiNoticeVO extends BusiNoticeFileVO {
 	
 	private int busiNoticeNo;
 	private int busiNo;
@@ -11,10 +11,16 @@ public class BusiNoticeVO {
 	private String content;
 	private String subContent;
 	private String writer;
+	private int hitCnt;
+	private int likeCnt;
+	private int replyCnt;
 	private Date regDate;
 	private Date modDate;
 	private Date delDate;
 	private String deleteYn;
+	
+	private int endRow;
+	
 	public int getBusiNoticeNo() {
 		return busiNoticeNo;
 	}
@@ -57,6 +63,24 @@ public class BusiNoticeVO {
 	public void setWriter(String writer) {
 		this.writer = writer;
 	}
+	public int getHitCnt() {
+		return hitCnt;
+	}
+	public void setHitCnt(int hitCnt) {
+		this.hitCnt = hitCnt;
+	}
+	public int getLikeCnt() {
+		return likeCnt;
+	}
+	public void setLikeCnt(int likeCnt) {
+		this.likeCnt = likeCnt;
+	}
+	public int getReplyCnt() {
+		return replyCnt;
+	}
+	public void setReplyCnt(int replyCnt) {
+		this.replyCnt = replyCnt;
+	}
 	public Date getRegDate() {
 		return regDate;
 	}
@@ -80,6 +104,12 @@ public class BusiNoticeVO {
 	}
 	public void setDeleteYn(String deleteYn) {
 		this.deleteYn = deleteYn;
+	}
+	public int getEndRow() {
+		return endRow;
+	}
+	public void setEndRow(int endRow) {
+		this.endRow = endRow;
 	}
 	
 	

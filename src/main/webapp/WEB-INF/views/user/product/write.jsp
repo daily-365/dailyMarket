@@ -400,13 +400,17 @@ $(document).ready(function(){
 
 	$("#fileInput").on("change",fileAddFunc)
 	
+	//에러 문구 flag : (변수를 반복문 밖에 두어 alert창 한번만 띄우게.)
+	var cntError = false;
+	var extError = false;
+	var sizeError = false;
+	
 	function fileAddFunc(e){
 		var files = e.target.files;
 	 	var fileArr = Array.prototype.slice.call(files);
 		// 파일 개수 제한
 		fileCnt=fileArr.length+fileNum
-		
-			
+				
 		//파일 체크 및 미리보기		
 		fileArr.forEach(function(f){ 		
 			var reader = new FileReader();
@@ -415,15 +419,19 @@ $(document).ready(function(){
 			console.log(fileCnt,fileSize)
 				
 			if(fileCnt>totalCnt){
-				alert("파일은 10개까지 등록 가능합니다.")
-				f.preventDefault()
+				cntError=true;
+				return false;
 			}if(fileExt!='jpeg' && fileExt!='jpg'&&fileExt!='png'&&fileExt!='gif'){
-				alert("확장자는 jpeg/jpg/png/gif 파일만 등록 가능합니다.")
-				f.preventDefault()
+				extError =true;
+				return false;
 			}if(fileSize>totalSize){
-				alert("용량은 3M 이하여야 합니다.")
-				f.preventDefault()
+				sizeError =true;
+				return false;
 			}else{
+				cntError = false;
+				extError = false;
+				sizeError = false;
+				
 				reader.onload=function(e){
 					fileNum++;
 					fileSize+=f.size
@@ -454,7 +462,17 @@ $(document).ready(function(){
 					reader.readAsDataURL(f)
 				}
 			});
+			
+		if(cntError){
+			alert("파일은 최대 10개까지 올릴 수 있습니다.")
+		}if(extError){
+			alert("jepg/jpg/png/gif파일만 올려주세요")
+		}if(sizeError){
+			alert("최대 용량은 10M까지 입니다.")
+		}
 	}
+	
+	
 	
 	//파일업로드 
 	function uploadFileFunc(){

@@ -48,9 +48,9 @@
           <a class="nav-link" href="/user/logout" onclick="javascript: alert('로그아웃 되었습니다.')" >로그아웃</a>
         </li>
         <li>
-       	 <form class="d-flex justify-content-right" >
-        	<input class="form-control col-md-4 me-4 text-center text-dark fw-bold" type="search" placeholder="물품이나 동네를 검색해보세요" aria-label="Search">
-        	<input class="btn btn-outline-dark col-md-4" type="button" value="검색">
+       	 <form class="d-flex justify-content-right" id="searchForm" >
+        	<input id="keyword" value="${param.keyword }" class="form-control col-md-4 me-4 text-center text-dark fw-bold" type="search" placeholder="물품이나 동네를 검색해보세요" aria-label="Search">
+        	<button id="searchBtn" type="button" class="btn btn-outline-dark col-md-4" type="button" >검색</button>
  		 </form>
         </li>
       </ul>
@@ -59,3 +59,4 @@
    
 </nav>
 </header>
+

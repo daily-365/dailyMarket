@@ -94,29 +94,34 @@ h1, h2, h3, h4, h5, h6 {
         <p class="blog-header-logo text-dark" href="#">Daily Business</p>
       </div>
       <div class="col-4 d-flex justify-content-end align-items-center">
-        <p class="blog-header-logo text-dark" href="#"></p>
-      </div>	
+        <p class="blog-header-logo text-dark" href="#" id="logoutBtn" >LogOut</p>
+      </div>
     </div>
   </header>
 
   <div class="nav-scroller py-1 mb-2">
-    <nav class="nav d-flex justify-content-center fw-bold ">
-      <c:if test="${busiVO.state eq 'Y' }">
-      	<c:if test="${menuExsit eq false  }"><a class="p-2 link-primary" href="/owner/company/menu/regist">메뉴등록</a>	</c:if>
-      	<c:if test="${menuExsit eq true  }"><a class="p-2 link-warning" href="/owner/company/menu/detail">메뉴수정</a></c:if>
-      	<a class="p-2 link-warning" href="/owner/notice/write">소식등록</a>
-      </c:if>
-      <c:if test="${busiVO.state eq 'S' }">
-       	<a class="p-2 link-warning" href="/owner/company/detail">업체 등록 대기중</a>
-      </c:if>
-      <c:if test="${busiVO.state eq 'N' }">
-      	<a class="p-2 link-danger" href="/owner/company/detail">업체 재 등록</a>
-      </c:if>
-      <c:if test="${empty busiVO.state }">
-      	<a class="p-2 link-primary" href="/owner/company/regist">업체등록</a>
-      </c:if>
-      <c:if test="${jobExsit eq false }"><a class="p-2 link-primary" href="/owner/job/regist">알바구인</a></c:if>
-      <c:if test="${jobExsit eq true }"><a class="p-2 link-warning" href="/owner/job/detail">구인정보수정</a></c:if>
+    <nav class="nav justify-content-center fw-bold ">
+    	<c:choose>
+    		<c:when test="${not empty busiVO.status  }">
+    			<a class="p-2 link-warning" href="/owner/company/detail?busiNo=${busiVO.busiNo }">업체정보 수정</a>
+				<c:if test="${busiVO.status eq 'Y' }">
+					<c:if test="${menuExist eq false }"><a class="p-2 link-primary" href="/owner/company/menu/regist">메뉴등록</a> </c:if>
+					<c:if test="${menuExist eq true}"><a class="p-2 link-warning" href="/owner/company/menu/detail?busiNo=${busiVO.busiNo }">메뉴수정</a></c:if>
+   					<c:if test="${jobExsit eq false }"><a class="p-2 link-primary" href="/owner/job/regist">알바구인</a> </c:if>
+     				<c:if test="${jobExsit eq true }"><a class="p-2 link-warning" href="/owner/job/detail">구인정보수정</a> </c:if>
+      				<a class="p-2 link-warning" href="/owner/notice/write">소식등록</a>
+      			</c:if>
+      			<c:if test="${busiVO.status eq 'S' }">
+       				<a class="p-2 link-warning" href="/owner/company/detail?busiNo=${busiVO.busiNo }">업체 등록 대기중</a>
+      			</c:if>
+      			<c:if test="${busiVO.status eq 'N' }">
+      				<a class="p-2 link-danger" href="/owner/company/detail?busiNo=${busiVO.busiNo }">업체 재 등록</a>
+     			 </c:if>
+    		</c:when>
+    		<c:otherwise>
+    			<a class="p-2 link-primary" href="/owner/company/regist">업체등록</a>
+    		</c:otherwise>
+    	</c:choose>
     </nav>
   </div>
 </div>
@@ -225,4 +230,15 @@ h1, h2, h3, h4, h5, h6 {
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+	
+	$("#logoutBtn").on("click",function(){
+		location.href="/owner/logout"
+		alert("로그아웃 되었습니다.")
+	})
+
+})
+
+</script>
 </html>

@@ -1,9 +1,10 @@
 package com.dailyMarket.www.vo;
 
 public class UserVO {
-	
+	private int rnum;
 	private String userId;
 	private String userPass;
+	private String userPassChk;
 	private String userName;
 	private String userNick;
 	private String userMail;
@@ -18,6 +19,14 @@ public class UserVO {
 	private String modDate;
 	private String delDate;
 	private String deleteYn;
+	
+	
+	public int getRnum() {
+		return rnum;
+	}
+	public void setRnum(int rnum) {
+		this.rnum = rnum;
+	}
 	public String getUserId() {
 		return userId;
 	}
@@ -29,6 +38,13 @@ public class UserVO {
 	}
 	public void setUserPass(String userPass) {
 		this.userPass = userPass;
+	}
+	
+	public String getUserPassChk() {
+		return userPassChk;
+	}
+	public void setUserPassChk(String userPassChk) {
+		this.userPassChk = userPassChk;
 	}
 	public String getUserName() {
 		return userName;

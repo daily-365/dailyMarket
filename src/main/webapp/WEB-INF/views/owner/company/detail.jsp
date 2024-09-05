@@ -1298,6 +1298,7 @@ $(document).ready(function(){
 			
 			for (var i=0; i<storeFileContent.length; i++){
 				formDatas.append("storeFiles",storeFileContent[i])
+				formDatas.append("busiNo",$("#busiNo").val())
 			}
 			
 			$.ajax({

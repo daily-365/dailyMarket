@@ -60,12 +60,12 @@
 	<br><br>
 	<div class="row">
 		<div class="col d-flex justify-content-center">
-			<img style="padding: 30px;" class="rounded-circle bg-secondary" src="">
+			<img style="width: 100px; height: 100px;" class="rounded-circle bg-secondary" src="/resources/upload/user/profile/${profileFile.storedFileName }">
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<p class="fw-bold">${userId }</p>
+			<p class="fw-bold">${estate.esWriter }</p>
 			&nbsp;&nbsp;&nbsp;
 			<c:set value="${estate.esLoc}" var="esLoc" />
-			${fn:substring(esLoc,0,9 ) }
+			${fn:substring(esLoc,0,6 ) }
 			
 		</div>
 	</div>	
@@ -89,14 +89,20 @@
 			%>
 			<c:set value="<%=now %>" var="today" />
 			<c:choose>
-				<c:when test="${estate.esMoveDate eq today}">
-					<p class="h5 text-danger ">마감 </p>
+				<c:when test="${estate.esMoveYn eq 'N' }">
+					<c:choose>
+						<c:when test="${estate.esMoveDate eq today}">
+							<p class="h5 text-danger fw-bold ">마감 </p>
+						</c:when>
+						<c:otherwise>
+							<p class="h5 ">${fn:substring(estate.regDate3,0,10)} ~ ${estate.esMoveDate } </p> 
+						</c:otherwise>
+					</c:choose>
 				</c:when>
 				<c:otherwise>
-					<p class="h5 "> <fmt:formatDate value="${estate.regDate }" pattern="yyyy-MM-dd"/> ~ ${estate.esMoveDate } </p> 
+					<p class="h5 text-primary fw-bold ">즉시입주가능 </p>
 				</c:otherwise>
 			</c:choose>
-			
 		</div>
 	</div>
 	<br>

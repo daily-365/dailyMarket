@@ -62,7 +62,7 @@
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<p class="fw-bold">${jobVO.jobCompany }</p>
 			&nbsp;&nbsp;&nbsp;
-			<p>${fn:substring(jobVO.jobLoc,0,2)}</p>
+			<p>${fn:substring(jobVO.jobLoc,0,6)}</p>
 		</div>
 	</div>	
 	<hr>
@@ -129,9 +129,9 @@
 		<div class="col-10">
 			<h4 class="fw-bold">상세 내용</h4>
 <br>
-<pre class="h6" >
-${jobVO.jobContent }
-</pre>
+		<h6>
+		${jobVO.jobContent }
+		</h6>
 		</div>
 	</div>
 	<br>
@@ -158,14 +158,14 @@ ${jobVO.jobContent }
 	<div class="row">
 		<div class="col-2">
 		</div>
-		<c:if test="${getJobYn eq false }">
+		<c:if test="${getJobYn eq false}">
 			<div class="col-8">
-				<button class="form-control fw-bold btn btn-outline-secondary" type="button" id="getJobBtn">데일리 알바 지원하기</button>
+				<button class="form-control fw-bold btn btn-outline-dark" type="button" id="getJobBtn">데일리 알바 지원하기</button>
 			</div>
 		</c:if>
 		<c:if test="${getJobYn eq true }">
 			<div class="col-8">
-				<button class="form-control fw-bold btn btn-outline-warning" type="button" >지원 확인하러 가기</button>
+				<button class="form-control fw-bold btn btn-outline-danger" type="button" >지원 취소</button>
 			</div>
 		</c:if>
 	</div>

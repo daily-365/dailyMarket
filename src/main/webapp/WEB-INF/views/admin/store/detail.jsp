@@ -66,28 +66,28 @@
 		<div class="col" >
 			<span>승인 상태 : </span>	
 			<c:choose>
-				<c:when test="${busiVO.state eq 'Y'}"><span class="text-primary">승인 완료</span></c:when>
-				<c:when test="${busiVO.state eq 'S'}"><span class="text-warning">승인 대기</span></c:when>
-				<c:when test="${busiVO.state eq 'N'}"><span class="text-danger">반려 및 재검수 요청</span></c:when>
+				<c:when test="${busiVO.status eq 'Y'}"><span class="text-primary">승인 완료</span></c:when>
+				<c:when test="${busiVO.status eq 'S'}"><span class="text-warning">승인 대기</span></c:when>
+				<c:when test="${busiVO.status eq 'N'}"><span class="text-danger">반려 및 재검수 요청</span></c:when>
 			</c:choose>	
 		</div>
 		<br>
 		<c:choose>
-			<c:when test="${busiVO.state eq 'S' }">
+			<c:when test="${busiVO.status eq 'S' }">
 				<div class="col">
 					<span>요청일 : </span>	
 					<span><fmt:formatDate value="${busiVO.regDate }" pattern="yyyy-MM-dd HH:mm:ss"/></span>
 				</div>
 				<br>
 			</c:when>
-			<c:when test="${busiVO.state eq 'Y' }">
+			<c:when test="${busiVO.status eq 'Y' }">
 				<div class="col">
 					<span>승인일</span>	
 					<span><fmt:formatDate value="${busiVO.modDate }" pattern="yyyy-MM-dd HH:mm:ss"/></span>
 				</div>
 				<br>
 			</c:when>
-			<c:when test="${busiVO.state eq 'N' }">
+			<c:when test="${busiVO.status eq 'N' }">
 				<div class="col">
 					<span>재검수 요청 일</span>	
 					<span><fmt:formatDate value="${busiVO.modDate }" pattern="yyyy-MM-dd HH:mm:ss"/></span>
@@ -116,13 +116,54 @@
 			</c:forEach>
 		</div>
 		<br>
+		<hr>
+		<div class="row">
+			<p>메뉴</p>
+			<br>
+			<c:forEach var="menu" items="${menu }">
+				<div class="col-2">
+					<img src="/resources/upload/owner/company/menu/${menu.storedFileName }" style="width: 150px; height: 150px;">
+				</div>
+				<div class="col-2">
+					<p>상품명</p>
+					<p>${menu.name }</p>	
+				</div>
+				<br>
+				<div class="col-2">
+					<p>가격</p>	
+					<p>${menu.price }</p>
+				</div>
+				<br>
+				<div class="col-1">
+					<p>재고</p>	
+					<p>${menu.count }</p>
+				</div>
+				<br>
+				<div class="col-2">
+					<p>설명</p>	
+					<p>${menu.content }</p>
+				</div>
+				<br>
+				<div class="col-1">
+					<p>배달가능여부 (Y/N)</p>
+					<p>${menu.deleveryYn }</p>	
+				</div>
+				<br>
+				<div class="col-2">
+					<p>배달료</p>	
+					<p>${menu.deleveryPrice }</p>
+				</div>
+				<br>
+			</c:forEach>
+		</div>
+		<br>
 	</div>
 	<br><br>
 	<div class="row">
 		<div class="col-2">
 		</div>
 		<c:choose>
-			<c:when test="${busiVO.state eq 'Y' }">
+			<c:when test="${busiVO.status eq 'Y' }">
 				<div class="col-4">
 					<button type="button" class="btn btn-success form-control" onclick="javascript: location.href='/admin/store/main'">목록 으로</button>
 				</div>
@@ -163,7 +204,7 @@ $(document).ready(function(){
 				url : "/admin/store/detail/update",
 				type: "post",
 				data : { "busiNo" : $("#busiNo").val(),
-						"state" : 'Y'  },
+						"status" : 'Y'  },
 				success:function(result){
 					alert(result)
 					location.reload(true);
@@ -182,7 +223,7 @@ $(document).ready(function(){
 					url : "/admin/store/detail/update",
 				type: "post",
 				data : { "busiNo" : $("#busiNo").val(),
-						"state" : 'N'  },
+						"status" : 'N'  },
 				success:function(result){
 					alert(result)
 					location.reload(true);
@@ -202,7 +243,7 @@ $(document).ready(function(){
 				url : "/admin/store/detail/update",
 				type: "post",
 				data : { "busiNo" : $("#busiNo").val(),
-						"state" : 'S'  },
+						"status" : 'S'  },
 				success:function(result){
 					alert(result)
 					location.reload(true);

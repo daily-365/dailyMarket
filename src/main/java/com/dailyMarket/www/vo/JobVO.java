@@ -3,7 +3,7 @@ package com.dailyMarket.www.vo;
 import java.util.Date;
 
 public class JobVO {
- 
+	private int rnum;
 	private int jobNo;
 	private String jobWriter;
 	private String jobCompany;
@@ -16,6 +16,7 @@ public class JobVO {
 	private String jobWorkTime;
 	private String jobLocContent;
 	private String jobContent;
+	private int hitCnt;
 	private Date regDate;
 	private Date modDate;
 	private Date delDate;
@@ -27,6 +28,19 @@ public class JobVO {
 	private long regWeek;
 	private long regMonth;
 	private long regYear;
+	
+	private String storedFileName;
+	
+	
+	
+	public int getRnum() {
+		return rnum;
+	}
+	public void setRnum(int rnum) {
+		this.rnum = rnum;
+	}
+	private int endRow;
+	
 	public int getJobNo() {
 		return jobNo;
 	}
@@ -99,6 +113,13 @@ public class JobVO {
 	public void setJobContent(String jobContent) {
 		this.jobContent = jobContent;
 	}
+	
+	public int getHitCnt() {
+		return hitCnt;
+	}
+	public void setHitCnt(int hitCnt) {
+		this.hitCnt = hitCnt;
+	}
 	public Date getRegDate() {
 		return regDate;
 	}
@@ -158,6 +179,18 @@ public class JobVO {
 	}
 	public void setRegYear(long regYear) {
 		this.regYear = regYear;
+	}
+	public String getStoredFileName() {
+		return storedFileName;
+	}
+	public void setStoredFileName(String storedFileName) {
+		this.storedFileName = storedFileName;
+	}
+	public int getEndRow() {
+		return endRow;
+	}
+	public void setEndRow(int endRow) {
+		this.endRow = endRow;
 	}
 	
 	

@@ -8,6 +8,8 @@ public class ProductVO extends SearchCriteria{
 	
 	private int rnum;
 	
+	private String keyword;
+	
 	private int productNo;
 	private String title;
 	private String type;
@@ -29,14 +31,29 @@ public class ProductVO extends SearchCriteria{
 	private String productStoredFileName;
 
 	//더보기 기능을 위함
-	private int startRow=0;
-
+	private int endRow=8;
+	
+	//프로필 불러오기
+	private String profileFile;
+	
+	//정렬기준
+	private String orderType;
+	
 	public int getRnum() {
 		return rnum;
 	}
 
 	public void setRnum(int rnum) {
 		this.rnum = rnum;
+	}
+	
+
+	public String getKeyword() {
+		return keyword;
+	}
+
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
 	}
 
 	public int getProductNo() {
@@ -175,12 +192,29 @@ public class ProductVO extends SearchCriteria{
 		this.productStoredFileName = productStoredFileName;
 	}
 
-	public int getStartRow() {
-		return startRow;
+
+	public int getEndRow() {
+		return endRow;
 	}
 
-	public void setStartRow(int startRow) {
-		this.startRow = startRow;
+	public void setEndRow(int endRow) {
+		this.endRow = endRow;
+	}
+
+	public String getProfileFile() {
+		return profileFile;
+	}
+
+	public void setProfileFile(String profileFile) {
+		this.profileFile = profileFile;
+	}
+
+	public String getOrderType() {
+		return orderType;
+	}
+
+	public void setOrderType(String orderType) {
+		this.orderType = orderType;
 	}
 	
 	

@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>물품 정보 메인 페이지</title>
+<title>부동산 메인 페이지</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
@@ -26,7 +26,6 @@
 			</div>
 			<div class="col-2">
 				<select id="pagePerNum" name="pagePerNum" class="form-control">
-					<option value=5 <c:if test="${param.pagePerNum eq 5 }">selected='selected'</c:if>>5개씩보기</option>		
 					<option value=10 <c:if test="${param.pagePerNum eq 10 }">selected='selected'</c:if>>10개씩보기</option>
 					<option value=20 <c:if test="${param.pagePerNum eq 20 }">selected='selected'</c:if>>20개씩보기</option>
 					<option value=30 <c:if test="${param.pagePerNum eq 30 }">selected='selected'</c:if>>30개씩보기</option>
@@ -54,11 +53,10 @@
 			<div class="col-2">
 				<select id="searchType" name="searchType" class="form-control">
 					<option value="all" <c:if test="${param.searchType eq 'all' }">selected='selected'</c:if>>전체</option>
-					<option value="title" <c:if test="${param.searchType eq 'title' }">selected='selected'</c:if>>제목</option>
-					<option value="type"  <c:if test="${param.searchType eq 'type' }">selected='selected'</c:if>>판매/나눔</option>
+					<option value="writer" <c:if test="${param.searchType eq 'writer' }">selected='selected'</c:if>>작성자</option>
+					<option value="loc"  <c:if test="${param.searchType eq 'loc' }">selected='selected'</c:if>>위치</option>
 					<option value="price"  <c:if test="${param.searchType eq 'price' }">selected='selected'</c:if>>가격</option>
-					<option value="location"  <c:if test="${param.searchType eq 'location' }">selected='selected'</c:if>>위치</option>
-					<option value="writer"  <c:if test="${param.searchType eq 'writer' }">selected='selected'</c:if>>등록자</option>
+					<option value="size"  <c:if test="${param.searchType eq 'size' }">selected='selected'</c:if>>전용면적</option>
 				</select>
 			</div>
 			<div class="col-3">
@@ -71,7 +69,7 @@
 				<button type="button" class="form-control btn btn-danger" id="excelDown">엑셀 다운</button>
 			</div>
 			<div class="col-2">
-				<button onclick="javascript: self.location='/admin/product/main'" type="button" class="form-control btn btn-outline-danger">검색 초기화</button>
+				<button onclick="javascript: self.location='/admin/estate/main'" type="button" class="form-control btn btn-outline-danger">검색 초기화</button>
 			</div>
 		</div>
 	</form>
@@ -81,27 +79,31 @@
 	<br>
 	<h4 class="text-center">입점 현황</h4>
 	<br>
-	<table class="table table-hover table-bordered">
+	<table class="table table-hover table-bordered fw-bold">
 		<tr>
 			<th>#</th>
 			<th>번호</th>
-			<th>재목</th>
-			<th>판매/나눔</th>
-			<th>가격</th>
-			<th>위치</th>
 			<th>작성자</th>
+			<th>세입자/집주인</th>
+			<th>원룸/빌라/오피스텔/상가/아파트</th>
+			<th>위치</th>
+			<th>월세/전세/매매/단기</th>
+			<th>가격</th>
+			<th>전용면적 (m2)</th>
 			<th>등록일</th>
 		</tr>
-		<c:forEach var="list" items="${list }">		
+		<c:forEach var="list" items="${list }" varStatus="status">		
 		<tr>
 			<td>${list.rnum }</td>
-			<td>${list.productNo }</td>
-			<td><a href="/admin/product/detail?productNo=${list.productNo}">${list.title}</a></td>
-			<td>${list.type}</td>
-			<td>${list.price}</td>
-			<td>${list.location }</td>
-			<td>${list.writer }</td>
-			<td><fmt:formatDate value="${list.regDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+			<td>${list.esNo }</td>
+			<td><a href="/admin/estate/detail?esNo=${list.esNo}">${list.esWriter}</a></td>
+			<td>${list.esHumType}</td>
+			<td>${list.esRoomType}</td>
+			<td>${list.esLoc }</td>
+			<td>${list.esTradeType }</td>
+			<td>${list.esPrice }</td>
+			<td>${list.esSize2 }</td>
+			<td>${list.regDate3 }</td>
 		</tr>
 		</c:forEach>
 		
@@ -118,9 +120,10 @@
 		<c:if test="${pageMaker.next && pageMaker.endPage>0}">
 			<a class="btn btn-outline-danger" href="${pageMaker.makeSearch(pageMaker.endPage+1)}">&raquo;</a>
 		</c:if>
-		<a class="btn btn-danger" href="${pageMaker.makeSearch(pageMaker.maxPage) }">&raquo;&raquo;</a>
+		<a class="btn btn-danger" href="${pageMaker.makeSearch(pageMaker.maxPage)}">&raquo;&raquo;</a>
 	</div>
 </main>
+<br><br>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -180,12 +183,12 @@ $(document).ready(function(){
  
     //검색
     $("#searchBtn").on("click",function(){
-    	self.location="/admin/product/main?keyword="+$("#keyword").val()+"&searchType="+$("#searchType").val()+"&startDate="+$("#startDate").val()+"&endDate="+$("#endDate").val()+"&pagePerNum="+$("#pagePerNum").val()
+    	self.location="/admin/estate/main?keyword="+$("#keyword").val()+"&searchType="+$("#searchType").val()+"&startDate="+$("#startDate").val()+"&endDate="+$("#endDate").val()+"&pagePerNum="+$("#pagePerNum").val()
     });
     
     //엑셀 다운로드
     $("#excelDown").on("click",function(){
-    	$("#excelForm").attr("action","/admin/excelDown")
+    	$("#excelForm").attr("action","/admin/estate/excelDown")
 		$("#excelForm").submit();
     
     });

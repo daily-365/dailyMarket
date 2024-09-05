@@ -72,11 +72,14 @@
 		<div class="col-3">
 		</div>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<div class="col-5">
-			<span><img class="rounded-circle bg-secondary" style="padding:35px;"></span>
+		<div class="col-6">
+			<c:forEach var="store" items="${store }" begin="0" end="0">
+			<span><img class="rounded-circle bg-secondary" src="/resources/upload/owner/company/${store.storedFileName }" style="width:100px; height:100px;"></span>
+			</c:forEach>
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<span class="fw-bold">${busiVO.busiName}- ${fn:substring(busiVO.storeAddr,3,6) }</span>
-			<span>${fn:substring(busiVO.storeAddr,6,9) }. ${busiVO.busiType1 } 단골 1,854</span>
+			<span>${fn:substring(busiVO.storeAddr,6,9) }. ${busiVO.busiType1 } </span>
+			<p class="fw-bold text-center">조회수  ${busiVO.hitCnt }</p>
 		</div>
 		<div class="col-2">
 		<br>
@@ -87,58 +90,27 @@
 	<div class="row">
 		<div class="col-3">
 		</div>
-		<c:set var="storeTel" value="${fn:substring(busiVO.storeTel,0,2)}" />
-		<c:choose>
-			<c:when test="${storeTel eq 02 }">
-				<fmt:formatNumber var="storeTel1" value="${busiVO.storeTel }" pattern="##,####,####" />
+			<c:choose>
+				<c:when test="${fn:substring(busiVO.storeTel,0,2) eq '02' }">
+				<div class="col-3">
+					<svg  data-toggle="tooltip" data-placement="top" class="svg" data-bs-title="${fn:substring(busiVO.storeTel,0,2)}-${fn:substring(busiVO.storeTel,2,6)}-${fn:substring(busiVO.storeTel,6,10)}" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16">
+	 				<path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z"/>
+					</svg>
+					<br>
+					<p class="fw-bold text-dark " >전화문의</p>
+				</div>
+				</c:when>
+				<c:otherwise>
+				<div class="col-3">
+					<svg  data-toggle="tooltip" data-placement="top" class="svg" data-bs-title="${fn:substring(busiVO.storeTel,0,3)}-${fn:substring(busiVO.storeTel,3,6)}-${fn:substring(busiVO.storeTel,6,10)}" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16">
+	 				<path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z"/>
+					</svg>
+					<br>
+					<p class="fw-bold text-dark " >전화문의</p>
+				</div>
+				</c:otherwise>
+			</c:choose>
 				
-				<c:if test="${fn:length(storeTel1) eq 11 }">
-					<div class="col-3">
-						<svg  data-toggle="tooltip" data-placement="top" title="연락처 : 0${fn:replace(storeTel1,',','-') }"
-							class="svg" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16">
-			 				<path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z"/>
-						</svg>
-						<br>
-						<p class="fw-bold text-dark " >전화문의</p>
-					</div>
-				</c:if>
-				<c:if test="${fn:length(storeTel1) eq 12 }">
-					<div class="col-3">
-						<svg  data-toggle="tooltip" data-placement="top" title="연락처 : ${fn:replace(storeTel1,',','-') }"
-							class="svg" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16">
-			 				<path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z"/>
-						</svg>
-						<br>
-						<p class="fw-bold text-dark " >전화문의</p>
-					</div>
-				</c:if>
-			</c:when>
-			<c:otherwise>
-				<fmt:formatNumber var="storeTel2"  value="${busiVO.storeTel }" pattern="###,###,####" />
-				<c:if test="${fn:length(storeTel2) eq 11 }">
-					<div class="col-3">
-						<svg  data-toggle="tooltip" data-placement="top" title="연락처 : 0${fn:replace(storeTel2,',','-') }"
-							class="svg" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16">
-			 				<path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z"/>
-						</svg>
-						<br>
-						<p class="fw-bold text-dark " >전화문의</p>
-					</div>
-				</c:if>
-				<c:if test="${fn:length(storeTel2) eq 12 }">
-					<div class="col-3">
-						<svg  data-toggle="tooltip" data-placement="top" title="연락처 : ${fn:replace(storeTel2,',','-') }"
-							class="svg" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16">
-			 				<path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z"/>
-						</svg>
-						<br>
-						<p class="fw-bold text-dark " >전화문의</p>
-					</div>
-				</c:if>
-			</c:otherwise>
-		</c:choose>
-		
-		
 		<div class="col-3">
 			<svg class="svg" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat" viewBox="0 0 16 16">
   				<path d="M2.678 11.894a1 1 0 0 1 .287.801 11 11 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8 8 0 0 0 8 14c3.996 0 7-2.807 7-6s-3.004-6-7-6-7 2.808-7 6c0 1.468.617 2.83 1.678 3.894m-.493 3.905a22 22 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a10 10 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105"/>
@@ -169,7 +141,7 @@
 			<a href="/user/company/product/main?busiNo=${param.busiNo}&busiNoticeNo=${param.busiNoticeNo}&busiReviewNo=${param.busiReviewNo}" class="text-dark fw-bold h5">상품</a>
 		</div>
 		<div class="col-3">
-			<a href="/user/company/review/main?busiNo=${param.busiNo}&busiNoticeNo=${param.busiNoticeNo}&busiReviewNo=${review.busiReviewNo }" class="text-dark fw-bold h5">후기</a>
+			<a href="/user/company/review/main?busiNo=${param.busiNo}&busiNoticeNo=${param.busiNoticeNo}&busiReviewNo=${param.busiReviewNo }" class="text-dark fw-bold h5">후기</a>
 		</div>
 	</div>
 	<br>
@@ -254,41 +226,49 @@
 		</div>
 	</div>
 	<br>
+	<div id="reviewWrap">
+	<c:forEach var="review" items="${review}">
 	<div class="row">
 		<div class="col-2">
 		</div>
 		<div class="col">
-			<img  class="bg-secondary rounded-circle" style="padding: 25px;">
-			<br><br>
-			<p class="fw-bold">${userId }<span class="fw-bold h5 text-dark"> ( 단골 ) </span></p>
-			<p class="fw-bold">${fn:substring(review.userAddr1,3,6) }  ∙ 조회수 ${review.hitCnt }회 ∙ 
-			<c:if test="${review.regMinute ne 0 and review.regMinute lt 60 }">${review.regMinute }분 전</c:if>
-			<c:if test="${review.regHour ne 0 and review.regHour lt 24 }">${review.regHour }시간 전</c:if>
-			<c:if test="${review.regDay ne 0 and review.regDay lt 7 }">${review.regDay }일 전</c:if>
-			<c:if test="${review.regWeek ne 0 and review.regWeek lt 4 }">${review.regWeek }주 전</c:if>
-			<c:if test="${review.regMonth ne 0 and review.regMonth lt 12 }">${review.regMonth }월 전</c:if>
-			<c:if test="${review.regYear ne 0 }">${review.regYear }년 전</c:if>
-			</p>
+			<c:if test="${not empty review.busiReviewNo }">
+				<img  class="bg-secondary rounded-circle"  src="/resources/upload/user/profile/${review.userStoredFileName }" style="width :100px; height: 100px;">
+				<br>
+				<p class="fw-bold">${review.writer }<span class="fw-bold h5 text-dark"> ( 단골 ) </span></p>
+				<p class="fw-bold">${fn:substring(review.userAddr1,3,6) }  조회수 ( ${review.hitCnt } ) 회  /
+				<c:if test="${review.regMinute ne 0 and review.regMinute le 60 }">${review.regMinute }분 전</c:if>
+				<c:if test="${review.regHour ne 0 and review.regHour le 24 }">${review.regHour }시간 전</c:if>
+				<c:if test="${review.regDay ne 0 and review.regDay le 7 }">${review.regDay }일 전</c:if>
+				<c:if test="${review.regWeek ne 0 and review.regWeek le 4 }">${review.regWeek }주 전</c:if>
+				<c:if test="${review.regMonth ne 0 and review.regMonth le 12 }">${review.regMonth }달 전</c:if>
+				<c:if test="${review.regYear ne 0 }">${review.regYear }년 전</c:if>
+				</p>
+				<br>
+			</c:if>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-2">
 		</div>
-		<img src="/resources/upload/user/company/review/${review.storedFileName }" style="width: 350px; height: 350px;">
+		<c:if test="${not empty review.busiReviewNo }">
+			<img src="/resources/upload/user/company/review/${review.reviewStoredFileName }" style="width: 350px; height: 350px;">
+		</c:if>
 	</div>
+	<br><br>
 	<div class="row">
 		<div class="col-2"></div>
-<pre class="col-6">
-<br>
-${review.content }
-<br>
-</pre>
+		<br>
+		<div class="col-6">${fn:substring(review.content,0,200) }</div>
+		<br>
 	</div>
-	</div>
-	
+	<br>
+</c:forEach>
+</div>
+	<input type="hidden" id="reviewMoreInput">
 	<div class="row">
 		<div class="col-2"></div>
-		<div class="col form-control text-center fw-bold">후기 더보기</div>
+		<div id="reviewMoreBtn" class="col form-control text-center fw-bold">후기 더보기</div>
 		<div class="col-2"></div>
 	</div>
 	<br>
@@ -302,25 +282,27 @@ ${review.content }
 		</div>
 	</div>
 	<br>
-	<div class="row">
-	<div class="col-2"></div>
-	<c:forEach var="notice" items="${notice }">
-		<c:forEach var="file" items="${file }" begin="0" end="0">
-			<div class="col-2">
-				<img style=" width: 100px; height: 100px; margin-left: 25px;"  src="/resources/upload/owner/company/notice/${file.storedFileName }" class="img-thumbnail" >
-				<br>
-				<a href="/user/company/notice/main?busiNo=${param.busiNo}&busiNoticeNo=${param.busiNoticeNo}"  class="fw-bold text-dark">${notice.title }</a>
-			</div>
-		</c:forEach>	
-	</c:forEach>
+	<div id="noticeWrap" class="row justify-content-center">
+		<c:forEach var="notice" items="${notice }" varStatus="status">
+				<div class="col-2">
+					<img style="width: 150px; height: 150px; margin-left: 25px;"  src="/resources/upload/owner/company/notice/${notice.storedFileName }" class="img-thumbnail" >
+					<br><br>
+					<a href="/user/company/notice/detail?busiNo=${notice.busiNo}&busiNoticeNo=${notice.busiNoticeNo}"  class="fw-bold text-dark">${notice.title }</a>
+					<br><br>
+				</div>
+		</c:forEach>
+		</div>
 	</div>
 	<br>
+	<input id="noticeMoreInput" type="hidden">
 	<div class="row">
 			<div class="col-2"></div>
-		<div class="col form-control text-center fw-bold bg-light">소식 더보기</div>
+		<div id="noticeMoreBtn" class="col form-control text-center fw-bold bg-light">소식 더보기</div>
 		<div class="col-2"></div>
 	</div>
 	<br>
+</div>
+<input type="hidden" value="${param.busiNo }" id="busiNo">
 <%@ include file="/resources/common/user/footer.jsp" %>	
 </body>
 
@@ -380,5 +362,98 @@ $(document).ready(function(){
 	$('[data-toggle="tooltip"]').tooltip()
 	
 }) 
+
+
+//후기 더보기
+var reviewCount =3;
+
+$("#reviewMoreBtn").on("click",function(){
+	
+	reviewCount+=3
+	$("#reviewMoreInput").val(reviewCount)
+	
+	var reviewMoreContent = ''
+	
+	$.ajax({
+		url :"/user/company/detail/reviewMore",
+		type:"post",
+		data : {
+				"endRow" : $("#reviewMoreInput").val(),
+				"busiNo" : $("#busiNo").val()
+				},
+		success:function(result){
+		
+			result.forEach(function(item){
+				reviewMoreContent+='<div class="row">'
+				reviewMoreContent+='<div class="col-2">'
+				reviewMoreContent+='</div>'
+				reviewMoreContent+='<div class="col">'
+				reviewMoreContent+='<img  class="bg-secondary rounded-circle"  src="/resources/upload/user/profile/'+item.userStoredFileName +'" style="width :100px; height: 100px;">'
+				reviewMoreContent+='<br>'
+				reviewMoreContent+='<p class="fw-bold">'+item.writer+'<span class="fw-bold h5 text-dark"> ( 단골 ) </span></p>'
+				reviewMoreContent+='<p class="fw-bold">'+item.userAddr1.substring(3,6)+'  조회수 ( '+ item.hitCnt +' ) 회  /'
+				reviewMoreContent+='</p>'
+				reviewMoreContent+='<br>'
+				reviewMoreContent+='</div>'
+				reviewMoreContent+='</div>'
+				reviewMoreContent+='<div class="row">'
+				reviewMoreContent+='<div class="col-2">'
+				reviewMoreContent+='</div>'
+				reviewMoreContent+='<img src="/resources/upload/user/company/review/'+item.reviewStoredFileName +'" style="width: 350px; height: 350px;">'
+				reviewMoreContent+='</div>'
+				reviewMoreContent+='<br><br>'
+				reviewMoreContent+='<div class="row">'
+				reviewMoreContent+='<div class="col-2"></div>'
+				reviewMoreContent+='<br>'
+				reviewMoreContent+='<div class="col-6">'+item.content.substring(0,200)+'</div>'
+				reviewMoreContent+='<br>'
+				reviewMoreContent+='</div>'
+				reviewMoreContent+='<br>'
+			
+			});
+			
+			$("#reviewWrap").html(reviewMoreContent)
+		}
+	});
+	
+
+});
+
+//소식 더보기
+	var noticeCount =4;
+	
+	$("#noticeMoreBtn").on("click",function(){
+		noticeCount+=4;
+		$("#noticeMoreInput").val(noticeCount)
+		
+		var noticeMoreContent=''
+		
+		$.ajax({
+			url:"/user/company/detail/noticeMore",
+			type:"post",
+			data :{"endRow" : $("#noticeMoreInput").val(),
+					"busiNo" : $("#busiNo").val() },
+			success:function(result){
+				
+				result.forEach(function(item){
+				
+					noticeMoreContent+='<div class="col-2 ">'
+					noticeMoreContent+='<img style="width: 150px; height: 150px; margin-left: 25px;"  src="/resources/upload/owner/company/notice/'+item.storedFileName +'" class="img-thumbnail" >'
+					noticeMoreContent+='<br><br>'
+					noticeMoreContent+='<a href="/user/company/notice/detail?busiNo='+item.busiNo+'"&busiNoticeNo='+item.busiNoticeNo+'"  class="fw-bold text-dark">'+item.title +'</a>'
+					noticeMoreContent+='<br><br>'
+					noticeMoreContent+='</div>'
+			
+					$("#noticeWrap").html(noticeMoreContent)
+					
+				});
+				
+			}
+		
+		})
+	
+	
+	});
+
 </script>
 </html>

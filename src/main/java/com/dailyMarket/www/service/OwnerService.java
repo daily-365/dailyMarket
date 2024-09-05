@@ -24,6 +24,8 @@ public interface OwnerService {
 		public List<StoreFileVO>selectStoreFile(int busiNo)throws Exception;
 		public void deleteStoreFile(int busiNo)throws Exception;
 		public void deleteStoreFileByFileNo(int fileNo)throws Exception;
+		public boolean selectMenuExist(int busiNo)throws Exception;
+		public boolean selectJobExist (String userId)throws Exception;
 		public void insertMenu( Map<String,Object>map )throws Exception;	
 		public void insertMenuFile(Map<String,Object>map)throws Exception;
 		public int menuFileNoCnt()throws Exception;
@@ -37,8 +39,6 @@ public interface OwnerService {
 		public void updateJobFile(int fileNo)throws Exception;
 		public void updateJob(JobVO jobVO)throws Exception;
 		public void deleteJob(int jobNo)throws Exception;
-		public boolean selectExsitMenuCnt(int busiNo)throws Exception;
-		public boolean selectExsitJobCnt(String writer)throws Exception;		
 		public void insertCompanyNotice(BusiNoticeVO busiNoticeVO)throws Exception;
 		public void insertCompanyNoticeFile(Map<String,Object> map)throws Exception;
 		public List<GetUserJobVO>selectGetUserJobList(int jobNo)throws Exception;

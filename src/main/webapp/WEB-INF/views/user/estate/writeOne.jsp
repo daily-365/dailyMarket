@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,11 +13,11 @@ input[type="text"]{
 border-radius: 10px;
 
 }
-
 </style>
 </head>
 <body>
 <%@ include file="/resources/common/user/header.jsp" %>
+
 <main class="container">
 	<br>
 	<h5 class="text-center fw-bold">매물 정보</h5>
@@ -29,7 +30,7 @@ border-radius: 10px;
 				<br><br>
 				<div class="col-6">
 					<label  class="form-label">세입자</label>
-					<input   type="radio" name="esHumType" value="세입자" checked="checked">
+					<input   type="radio" name="esHumType" value="세입자" >
 				</div>	
 				<div class="col-6">
 					<label class="form-label">집주인</label>
@@ -44,20 +45,20 @@ border-radius: 10px;
 				</div>
 				<div class="col-4">
 					<label class="form-label">주소</label>
-					<input type="text"  class="form-control" id="esLoc" name="esLoc" readonly="readonly" onclick="javascript: sample6_execDaumPostcode()" >
+					<input type="text"  class="form-control" id="esLoc" name="esLoc" readonly="readonly" onclick="javascript: sample6_execDaumPostcode()" value="${userVO.userAddr1 }">
 				</div>
 				<div class="col-4">
 					<label class="form-label">상세 주소</label>
-					<input type="text" class="form-control"  id="esLocDetail" name="esLocDetail" >
+					<input type="text" class="form-control"  id="esLocDetail" name="esLocDetail" value="${userVO.userAddr2 }" >
 				</div>
 			</div>
 			<hr>
-			<div class="row text-center fw-bold">
+			<div id="mapWrap" class="row text-center fw-bold">
 				<p>주소 확인</p>
 				<br><br>
 				<div class="col-4">
 				</div>
-				<div class="col-4">
+				<div class="col-4" >
 					<div id="map" style="width:100%;height:350px;"></div>
 				</div>
 			</div>
@@ -242,9 +243,9 @@ function viewEsLocMapFunc(){
 $(document).ready(function(){
 	
 	// 주소 API 입력 후 카카오 지도 API 호출
-	$("#esLocDetail").on("blur",function(){
-		if($("#esLoc").val() && $(this).val()){
-			//빈값 검증 후  blur 이벤트를 통해 아래 함수 호출
+	$("#mapWrap").on("click",function(){
+		if($("#esLoc").val() && $("#esLocDetail").val()){
+			//빈값 검증 후  mapWrap(맵을 포함한  전체 해당 div) click 이벤트를 통해 아래 함수 호출
 			viewEsLocMapFunc()
 		}
 	});
@@ -258,7 +259,7 @@ $(document).ready(function(){
 		}else{
 		
 			var param = {   
-						"esHumType" : $("input[name=esHumType]").val() ,
+						"esHumType" : $("input[name=esHumType]:checked").val() ,
 						"esLoc" : $("#esLoc").val() ,
 						"esLocDetail" : $("input[name=esLocDetail]").val(),
 						"esLocContent" : $("#esLocContent").val(),
@@ -302,6 +303,10 @@ $(document).ready(function(){
 	var fileSize =0;
 	var totalSize = 1024**2*3
 	
+	//에러 문구 flag : (변수를 반복문 밖에 두어 alert창 한번만 띄우게.)
+	var cntError = false;
+	var extError = false;
+	var sizeError = false;
 	
 	function fileAddFunc(e){
 		var files = e.target.files
@@ -314,17 +319,19 @@ $(document).ready(function(){
 			var fileExt = f.type.substring(f.type.lastIndexOf("/")).replace("/","")
 		
 			if(fileCnt>totalCnt){
-				alert("파일은 5개까지 등록 가능합니다.")
-				f.preventDefault()
-			
+				cntError=true;
+				return false;
 			}if(fileExt!='jpeg' && fileExt!='jpg' && fileExt!='png' && fileExt!='gif'){
-				alert("파일 형식은 jpeg/jpg/png/gif 형식만 지원합니다.")
-				f.preventDefault()
-			
+				extError=true;
+				return false;
 			}if(fileSize>totalSize){
-				alert("용량은 3M 이하여야 합니다.")
-				f.preventDefault()
+				sizeError=true;
+				return false;
 			}else{
+				cntError = false;
+				extError = false;
+				sizeError = false;
+				
 				reader.onload=function(e){
 					fileNum++;
 					fileSize+=f.size
@@ -353,7 +360,14 @@ $(document).ready(function(){
 				}
 		
 			});
-	
+			
+			if(cntError){
+				alert("파일은 최대 5개까지 올릴 수 있습니다.")
+			}if(extError){
+				alert("jepg/jpg/png/gif파일만 올려주세요")
+			}if(sizeError){
+				alert("최대 용량은 3M까지 입니다.")
+			}
 		}
 	
 	//파일업로드 AJAX

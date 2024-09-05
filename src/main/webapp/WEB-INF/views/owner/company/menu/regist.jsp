@@ -130,6 +130,8 @@ $(document).ready(function(){
 	var menuContent = new Array()
 	var list = new Array()
 	
+	var extError = false;
+	
 	function addMenuContentFunc(e){
 		var files = e.target.files;
 		var fileArr = Array.prototype.slice.call(files)
@@ -139,11 +141,12 @@ $(document).ready(function(){
 			var fileExt = f.type.substring(f.type.lastIndexOf("/")).replace("/","")
 			
 			if(fileExt!='jpeg'&&fileExt!='jpg'&&fileExt!='png'&&fileExt!='gif'){
-				alert("파일 확장자는 jpeg/jpg/png/gif만 가능합니다.")
 				$("#fileInput").val("")
 				$("#menuImg").attr("src","")
 				return false
 			}else{
+				extError=true;
+				
 				reader.onload=function(e){
 					fileNum++;
 					
@@ -193,6 +196,10 @@ $(document).ready(function(){
 			}
 				
 		});
+		
+		if(extError){
+			alert("jepg/jpg/png/gif파일만 올려주세요")
+		}
 	}
 	
 	//메뉴 정보 등록 함수						

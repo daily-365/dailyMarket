@@ -5,7 +5,7 @@ import java.util.Date;
 import com.dailyMarket.www.utils.SearchCriteria;
 
 
-public class BusiVO extends SearchCriteria {
+public class BusiVO  {
 	private int rnum;
 	
 	private int busiNo;
@@ -14,6 +14,7 @@ public class BusiVO extends SearchCriteria {
 	private String	ownerName;
 	private String	busiTel;
 	private String	busiName;
+	private String  busiType;
 	private String	busiType1;
 	private String	busiType2;
 	private String	busiType3;
@@ -21,7 +22,7 @@ public class BusiVO extends SearchCriteria {
 	private String	storeAddr;
 	private String	storeAddrDetail;
 	private String	agreeYn;
-	private String	state;
+	private String	status;
 	private Date	regDate;
 	private Date	modDate;
 	private Date	delDate;
@@ -36,6 +37,11 @@ public class BusiVO extends SearchCriteria {
 	
 	private String storedFileName;
 
+	private int hitCnt;
+	
+	private int menuNo;
+	private int jobNo;
+	
 	public int getRnum() {
 		return rnum;
 	}
@@ -90,6 +96,14 @@ public class BusiVO extends SearchCriteria {
 
 	public void setBusiName(String busiName) {
 		this.busiName = busiName;
+	}
+
+	public String getBusiType() {
+		return busiType;
+	}
+
+	public void setBusiType(String busiType) {
+		this.busiType = busiType;
 	}
 
 	public String getBusiType1() {
@@ -148,12 +162,12 @@ public class BusiVO extends SearchCriteria {
 		this.agreeYn = agreeYn;
 	}
 
-	public String getState() {
-		return state;
+	public String getStatus() {
+		return status;
 	}
 
-	public void setState(String state) {
-		this.state = state;
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public Date getRegDate() {
@@ -235,7 +249,30 @@ public class BusiVO extends SearchCriteria {
 	public void setStoredFileName(String storedFileName) {
 		this.storedFileName = storedFileName;
 	}
-	
-	
+
+	public int getHitCnt() {
+		return hitCnt;
+	}
+
+	public void setHitCnt(int hitCnt) {
+		this.hitCnt = hitCnt;
+	}
+
+	public int getMenuNo() {
+		return menuNo;
+	}
+
+	public void setMenuNo(int menuNo) {
+		this.menuNo = menuNo;
+	}
+
+	public int getJobNo() {
+		return jobNo;
+	}
+
+	public void setJobNo(int jobNo) {
+		this.jobNo = jobNo;
+	}
+
 	
 }

@@ -73,6 +73,28 @@ public class OwnerServiceImpl implements OwnerService {
 	public void deleteStoreFileByFileNo(int fileNo) throws Exception {
 		ownerDAO.deleteStoreFileByFileNo(fileNo);
 	}
+	
+	
+	@Override
+	public boolean selectMenuExist(int busiNo) throws Exception {
+		int count = ownerDAO.selectMenuExist(busiNo);
+		System.out.println(count);
+		if(count>0) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+	@Override
+	public boolean selectJobExist(String userId) throws Exception {
+		int count = ownerDAO.selectJobExist(userId);
+		System.out.println(count);
+		if(count>0) {
+			return true;
+		}else {
+			return false;
+		}
+	}
 	@Override
 	public void insertMenu( Map<String,Object>map) throws Exception {
 		ownerDAO.insertMenu(map);
@@ -134,26 +156,7 @@ public class OwnerServiceImpl implements OwnerService {
 		ownerDAO.deleteJob(jobNo);
 		ownerDAO.deleteJobFile(jobNo);
 	}
-	@Override
-	public boolean selectExsitMenuCnt(int busiNo) throws Exception {
-		int res = ownerDAO.selectExsitMenuCnt(busiNo);
-		if(res>0) {
-			return true;
-		}else {
-			return false;
-		}
 	
-	}
-	@Override
-	public boolean selectExsitJobCnt(String writer) throws Exception {
-		int res = ownerDAO.selectExsitJobCnt(writer);
-		if(res>0) {
-			return true;
-		}else {
-			return false;
-		}
-		
-	}
 	@Override
 	public void insertCompanyNotice(BusiNoticeVO busiNoticeVO) throws Exception {
 		ownerDAO.insertCompanyNotice(busiNoticeVO);		

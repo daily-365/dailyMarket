@@ -68,6 +68,15 @@ public class OwnerDAOImpl implements OwnerDAO {
 	public void deleteStoreFileByFileNo(int fileNo) throws Exception {
 		sqlSession.update("OwnerMapper.deleteStoreFileByFileNo",fileNo);
 	}
+	
+	@Override
+	public int selectMenuExist(int busiNo) throws Exception {
+		return sqlSession.selectOne("OwnerMapper.selectMenuExist");
+	}
+	@Override
+	public int selectJobExist(String userId) throws Exception {
+		return sqlSession.selectOne("OwnerMapper.selectJobExist");
+	}
 	@Override
 	public void insertMenu( Map<String,Object>map) throws Exception {
 		sqlSession.insert("OwnerMapper.insertMenu",map);
@@ -138,14 +147,7 @@ public class OwnerDAOImpl implements OwnerDAO {
 	public void deleteJobFile(int jobNo) throws Exception {
 		sqlSession.update("OwnerMapper.deleteJobFile",jobNo);
 	}
-	@Override
-	public int selectExsitMenuCnt(int busiNo) throws Exception {
-		return sqlSession.selectOne("OwnerMapper.selectExsitMenuCnt",busiNo);
-	}
-	@Override
-	public int selectExsitJobCnt(String writer) throws Exception {
-		return sqlSession.selectOne("OwnerMapper.selectExsitJobCnt",writer);
-	}
+	
 	@Override
 	public void insertCompanyNotice(BusiNoticeVO busiNoticeVO) throws Exception {
 		sqlSession.insert("OwnerMapper.insertCompanyNotice",busiNoticeVO);		

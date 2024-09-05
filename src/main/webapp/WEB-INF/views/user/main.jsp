@@ -293,6 +293,7 @@ $(document).ready(function(){
 	 $('#mainCarousel').carousel({        
 	  	interval: 3000         
 	   });
+	   
 
 });
 

@@ -7,8 +7,8 @@ From busi
 where busiNum = #{busiNum}
 </select>
 <insert id="insertOwnerRegist">
-Insert into busi (busiNum,writer,ownerName,busiTel,busiName,busiType1,busiType2,busiType3,storeTel,storeAddr,storeAddrDetail,agreeYn,introduce,homePage,title)
-		values (#{busiNum},#{writer},#{ownerName},#{busiTel},#{busiName},#{busiType1},#{busiType2},#{busiType3},#{storeTel},#{storeAddr},#{storeAddrDetail},#{agreeYn},#{introduce},#{homePage},#{title})
+Insert into busi (busiNum,writer,ownerName,busiTel,busiName,busiType,busiType1,busiType2,busiType3,storeTel,storeAddr,storeAddrDetail,agreeYn,introduce,homePage,title)
+		values (#{busiNum},#{writer},#{ownerName},#{busiTel},#{busiName},#{busiType},#{busiType1},#{busiType2},#{busiType3},#{storeTel},#{storeAddr},#{storeAddrDetail},#{agreeYn},#{introduce},#{homePage},#{title})
 </insert>
 <insert id="insertBusiFile">
 Insert into busiFile(busiNo,busiOriginFileName,busiStoredFileName,busiFileSize,writer)
@@ -16,18 +16,19 @@ Insert into busiFile(busiNo,busiOriginFileName,busiStoredFileName,busiFileSize,w
 </insert>
 <insert id="insertStoreFile">
 Insert into storefile(busiNo,originFileName,storedFileName,fileSize,writer,regDate)
-		values ( (SELECT IFNULL(max(busiNo),1)FROM busi), #{originFileName},#{storedFileName},#{fileSize},#{writer},now())
+		values ( #{busiNo}, #{originFileName},#{storedFileName},#{fileSize},#{writer},now())
 </insert>
 <select id="selectBusiByWriter" resultType="com.dailyMarket.www.vo.BusiVO">
-SELECT a.busiNo,a.busiNum,a.ownerName,a.busiTel,a.busiName,a.busiType1,a.busiType2,a.busiType3,a.storeTel,a.storeAddr,a.storeAddrDetail,a.agreeYn,a.state,a.regDate,a.modDate,a.delDate,a.deleteYn
-		,a.title,a.homePage,a.introduce,b.busiFileNo,b.busiStoredFileName
+SELECT a.busiNo,a.busiNum,a.ownerName,a.busiTel,a.busiName,a.busiType,a.busiType1,a.busiType2,a.busiType3,a.storeTel,a.storeAddr,a.storeAddrDetail,a.agreeYn,a.status,a.regDate,a.modDate,a.delDate,a.deleteYn
+		,a.title,a.homePage,a.introduce
+		,b.busiStoredFileName
 FROM busi a
 INNER JOIN busifile b
-ON a.busiNo= b.busiNo 
-WHERE 1=1
+ON a.busiNo =b.busiNo
 	AND a.writer =#{writer}
 	AND a.deleteYn ='N'
 	AND b.deleteYn ='N'
+GROUP BY busiNo
 </select>
 <update id="deleteBusiFile">
 UPDATE busiFile SET modDate=now(),delDate=now(), deleteYn='Y'
@@ -61,13 +62,25 @@ UPDATE storeFile set deleteYn='Y' , modDate =now() ,delDate =now()
 WHERE fileNo=#{fileNo}
 </update>
 
+<!-- /owner/main 에서 메뉴 및 알바 등록 여부  -->
+<select id="selectMenuExist" resultType="int">
+SELECT COUNT(menuNo) 
+FROM menu
+WHERE busiNo=#{busiNo}
+</select>
+<select id="selectJobExist" resultType="int">
+SELECT COUNT(jobNo)
+FROM job
+WHERE jobWriter =#{uesrId}
+</select>
+
 <insert id="insertMenu">
 INSERT into menu (busiNo,name,price,count,content,deleveryYn,deleveryPrice,regDate)
 			values ( (SELECT IFNULL(max(busiNo),1)FROM busi) ,#{name},#{price},#{count},#{content},#{deleveryYn},#{deleveryPrice},now())
 </insert>
 
 <select id="selectMenuFileNoCnt" resultType="int">
-SELECT IFNULL(max(menuNo)+1,1) FROM menu  
+SELECT IFNULL(max(menuNo)+1,1) FROM menu 
 </select>
 
 <!--  다중 insert Mybatis Foreach 구문 (index 포함 ) --> 
@@ -143,19 +156,6 @@ UPDATE jobFile set deleteYn='Y',delDate =now()
 	WHERE jobNo=#{jobNo}
 </update>
 
-
-<select id="selectExsitMenuCnt" resultType="int">
-SELECT count(menuNo) 
-FROM menu
-WHERE busiNo =#{busiNo}
-AND deleteYN='N'
-</select>
-<select id="selectExsitJobCnt" resultType="int">
-SELECT count(jobNo) 
-FROM job
-WHERE jobWriter =#{writer}
-AND deleteYN='N'
-</select>
 
 <insert id="insertCompanyNotice">
 Insert Into busiNotice (busiNo,title,subTitle,content,subContent,writer)

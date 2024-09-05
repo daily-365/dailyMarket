@@ -156,6 +156,7 @@ $(document).ready(function(){
 		$("#reUserInfo").attr("checked",true)
 	}else{
 		$("#reUserInfo").attr("checked",false)
+		
 	}
 	
 	
@@ -170,22 +171,38 @@ $(document).ready(function(){
 			$(".userPass").focus()
 			return false;
 		}else{
-			$("#loginForm").attr("action","/user/login")
-			$("#loginForm").submit()
+			if($("#reUserInfo").is(":checked")){
+				var userId =$(".userId").val()
+				localStorage.setItem("userId",userId)
+				
+				$("#loginForm").attr("action","/user/login")
+				$("#loginForm").submit()
+			}else{
+				$("#loginForm").attr("action","/user/login")
+				$("#loginForm").submit()
+			}
 		}
 		
 	});
 	
 	
-	
 	$("#reUserInfo").on("click",function(){
-		var userId = $(".userId").val()
-		
 		if($("#reUserInfo").is(":checked")){
 			if(!confirm("아이디를 기억하시겠습니까?")){
 				return false;
 			}else {
-				localStorage.setItem("userId",userId)
+				if(!$(".userId").val()){
+					alert("아이디를 입력해 주세요")
+					$(".userId").focus()
+					return false;
+				}else if(!$(".userPass").val()){
+					alert("비밀번호를 입력해 주세요")
+					$(".userPass").focus()
+					return false;
+				}else{
+					var userId =$(".userId").val()
+					localStorage.setItem("userId",userId)
+				}
 			}
 		}else{
 			alert("아이디를 기억하지 않습니다.")

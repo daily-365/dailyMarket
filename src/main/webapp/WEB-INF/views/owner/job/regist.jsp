@@ -7,6 +7,9 @@
 <head>
 <meta charset="UTF-8">
 <title>사장님 알바 구하기</title>
+<!-- timePicker -->
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 </head>
@@ -75,6 +78,7 @@
 			&nbsp;&nbsp;&nbsp;&nbsp;
 			<span class="fw-bold">평일</span><input type="checkbox" name="jobWorkDate" value="평일" >
 			<span class="fw-bold">주말</span><input type="checkbox" name="jobWorkDate" value="주말" >
+			<span class="fw-bold">근무일정협의</span><input type="checkbox" name="jobWorkDate"  value="근무일정협의"  >
 			<br><br>
 		</div>
 		<div style="border: 1px solid black;">
@@ -83,40 +87,13 @@
 			<div class="row">
 				<div class="col-2 "></div>
 				<div class="col-4">
-					<select id="jobWorkStartTime"  class="form-control text-center w-50">
-						<option value="">선택</option>
-						<%for(int i=0; i<24; i++) {
-							if(i==0){%>
-							<option value="<%=i %>0:00"><%=i %>0:00</option>
-						<%	}else if(i<10) {%>
-							<option value="0<%=i %>:00">0<%=i %>:00</option>	
-						<%}else{ %>
-							<option value="<%=i %>:00"><%=i %>:00</option>	
-							<% 
-							}
-						}
-						%>
-					</select>
+					<input type="text" id="jobWorkStartTime" readonly="readonly"  class="form-control text-center w-50">
 				</div>
 				<div class="col-2 fw-bold">
 					~
 				</div>
 				<div class="col-4">
-					<select id="jobWorkEndTime"  class="form-control text-center w-50">
-						<option value="">선택</option>
-						<%for(int i=0; i<24; i++) {
-							if(i==0){%>
-							<option value="<%=i %>0:00"><%=i %>0:00</option>
-						<%	}else if(i<10) {%>
-							<option value="0<%=i %>:00">0<%=i %>:00</option>	
-						<%}else{ %>
-							<option value="<%=i %>:00"><%=i %>:00</option>	
-							<% 
-							}
-						}
-						%>
-					</select>
-				</div>
+					<input type="text" id="jobWorkEndTime"  readonly="readonly" class="form-control text-center w-50"></div>
 			</div>
 			<br><br>
 		</div>	
@@ -160,17 +137,19 @@
 		</div>
 	</div>
 	<br><br>
-	<input type="text" id="jobWorkDate" style="display: none;">
-	<input type="text" id="jobWorkTime"  style="display: none;">
-	
-	<input type="text" id="jobNo" value="${jobVO.jobNo }" style="display: none;">
+	<input type="hidden" id="jobWorkDate">
+	<input type="hidden" id="jobNo" value="${jobVO.jobNo }">
 </body>
+<!-- timePicker -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <!-- daum 우편번호 api -->
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<!-- timePicker -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
 <script type="text/javascript">
 //다음 주소 api
 
@@ -224,7 +203,18 @@ function jobLocFunc() {
 
 $(document).ready(function(){
 
-
+	 $('#jobWorkStartTime , #jobWorkEndTime')
+        .timepicker({
+            timeFormat: 'HH:mm',
+            interval: 30,
+            defaultTime: '00',
+            startTime: '00:00',
+            dynamic: false,
+            dropdown: true,
+            scrollbar: true
+        });
+   
+    
 	// 근무일 ( 다중 선택  = >체크박스 )
 	$("input[name=jobWorkDate]").on("change",function(){
 		var jobWorkDateList ='';
@@ -236,11 +226,13 @@ $(document).ready(function(){
 
 	//근무 시간 start-end 합치기
 	$("#jobWorkStartTime , #jobWorkEndTime").on("change",function(){
-		var startTime =$("#jobWorkStartTime").val()
+		var startTime =$(this).val()
 		var endTime =$("#jobWorkEndTime").val()
 		$("#jobWorkTime").val(startTime+"~"+endTime)
 	});
-		$("#addFileBtn").on("click",function(){
+	
+	
+	$("#addFileBtn").on("click",function(){
 		$("#inputFile").click()
 	});
 	
@@ -257,28 +249,33 @@ $(document).ready(function(){
 	var fileSize =0;
 	var totalSize = 1024**2*3
 	
+	//에러 문구 flag : (변수를 반복문 밖에 두어 alert창 한번만 띄우게.)
+	var cntError = false;
+	var extError = false;
+	var sizeError = false;
 	
 	function fileAddFunc(e){
 	
 		var files = e.target.files
 		var fileArr = Array.prototype.slice.call(files)
 		
-		fileCnt = fileArr.length+fileNum+storedFileLength
+		fileCnt = fileArr.length
 		
 		fileArr.forEach(function(f){
 			var reader = new FileReader()
 			var fileExt = f.type.substring(f.type.lastIndexOf("/")).replace("/","")
 		
 			if(fileCnt>totalCnt){
-				alert("사진은 최대 5개까지 가능합니다.")
-				f.preventDefault()
+				return false;
 			}if(fileExt!='jpeg' &&fileExt!='jpg' &&fileExt!='png' && fileExt!='gif'){
-				alert("jpeg/jpg/png/jif 파일 형식만 지원합니다.")
-				f.preventDefault()
+				return false;
 			}if(fileSize>totalSize){
-				alert("파일은 최대 3M 까지 지원 합니다.")
-				f.preventDefault()
+				return false;
 			}else{
+				cntError = true;
+				extError = true;
+				sizeError = true;
+				
 				reader.onload=function(e){
 					fileNum ++;
 					fileSize +=f.size;
@@ -307,7 +304,14 @@ $(document).ready(function(){
 				}
 		
 			});
-		
+			
+			if(!cntError){
+				alert("파일은 최대 5개까지 올릴 수 있습니다.")
+			}if(!extError){
+				alert("jepg/jpg/png/gif파일만 올려주세요")
+			}if(!sizeError){
+				alert("최대 용량은 3M까지 입니다.")
+			}
 		}
 
 	
@@ -347,7 +351,7 @@ $(document).ready(function(){
 						"jobLoc" : $("#jobLoc").val(),
 						"jobLocDetail" : $("#jobLocDetail").val(),
 						"jobWorkDate" : $("#jobWorkDate").val(),
-						"jobWorkTime" : $("#jobWorkTime").val(),
+						"jobWorkTime" : $("#jobWorkStartTime").val()+"~"+$("#jobWorkEndTime").val(),
 						"jobLocContent" :$("#jobLocContent").val(),
 						"jobContent" :$("#jobContent").val()
 					}

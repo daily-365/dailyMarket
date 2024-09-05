@@ -46,7 +46,7 @@ svg {
             
             <div class="col-sm-12">
               <label for="userPassChk" class="form-label"><span class="text-danger fw-bold">※ </span> 비밀번호 확인</label>
-              <input type="password" class="form-control" id="userPassChk"   maxlength="20">
+              <input type="password" class="form-control" id="userPassChk"   name="userPassChk" maxlength="20">
             </div><br>
 
             <div class="col-12">
@@ -468,6 +468,11 @@ $(document).ready(function(){
 		}else if(!passReg.test($("#userPass").val())){
 			alert("비밀번호는 8 ~ 16자 영문, 숫자, 특수문자를 최소 한가지씩 조합 하여야 됩니다.")
 			$("#userPass").focus()
+			return false;
+		
+		}else if(!$("#userPassChk").val()){
+			alert("비밀번호를 확인해 주세요")
+			$("#userPassChk").focus()
 			return false;
 		
 		}else if($("#userPass").val()!=$("#userPassChk").val()){
