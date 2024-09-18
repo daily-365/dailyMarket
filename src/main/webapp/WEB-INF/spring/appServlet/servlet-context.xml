@@ -1,0 +1,124 @@
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:lang="http://www.springframework.org/schema/lang"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:websocket="http://www.springframework.org/schema/websocket"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-5.0.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd
+		http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+		http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket-4.3.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd
+		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-3.1.xsd
+		http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-3.1.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
+	<!-- DispatcherServlet Context: defines this servlet's request-processing 
+		infrastructure -->
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<annotation-driven />
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving 
+		up static resources in the ${webappRoot}/resources directory -->
+	<resources mapping="/resources/**" location="/resources/" />
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources 
+		in the /WEB-INF/views directory -->
+	<beans:bean	class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+	
+	<context:component-scan	base-package="com.dailyMarket.www.controller" />
+	
+	<!-- MultipartResolver 설정 -->
+	<beans:bean id="multipartResolver"	class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<beans:property name="maxUploadSize" value="104857600" />
+	</beans:bean>
+	<interceptors>
+		<interceptor>
+			<mapping path="/admin/main" />
+			<mapping path="/admin/product/main" />
+			<mapping path="/admin/product/detail" />
+			<mapping path="/admin/product/delete" />
+			<mapping path="/admin/product/update" />
+			<mapping path="/admin/store/main" />
+			<mapping path="/admin/store/detail" />
+			<mapping path="/admin/store/detail/update" />
+			<mapping path="/admin/job/main" />
+			<mapping path="/admin/estate/main" />
+			<mapping path="/admin/car/main" />
+			<mapping path="/admin/user/main" />
+			<beans:bean id="adminInterceptor" class="com.dailyMarket.www.utils.AdminInterceptor" />
+		</interceptor>
+		<interceptor>
+			<mapping path="/user/main" />
+			<mapping path="/user/product/main" />
+			<mapping path="/user/product/write" />
+			<mapping path="/user/product/detail" />
+			<mapping path="/user/company/main" />
+			<mapping path="/user/company/detail" />
+			<mapping path="/user/company/product/main" />
+			<mapping path="/user/company/notice/main" />
+			<mapping path="/user/company/notice/detail" />
+			<mapping path="/user/company/reivew/write" />
+			<mapping path="/user/company/review/main" />
+			<mapping path="/user/job/main" />
+			<mapping path="/user/job/write" />
+			<mapping path="/user/job/detail" />
+			<mapping path="/user/estate/main" />
+			<mapping path="/user/estate/writeOne" />
+			<mapping path="/user/estate/writeTwo" />
+			<mapping path="/user/estate/writeThree" />
+			<mapping path="/user/estate/detail" />
+			<mapping path="/user/car/main" />
+			<mapping path="/user/car/regist" />
+			<mapping path="/user/car/detail" />
+			<mapping path="/user/mypage/main" />
+			<mapping path="/user/mypage/profile" />
+			<mapping path="/user/mypage/profile/modpass" />
+			<mapping path="/user/mypage/account" />
+			<mapping path="/user/mypage/location" />
+			<mapping path="/user/inquiry/write"/>
+			<mapping path="/user/inquiry/main"/>
+			<mapping path="/user/inquiry/detail"/>
+			<mapping path="/chatting"/>
+			<mapping path="/owner/main" />
+			<mapping path="/owner/company/regist" />
+			<mapping path="/owner/company/detail" />
+			<mapping path="/owner/company/update" />
+			<mapping path="/owner/company/delete" />
+			<mapping path="/owner/company/menu/regist" />
+			<mapping path="/owner/company/menu/detail" />
+			<mapping path="/owner/mypage/main" />
+			<mapping path="/owner/job/regist" />
+			<mapping path="/owner/job/deatil" />
+			<mapping path="/owner/notice/write" />
+			<beans:bean id="userInterceptor" class="com.dailyMarket.www.utils.UserInterceptor" />
+		</interceptor>
+	</interceptors>
+	
+	<beans:bean id="chattingHandler" class="com.dailyMarket.www.utils.ChattingWebSocketHandler" />
+	<websocket:handlers>
+		<websocket:mapping handler="chattingHandler" path="/chatting"/>
+			<websocket:handshake-interceptors>
+				<beans:bean class="org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor"></beans:bean>
+			</websocket:handshake-interceptors>
+		<websocket:sockjs/>
+	</websocket:handlers>	
+	
+</beans:beans>

@@ -1,0 +1,805 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="UserMapper">
+
+<insert id="insertUserRegist">
+Insert Into user (	userId,userPass,userPassChk,userName,userNick,userMail,userTel,userBirth,userGender
+					,userAddr1,userAddr2,userAgree1,userAgree2
+					)
+			values ( #{userId},#{userPass},#{userPassChk},#{userName},#{userNick},#{userMail},#{userTel},#{userBirth},#{userGender}
+					,#{userAddr1},#{userAddr2},#{userAgree1},#{userAgree2}
+					)
+
+</insert>
+<select id="selectUserLogin" resultType="int">
+Select Count(userId)
+From user
+where 1=1
+	and userId=#{userId}
+	and userPass=#{userPass}
+</select>
+<select id="selectUserByUserId" resultType="com.dailyMarket.www.vo.UserVO">
+Select userId,userPass,userPassChk,userName,userNick,userMail,userTel,userBirth,userGender
+		,userAddr1,userAddr2,userAgree1,userAgree2
+FROM user
+WHERE userId=#{userId}
+</select> 
+
+<insert id="insertUserProduct">
+Insert into product(title,type,price,content,location,writer)
+	values(#{title},#{type},#{price},#{content},#{location},#{writer})
+</insert>
+
+<insert id="insertUserFile">
+Insert into productFile(productNo, productOriginFileName,productStoredFileName,productFileSize,productWriter)
+	values ( (SELECT IFNULL((SELECT max(productNo)+1),1) From product) ,#{productOriginFileName},#{productStoredFileName},#{productFileSize},#{productWriter})
+</insert>
+
+<select id="selectProductList" resultType="com.dailyMarket.www.vo.ProductVO">
+SELECT rnum,productNo,title,type,price,content,location,writer,hitCnt,likeCnt,regDate,modDate,delDate,deleteYn,productStoredFileName
+FROM (
+	SELECT 
+		 p.productNo,p.title,p.type,p.price,p.content,p.location,p.writer,p.hitCnt,p.likeCnt,p.regDate,p.modDate,p.delDate,p.deleteYn,
+		 f.productStoredFileName
+		 ,ROW_NUMBER() OVER (ORDER BY productNo DESC ) AS rnum
+	FROM product p
+	LEFT OUTER JOIN productFile f
+	ON p.productNo = f.productNo
+	WHERE 1=1
+	<if test="keyword!=null and !keyword.equals('')">
+		AND a.title like CONCAT('%',#{keyword},'%')
+		OR a.location like CONCAT('%',#{keyword},'%')
+	</if>
+) R
+WHERE 1=1
+	And  deleteYn='N'
+GROUP BY productNo
+<choose>
+	<when test="orderType!=null and orderType.equals('')">
+		<if test="orderType=='likeCnt'.toString()">
+			ORDER BY likeCnt DESC	
+		</if>
+		<if test="orderType=='productNo'.toString()">
+			ORDER BY productNo DESC	
+		</if>
+	</when>
+	<otherwise>
+		ORDER BY likeCnt DESC
+	</otherwise>
+</choose>
+<choose>
+	<when test="endRow!=null and endRow.equals('')">
+		LIMIT 0, 8
+	</when>
+	<otherwise>
+		LIMIT 0, #{endRow}
+	</otherwise>
+</choose>
+
+</select>
+
+<select id="selectProductTotalCount" resultType="int">
+SELECT COUNT(productNo)
+FROM product
+WHERE 1=1
+</select>
+
+<update id="updateProductHitCnt">
+UPDATE product SET hitCnt = hitCnt+1
+WHERE 1=1
+	AND productNo=#{productNo}
+</update>
+
+<select id="selectProductDetail" resultType="com.dailyMarket.www.vo.ProductVO">
+SELECT a.productNo,a.title,a.type,a.price,a.content,a.location,a.writer,a.hitCnt,a.likeCnt,a.regDate,a.modDate,a.delDate,a.deleteYn
+	,b.storedFileName as profileFile
+FROM product a
+INNER JOIN userProFileFile b
+ON a.writer =b.userId
+WHERE 1=1
+	AND a.productNo =#{productNo}
+	AND a.deleteYn ='N'
+	AND b.deleteYn ='N'
+GROUP BY productNo
+</select>
+<select id="selectProductFile" resultType="com.dailyMarket.www.vo.ProductFileVO">
+SELECT productFileNo,productNo,productOriginFileName,productStoredFileName,productFileSize,productWriter,regDate,modDate,delDate,deleteYn
+FROM productfile
+WHERE productNo = #{productNo}
+</select>
+
+<sql id="searchBusiType">
+<if test="busiType!=null and !busiType.equals('')">
+	<if test="busiType=='식당'.toString()">AND busiType = #{busiType}</if>
+	<if test="busiType=='카페'.toString()">AND busiType = #{busiType}</if>
+	<if test="busiType=='용달/이사'.toString()">AND busiType = #{busiType}</if>
+	<if test="busiType=='뷰티/미용'.toString()">AND busiType = #{busiType}</if>
+	<if test="busiType=='헬스/필라테스/요가'.toString()">AND busiType = #{busiType}</if>
+</if>
+</sql>
+
+<sql id="inquirySearch">
+<if test="keyword!=null and !keyword.equals('')">
+	AND ( title like CONCAT('%',#{keyword},'%')
+		OR content like CONCAT('%',#{keyword},'%')
+	    )
+</if>
+</sql>
+
+<select id="selectBusiList" resultType="com.dailyMarket.www.vo.BusiVO">
+SELECT rnum,busiNo,busiNum,writer,ownerName,busiTel,busiName,busiType,busiType1,busiType2,busiType3,storeTel,storeAddr,storeAddrDetail
+	  ,agreeYn,status,homepage,introduce,regDate,modDate,delDate,deleteYn,title,storedFileName,hitCnt
+	FROM (
+		SELECT 
+			a.busiNo,a.busiNum,a.writer,a.ownerName,a.busiTel,a.busiName,a.busiType,a.busiType1,a.busiType2,a.busiType3,a.storeTel
+			,a.storeAddr,a.storeAddrDetail,a.agreeYn,a.status,a.homepage,a.introduce,a.regDate,a.modDate,a.delDate,a.deleteYn,a.title
+			,b.storedFileName,a.hitCnt
+			,ROW_NUMBER() OVER (ORDER BY hitCnt DESC ) rnum
+	FROM busi a
+	inner join storeFile b
+	ON a.busiNo = b.busiNo	
+	WHERE 1=1
+	<include refid="searchBusiType"/>
+		AND a.deleteYn='N'
+		AND b.deleteYn='N'
+		AND a.status = 'Y'
+	) R
+WHERE 1=1
+	AND rnum BETWEEN 1 AND 8
+	
+GROUP BY busiNo
+ORDER BY hitCnt DESC
+</select>
+
+
+<select id="selectByBusiNo" resultType="com.dailyMarket.www.vo.BusiVO">
+SELECT busiNo,busiNum,writer,ownerName,busiTel,busiName,busiType1,busiType2,busiType3,storeTel,storeAddr,storeAddrDetail,introduce,homePage,agreeYn,status
+		,regDate,modDate,delDate,deleteYn,title,hitCnt
+FROM busi
+WHERE 1=1
+	AND busiNo= #{busiNo}
+	AND deleteYn='N'
+</select>
+
+<select id="selectStoreList" resultType="com.dailyMarket.www.vo.StoreFileVO">
+SELECT fileNo,busiNo,originFileName,storedFileName,fileSize,writer,regDate,modDate,delDate,deleteYn
+FROM storeFile
+WHERE 1=1
+ AND busiNo = #{busiNo}
+ AND deleteYn='N'
+</select>
+
+<select id="selectMenuList" resultType="com.dailyMarket.www.vo.MenuVO">
+SELECT a.menuNo,a.busiNo,a.name,a.price,a.count,a.content,a.deleveryYn,a.deleveryPrice,a.regDate,a.modDate,a.delDate,a.deleteYn
+		,b.fileNo,b.menuNo,b.originFileName,b.storedFileName,b.fileSize,b.fileSize,b.writer,b.regDate,b.modDate,b.delDate,b.deleteYn
+FROM menu a
+INNER JOIN menufile b
+ON a.menuNo = b.menuNo
+WHERE busiNo = #{busiNo}
+and a.deleteYn='N'
+and b.deleteYn ='N'
+</select>
+<select id ="selectBusiFile" resultType="com.dailyMarket.www.vo.BusiFileVO">
+SELECT busiFileNo,busiNo,busiOriginFileName,busiStoredFileName,busiFileSize,writer,regDate,modDate,delDate,deleteYn
+FROM busiFile
+WHERE busiNo=#{busiNo}
+AND deleteYn='N'
+</select>
+<update id="updateBusiHitCnt">
+UPDATE busi SET hitCnt = IFNULL(hitCnt+1,1)
+WHERE busiNo=#{busiNo}
+</update>
+
+
+
+<insert id="insertEstateOne">
+INSERT INTO estate(esWriter,esHumType,esRoomType,esLoc,esLocDetail,esLocContent,regDate1)
+	VALUES (#{esWriter}, #{esHumType},#{esRoomType},#{esLoc},#{esLocDetail},#{esLocContent},NOW())
+</insert>
+<insert id="insertEstateFile">
+Insert Into estateFile (esNo ,originFileName ,storedFileName ,fileSize ,writer )
+		Values ( (SELECT IFNULL(max(esNo)+1,1) FROM estate  )  ,#{originFileName},#{storedFileName},#{fileSize},#{writer})
+</insert>
+
+<update id="updateEstateTwo">
+UPDATE estate SET esTradeType =#{esTradeType} , esPrice =#{esPrice}, esPosiType =#{esPosiType}
+				, esSize1 =#{esSize1}, esSize2 =#{esSize2}, esOption1 =#{esOption1}, esOption2 =#{esOption2}
+				, esOption3 =#{esOption3}, esCostYn =#{esCostYn}, esCost =#{esCost}, esCostChk =#{esCostChk}, esSeperCostChk =#{esSeperCostChk}
+				, esCostContent =#{esCostContent}
+				,regDate2 =now()
+	WHERE 1=1
+		AND esNo= (SELECT max(esNo) FROM estate WHERE esWriter = #{esWriter}   )
+</update>
+<update id="updateEstateThree">
+UPDATE estate SET esLoanYn = #{esLoanYn},esAnimalYn = #{esAnimalYn},esParkingYn = #{esParkingYn}
+				 ,esMoveYn = #{esMoveYn},esMoveDate = #{esMoveDate}
+				 ,esFacility = #{esFacility},esAdvantage = #{esAdvantage},esHouseIntro = #{esHouseIntro}
+				 ,regDate3 =now()
+	WHERE 1=1
+		AND esNo= (SELECT max(esNo) FROM estate WHERE esWriter = #{esWriter}   )
+</update>
+
+
+<select id="selectEstateList" resultType="com.dailyMarket.www.vo.EstateVO">
+SELECT rnum,esNo,esWriter,esHumType,esRoomType,esLoc,esLocDetail,esLocContent,esTradeType,esPrice,esPosiType,esTradeYn,
+			esSize1,esSize2,esOption1,esOption2,esOption3,esCostYn,esCostChk,esSeperCostChk,esCostContent,esLoanYn,esAnimalYn,
+			esParkingYn,esMoveYn,esMoveDate,esFacility,esAdvantage,esHouseIntro,regDate1,regDate2,regDate3,modDate1,modDate2,modDate3,
+			delDate,deleteYn,
+			hitCnt,
+			storedFileName
+	FROM(
+		SELECT 
+			 a.esNo,a.esWriter,a.esHumType,a.esRoomType,a.esLoc,a.esLocDetail,a.esLocContent,a.esTradeType,a.esPrice,a.esPosiType,a.esTradeYn
+			,a.esSize1,a.esSize2,a.esOption1,a.esOption2,a.esOption3,a.esCostYn,a.esCost,a.esCostChk,a.esSeperCostChk,a.esCostContent
+			,a.esLoanYn,a.esAnimalYn,a.esParkingYn,a.esMoveYn,a.esMoveDate,a.esFacility,a.esAdvantage,a.esHouseIntro
+			,a.regDate1,a.regDate2,a.regDate3,a.modDate1,a.modDate2,a.modDate3,a.delDate,a.deleteYn
+			,a.hitCnt
+			,b.storedFileName
+			, ROW_NUMBER() OVER (ORDER BY hitCnt desc) AS rnum
+	FROM estate a
+	INNER JOIN estateFile b
+	ON a.esNo =b.esNo
+	WHERE 1=1
+	<if test="esLoc!=null and !esLoc.equals('')">
+		AND esLoc like CONCAT('%',#{esLoc},'%')
+	</if>
+	)R
+WHERE 1=1
+	AND deleteYn='N'
+GROUP BY esNo
+ORDER BY hitCnt desc 
+LIMIT 0, #{endRow}
+</select>
+<select id="selectEstateFile" resultType="com.dailyMarket.www.vo.EstateFileVO">
+SELECT fileNo,esNo,originFileName,storedFileName,fileSize,writer,regDate,modDate,delDate,deleteYn
+FROM estatefile
+WHERE 1=1
+	AND deleteYn='N'
+</select>
+<select id="selectEstateDetail" resultType="com.dailyMarket.www.vo.EstateVO">
+SELECT esNo,esWriter,esHumType,esRoomType,esLoc,esLocDetail,esLocContent,esTradeType,esPrice,esPosiType,esTradeYn
+		,esSize1,esSize2,esOption1,esOption2,esOption3,esCostYn,esCost,esCostChk,esSeperCostChk,esCostContent
+		,esLoanYn,esAnimalYn,esParkingYn,esMoveYn,esMoveDate,esFacility,esAdvantage,esHouseIntro
+		,regDate1,regDate2,regDate3,modDate1,modDate2,modDate3,delDate,deleteYn
+FROM estate
+WHERE 1=1
+	AND deleteYn='N'
+	AND esNo=#{esNo}
+</select>
+<select id="selectEstateFileDetail" resultType="com.dailyMarket.www.vo.EstateFileVO">
+SELECT fileNo,esNo,originFileName,storedFileName,fileSize,writer,regDate,modDate,delDate,deleteYn
+FROM estatefile
+WHERE 1=1
+	AND deleteYn='N'
+	AND esNo=#{esNo}
+</select>
+<update id="updateEstateHitCnt">
+UPDATE estate SET hitCnt=hitCnt+1
+WHERE esNo=#{esNo}
+</update>
+
+
+<insert id="insertCarRegist">
+Insert Into car (carUserId,carWriter,carPrice,carType,carManuFacturing,carModel,carRank,carDetailRank,carDiffDate,carRegDate
+			,carDistance,carDisplaceMent,carFuel,carTransMission,carAccidentCnt,carSpecialUseYn
+			,carChangeCnt,carOption1,carOption2,carOption3,carAdditionInfo,carIntro,carLoc)
+	values (#{carUserId},#{carWriter},#{carPrice},#{carType},#{carManuFacturing},#{carModel},#{carRank},#{carDetailRank},#{carDiffDate},#{carRegDate},
+			#{carDistance},#{carDisplaceMent},#{carFuel},#{carTransMission},#{carAccidentCnt},#{carSpecialUseYn},
+			#{carChangeCnt},#{carOption1},#{carOption2},#{carOption3},#{carAdditionInfo},#{carIntro},#{carLoc})
+</insert>
+<insert id="insertCarFile">
+Insert Into carFile (writer,carNo,originFileName,storedFileName,fileSize)
+			values (#{writer},( SELECT IFNULL(max(carNo),1) FROM car  ) , #{originFileName},#{storedFileName},#{fileSize})
+</insert>
+<select id="selectCarList" resultType="com.dailyMarket.www.vo.CarVO">
+SELECT rnum,carNo,carWriter,carPrice,carTradeYn,carUserId,carType,carManuFacturing,carModel
+			,carRank,carDetailRank,carDiffDate,carRegDate,carDistance,carDisplaceMent
+			,carFuel,carTransMission,carAccidentCnt,carSpecialUseYn,carChangeCnt
+			,carOption1,carOPtion2,carOption3,carAdditionInfo,carIntro,carLoc
+			,regDate,modDate,delDate,deleteYn,hitCnt
+			,storedFileName
+	FROM ( 
+		SELECT
+			 a.carNo,a.carWriter,a.carPrice,a.carTradeYn,a.carUserId,a.carType,a.carManuFacturing,a.carModel
+			,a.carRank,a.carDetailRank,a.carDiffDate,a.carRegDate,a.carDistance,a.carDisplaceMent
+			,a.carFuel,a.carTransMission,a.carAccidentCnt,a.carSpecialUseYn,a.carChangeCnt
+			,a.carOption1,a.carOPtion2,a.carOption3,a.carAdditionInfo,a.carIntro,a.carLoc
+			,a.regDate,a.modDate,a.delDate,a.deleteYn,a.hitCnt
+			,b.storedFileName
+			,ROW_NUMBER() OVER(ORDER BY hitCnt DESC) AS rnum
+		FROM car a
+		INNER JOIN carfile b
+		ON a.carUserId = b.writer
+		WHERE 1=1
+		<if test="carLoc!=null and !carLoc.equals('')">
+			AND carLoc like CONCAT('%',#{carLoc},'%')
+		</if>
+		) R
+WHERE 1=1
+	AND deleteYn='N'
+
+GROUP BY carNo
+ORDER BY hitCnt DESC
+LIMIT 0, #{endRow}
+</select>
+<select id="selectCarFile"  resultType="com.dailyMarket.www.vo.CarFileVO" >
+SELECT fileNo,carNo,writer,originFileName,storedFileName,fileSize,regDate,modDate,delDate,deleteYn
+FROM carFile
+WHERE deleteYn='N'
+	AND carNo =#{carNo}
+</select>
+<select id="selectCarVO" resultType="com.dailyMarket.www.vo.CarVO">
+SELECT a.carNo,a.carWriter,a.carPrice,a.carTradeYn,a.carUserId,a.carType,a.carManuFacturing,a.carModel
+		,a.carRank,a.carDetailRank,a.carDiffDate,a.carRegDate,a.carDistance,a.carDisplaceMent
+		,a.carFuel,a.carTransMission,a.carAccidentCnt,a.carSpecialUseYn,a.carChangeCnt
+		,a.carOption1,a.carOPtion2,a.carOption3,a.carAdditionInfo,a.carIntro,a.carLoc
+		,a.regDate,a.modDate,a.delDate,a.deleteYn,a.hitCnt
+		,b.storedFileName
+FROM car a
+INNER JOIN userProfileFile b
+ON a.carUserId =b.userId
+WHERE 1=1
+	AND  a.deleteYn='N'
+	AND  b.deleteYn='N'
+	AND  a.carNo =#{carNo}
+</select>
+<update id="updateCarHitCnt">
+UPDATE car SET hitCnt=hitCnt+1
+WHERE carNo=#{carNo}
+</update>
+
+
+<select id="selectJobList" resultType="com.dailyMarket.www.vo.JobVO">
+SELECT rnum,jobNo,jobWriter,jobCompany,jobTitle,jobType,jobMoney,jobLoc,jobLocDetail,jobWorkTime,jobLocContent,hitCnt
+		,regDate,modDate,delDate,deleteYn,storedFileName
+		FROM ( SELECT 	 a.jobNo,a.jobWriter,a.jobCompany,a.jobTitle,a.jobType,a.jobMoney,
+				a.jobLoc,a.jobLocDetail,a.jobWorkTime,a.jobLocContent,a.hitCnt,
+				a.regDate,a.modDate,a.delDate,a.deleteYn,
+				b.storedFileName,
+				ROW_NUMBER() OVER(ORDER BY hitCnt) AS rnum
+			FROM job  a  	
+			INNER JOIN jobfile b
+			ON a.jobNo =b.jobNo
+			WHERE 1=1
+			<if test="jobLoc!=null and !jobLoc.equals('')">
+				AND a.jobLoc LIKE CONCAT('%',#{jobLoc},'%')
+			</if>
+		)R
+WHERE 1=1 
+	AND deleteYn='N'
+GROUP BY jobNo
+ORDER BY hitCnt DESC
+LIMIT 0 ,#{endRow}
+
+</select>
+<select id="selectJobFile" resultType="com.dailyMarket.www.vo.JobFileVO">
+SELECT fileNo,jobNo,originFileName,storedFileName,fileSize,writer,regDate,modDate,delDate,deleteYn
+FROM jobFile
+WHERE 1=1
+	AND deleteYN='N'
+	AND jobNo=#{jobNo}
+</select>
+<select id="selectJobByNo" resultType="com.dailyMarket.www.vo.JobVO">
+SELECT jobNo,jobWriter,jobCompany,jobTitle,jobType,jobMoney,jobLoc,jobLocDetail,jobWorkDate,jobWorkTime,jobLocContent,jobContent,hitCnt,
+			regDate,modDate,delDate,deleteYn,
+			TIMESTAMPDIFF(MINUTE,regDate,NOW()) regMinute,TIMESTAMPDIFF(HOUR,regDate,NOW()) regHour ,TIMESTAMPDIFF(DAY ,regDate,NOW()) regDay ,
+			TIMESTAMPDIFF(WEEK ,regDate,NOW())regWeek , TIMESTAMPDIFF(MONTH	,regDate,NOW())regMonth , TIMESTAMPDIFF(YEAR ,regDate,NOW())  regYear
+FROM job
+WHERE deleteYn='N'
+And jobNo=#{jobNo}
+</select>
+<update id="updateJobHitCnt">
+UPDATE job SET hitCnt=hitCnt+1
+WHERE jobNo=#{jobNo}
+</update>
+
+<select id="selectCompanyNoticeList" resultType="com.dailyMarket.www.vo.BusiNoticeVO"> 
+SELECT a.busiNoticeNo,a.busiNo,a.title,a.subTitle,a.content,a.subContent,a.regDate,a.modDate,a.delDate,a.deleteYn,a.hitCnt
+		,b.storedFileName
+FROM busiNotice a
+INNER JOIN busiNoticeFile b
+ON a.busiNoticeNo = b.busiNoticeNo
+WHERE busiNo = #{busiNo}
+AND a.deleteYn='N'
+GROUP BY busiNoticeNo
+limit 0 , #{endRow}
+</select>
+
+<select id="selectCompanyNoticeByNO" resultType="com.dailyMarket.www.vo.BusiNoticeVO"> 
+SELECT busiNoticeNo,busiNo,title,subTitle,content,subContent,regDate,modDate,delDate,deleteYn,HitCnt
+FROM busiNotice
+WHERE busiNoticeNo=#{busiNoticeNo}
+AND deleteYn='N'
+limit 0 , #{endRow}
+</select>
+<select id="selectCompanyNoticeFileByNo" resultType="com.dailyMarket.www.vo.BusiNoticeFileVO">
+SELECT fileNo,busiNoticeNo,originFileName,storedFileName,fileSize,writer,regDate,modDate,delDate,deleteYn
+FROM busiNoticeFile
+WHERE busiNoticeNo=#{busiNoticeNo}
+AND deleteYn='N'
+</select>
+
+
+<update id="updateNoticeHitCnt">
+UPDATE busiNotice SET hitCnt = hitCnt+1
+WHERE 1=1
+	AND busiNoticeNo=#{busiNoticeNo}
+</update>
+
+<insert id="insertCompanyReview">
+Insert into busiReview (busiNo,title,content,writer)
+	values(#{busiNo},#{title},#{content},#{writer})
+</insert>
+
+<insert id="insertCompanyReviewFile">
+Insert into busiReviewFile (busiReviewNo, originFileName,storedFileName,fileSize,writer)
+	values( (SELECT IFNULL(max(busiReviewNo)+1,1) FROM busiReview ) ,   #{originFileName},#{storedFileName},#{fileSize},#{writer})
+</insert>
+
+<!-- review 리스트 전체 출력 (/user/company/main) -->
+<select id="selectCompanyReviewList" resultType="com.dailyMarket.www.vo.BusiReviewVO">
+SELECT a.busiReviewNo,a.busiNo,a.title,a.content,a.writer,a.regDate,a.modDate,a.delDate,a.deleteYn,a.hitCnt
+		,b.storedFileName AS reviewStoredFileName
+		,c.storedFileName AS userStoredFileName
+		,d.userAddr1
+		,e.busiName
+From busireview a
+INNER JOIN busireviewfile b
+ON a.busiReviewNo = b.busiReviewNo
+INNER JOIN userProfilefile c
+ON a.writer = c.userId
+INNER JOIN user d
+ON a.writer =d.userId
+INNER JOIN busi e
+ON a.busiNo =e.busiNo
+WHERE 1=1
+	AND a.deleteYn='N'
+	AND b.deleteYn='N'
+	AND c.deleteYn='N'
+GROUP BY busiReviewNo
+ORDER BY a.hitCnt DESC  
+limit 0,4
+</select>
+
+<select id="selectCompanyReviewByBusiNo" resultType="com.dailyMarket.www.vo.BusiReviewVO">
+SELECT a.busiReviewNo,a.busiNo,a.title,a.content,a.writer,a.regDate,a.modDate,a.delDate,a.deleteYn,max(a.hitCnt) as hitCnt
+		 ,TIMESTAMPDIFF(MINUTE, a.regDate,NOW()) regMinute,TIMESTAMPDIFF(HOUR, a.regDate,NOW()) regHour,TIMESTAMPDIFF(DAY , a.regDate,NOW()) regDay
+		 ,TIMESTAMPDIFF(WEEK  , a.regDate,NOW()) regWeek,TIMESTAMPDIFF(MONTH  , a.regDate,NOW()) regMonth,TIMESTAMPDIFF(YEAR, a.regDate,NOW()) regYear
+		,b.storedFileName AS reviewStoredFileName
+		,c.storedFileName AS userStoredFileName
+		,d.userAddr1
+From busireview a
+INNER JOIN busireviewfile b
+ON a.busiReviewNo = b.busiReviewNo
+INNER JOIN userProfilefile c
+ON a.writer = c.userId
+INNER JOIN user d
+ON a.writer =d.userId
+WHERE 1=1
+	AND a.busiNo =#{busiNo}
+	AND a.deleteYn='N'
+	AND b.deleteYn='N'
+	AND c.deleteYn='N'
+GROUP BY busiReviewNo
+ORDER BY hitCnt DESC
+limit 0,#{endRow}
+</select>
+
+<select id="selectReviewByReviewNo" resultType="com.dailyMarket.www.vo.BusiReviewVO">
+SELECT busiReviewNo,busiNo,title,content,writer,hitCnt,regDate,modDate,delDate,deleteYn
+FROM busiReview
+WHERE 1=1
+	AND busiReviewNo=#{busiReviewNo}
+</select>
+
+<select id="selectCompanyReviewFileByBusiViewNo" resultType="com.dailyMarket.www.vo.BusiReviewFileVO">
+SELECT fileNo,busiReviewNo,originFileName,storedFileName,fileSize,writer,regDate,modDate,delDate,deleteYn
+FROM busiReviewFile
+WHERE busiReviewNo = #{busiReviewNo}
+AND deleteYn='N'
+</select>
+
+<update id="updateReviewHitCnt">
+UPDATE busiReview SET hitCnt=hitCnt+1
+WHERE 1=1
+	AND busiReviewNo=#{busiReviewNo}
+</update>
+
+
+<insert id="insertUserJob">
+Insert into userJob (writer,lastName,firstName,tel,gender,birthYear
+					,careerYn,careerLoc,careerWork,careerYear,careerDiff,advantage,introduce,addInfo)
+		values (#{writer},#{lastName},#{firstName},#{tel},#{gender},#{birthYear}
+				,#{careerYn},#{careerLoc},#{careerWork},#{careerYear},#{careerDiff},#{advantage},#{introduce},#{addInfo})
+</insert>
+<insert id="insertUserJobFile">
+Insert Into userJobFile ( userJobNo,originFileName,storedFileName,fileSize,writer )
+	values ( (select IFNULL(max(userJobNo),1) from userJob   ) , #{originFileName}, #{storedFileName}, #{fileSize}, #{writer}   )
+</insert>
+<select id="selectUserJobByWriter" resultType="com.dailyMarket.www.vo.UserJobVO">
+SELECT a.userJobNo,a.writer,a.lastName,a.firstName,a.tel,a.gender,a.birthYear,a.careerYn,a.careerLoc,a.careerWork,a.careerYear,a.careerDiff
+		,a.advantage,a.introduce,a.addInfo,a.regDate,a.modDate,a.delDate,a.deleteYn
+		,b.storedFIleName
+FROM userjob a
+INNER JOIN userjobfile b
+ON a.userJobNo =b.userJobNo
+WHERE a.writer = #{writer}
+AND a.deleteYn ='N'
+AND b.deleteYn ='N'
+</select>
+<update id="updateUserJob">
+UPDATE userJob set writer=#{writer},lastName=#{lastName},firstName=#{firstName},tel=#{tel},gender=#{gender},birthYear=#{birthYear}
+				,careerYn=#{careerYn},careerLoc=#{careerLoc},careerWork=#{careerWork},careerYear=#{careerYear},careerDiff=#{careerDiff}
+				,advantage=#{advantage},introduce=#{introduce},addInfo=#{addInfo}
+	WHERE writer =#{writer}
+</update>
+<update id="updateUserJobFile">
+UPDATE userJobFile set delDate = now(), deleteYn='Y'
+WHERE fileNo != (SELECT MAX(fileNo) AS fileNo FROM userjobfile)
+</update>
+<update id="deleteUserJob">
+UPDATE userJob set delDate = now() ,deleteYn='Y'
+	WHERE writer=#{writer}
+</update>
+<update id="deleteUserJobFile">
+UPDATE userJobFile set delDate = now() ,deleteYn='Y'
+	WHERE writer=#{writer}
+</update>
+<select id="selectUserJobWrtieYn" resultType="int">
+SELECT COUNT(userJobNo)
+FROM userjob
+WHERE writer =#{writer}
+</select>
+
+<!-- 알바 지원 -->
+<insert id="insertGetUserJob">
+Insert Into getUserJob (jobNo,userId,status)
+	Values (#{jobNo},#{userId},'S')	
+</insert>
+<!-- 로그인한 사용자가 해당 업체에 지원했는지 여부 -->
+<select id="selectGetUserJobYn" resultType="int">
+SELECT COUNT(getUserJobNo)
+FROM getUserJob
+WHERE 1=1 
+AND userId = #{userId}
+AND jobNo = #{jobNo}
+</select>
+
+<!-- 마이페이지 : 회원정보 불러오기 -->
+<select id="selectUserByWriter" resultType="com.dailyMarket.www.vo.UserVO">
+SELECT userId,userPass,userPassChk,userName,userNick,userMail,userTel,userBirth,userGender,userAddr1,userAddr2,userAgree1,userAgree2,regDate,modDate,delDate,deleteYn
+FROM user 
+WHERE userId =#{userId}
+And deleteYn ='N'
+</select>
+<!-- 비밀번호 확인 쿼리문 -->
+<select id="selectUserPassChk" resultType="int">
+SELECT COUNT(userId)
+FROM user
+WHERE 1=1
+And userId = #{userId}
+And userPass =#{userPass}
+And userPassChk =#{userPassChk}
+</select>
+<!-- 회언정보 수정 쿼리문 -->
+<update id="updateUserInfo">
+Update user SET userName=#{userName},userNick=#{userNick},userMail=#{userMail},userTel=#{userTel}
+			,userBirth=#{userBirth},userAddr1=#{userAddr1},userAddr2=#{userAddr2},modDate= now()
+where userId =#{userId}
+</update>
+<!-- 프로필 사진 등록 -->
+<insert id="insertUserPofileFile">
+Insert into userProfileFile(userId,originFileName,storedFileName,fileSize)
+		Values (#{userId},#{originFileName},#{storedFileName},#{fileSize})
+</insert>
+<!-- 프로필 사진 등록 여부 -->
+<select id="selectUserProfileYn" resultType="com.dailyMarket.www.vo.UserProfileFileVO">
+Select fileNo,userId,originFileName,storedFileName,fileSize,regDate,modDate,delDate,deleteYn
+From userProfileFile
+where deleteYn='N'
+And userId =#{writer}
+</select>
+<!-- 이전 사진은 delete.. -->
+<update id="deleteUserProfileFile">
+Update userProfileFile set deleteYn='Y' , delDate=now()
+Where fileNo = #{fileNo}
+</update>
+<!-- 프로필 사진 리스트 -->
+<select id="selectUserProfileFileList" resultType="com.dailyMarket.www.vo.UserProfileFileVO">
+SELECT a.fileNo,a.userId,a.originFileName,a.storedFileName AS profileFile ,a.fileSize,a.regDate,a.modDate,a.delDate,a.deleteYn
+		,b.busiReviewNo,b.busiNo,b.title,b.content,b.writer,b.hitCnt,b.regDate,b.modDate,b.delDate,b.deleteYn
+		,c.storedFileName 
+From userprofilefile a
+INNER JOIN busireview b
+ON a.userId =b.writer
+INNER JOIN busireviewfile c
+ON b.busiReviewNo =c.busiReviewNo
+WHERE a.deleteYn='N'
+GROUP BY busiReviewNo
+</select>
+
+<!-- 기존 비밀번호와 동일 여부 확인 -->
+<select id="selectPrevPassChk" resultType="com.dailyMarket.www.vo.UserVO">
+SELECT userPass
+FROM user
+WHERE userId = #{userId}
+</select>
+<!-- 비밀번호 변경 -->
+<update id="updateModPass">
+UPDATE user SET userPass=#{userPass},userPassChk=#{userPassChk} ,modDate = now()
+WHERE userId =#{userId}
+</update>
+<!--계좌 충전 -->
+<insert id="insertAccount" >
+Insert into userAccount (userId,userName,accountNum,tradeBank,saveMoney)
+	values (#{userId},#{userName},#{accountNum},#{tradeBank},#{saveMoney})
+</insert>
+
+<select id="selectAccount" resultType="com.dailyMarket.www.vo.UserAccountVO">
+SELECT userId,accountNum,tradeBank,SUM(saveMoney) AS saveMoney
+FROM userAccount
+WHERE userId=#{userId}
+GROUP BY accountNum
+</select>
+
+<!-- 물품 구매 -->
+<insert id="insertUserTrade">
+INSERT INTO userTrade(userId,productNo,title,content,price,location, likeDate)
+		VALUES (#{userId},#{productNo},#{title},#{content} ,#{price},#{location}, now())
+</insert>
+<!-- 찜하기 -->
+<update id="updateUserLike">
+UPDATE product SET likeCnt = likeCnt+1
+WHERE productNo =#{productNo} 
+</update>
+<!-- 찜하기 조회 -->
+<select id="selectProductByNo" resultType="com.dailyMarket.www.vo.ProductVO">
+SELECT userId,productNo,title,content,price,location,likeDate,purChaseDate,regDate,modDate,delDate,deleteYn
+FROM userTrade
+WHERE  productNo =#{productNo}
+AND deleteYn='N'
+</select>
+<!-- 찜하기 취소 -->
+<update id="updateUserLikeCancle">
+UPDATE userTrade set deleteYn='Y' , delDate =now()
+WHERE  productNo =#{productNo}
+</update>
+<!-- 관심목록 조회 -->
+<select id="selectLikeList" resultType="com.dailyMarket.www.vo.UserTradeVO">
+SELECT a.idx,a.userId,a.productNo,a.title,a.content,a.price,a.location, a.likeDate,a.purChaseDate,a.regDate,a.modDate,a.delDate,a.deleteYn
+		,b.productStoredFileName
+FROM usertrade a
+INNER JOIN productfile b
+ON a.productNo =b.productNo
+WHERE a.userId=#{userId}
+AND a.deleteYn='N'
+GROUP BY productNo
+</select>
+<!-- 판매내역 -->
+<select id="selectProductSalesList" resultType="com.dailyMarket.www.vo.ProductVO">
+SELECT a.productNo,a.title,a.type,a.price,a.content,a.location,a.writer
+		,a.tradeYn,a.tradeId,a.tradeDate,a.hitCnt,a.likeCnt,a.regDate,a.modDate,a.delDate,a.deleteYn
+		,b.productStoredFileName
+FROM product a
+INNER JOIN productfile b
+ON a.productNo =b.productNo
+WHERE a.writer=#{userId}
+AND a.deleteYn='N'
+GROUP BY productNo
+</select>
+
+<!-- 이벤트 -->
+<select id="selectEventList" resultType="com.dailyMarket.www.vo.EventVO">
+SELECT rnum,eventNo,title,content,regDate,modDate,delDate,deleteYn
+FROM (SELECT eventNo,title,content,regDate,modDate,delDate,deleteYn
+	 ,ROW_NUMBER() OVER(ORDER BY eventNo desc) AS rnum
+	 FROM event
+	WHERE 1=1
+	AND deleteYn='N'
+	)R
+WHERE 1=1
+AND rnum BETWEEN #{startRow} AND #{endRow}
+ORDER BY eventNo desc 
+</select>
+<select id="selectEventTotalCnt" resultType="int">
+SELECT COUNT(eventNo)
+FROM event
+WHERE 1=1
+	AND deleteYn ='N'
+</select>
+<!-- 공지사항 -->
+<select id="selectNoticeList" resultType="com.dailyMarket.www.vo.NoticeVO">
+SELECT rnum, noticeNo,title,content,regDate,modDate,delDate,deleteYn
+FROM ( SELECT noticeNo,title,content,regDate,modDate,delDate,deleteYn
+	  ,ROW_NUMBER() OVER(ORDER BY noticeNo desc) AS rnum
+	FROM notice
+	WHERE 1=1
+	AND deleteYn='N'
+	)R
+WHERE 1=1
+AND rnum BETWEEN #{startRow} AND #{endRow}
+ORDER BY noticeNo desc
+</select>
+<select id="selectNoticeTotalCnt" resultType="int">
+SELECT COUNT(noticeNo)
+	FROM notice
+	WHERE 1=1
+	AND deleteYn ='N'
+</select>
+<select id="selectNoticeByNo" resultType="com.dailyMarket.www.vo.NoticeVO" >
+SELECT noticeNo,title,content,regDate,modDate,delDate,deleteYn
+	FROM notice
+	WHERE 1=1
+	AND noticeNo=#{noticeNo}
+</select>
+<select id="selectNoticeFile" resultType="com.dailyMarket.www.vo.NoticeFileVO">
+SELECT fileNo,noticeNo,originFileName,storedFileName,fileSize,regDate,modDate,delDate,deleteYn
+FROM noticeFile
+WHERE 1=1
+	AND noticeNo=#{noticeNo}
+</select>
+<select id="selectNoticeFileByNo" resultType="hashMap">
+SELECT fileNo,noticeNo,originFileName,storedFileName,fileSize,regDate,modDate,delDate,deleteYn
+FROM noticeFile
+WHERE 1=1
+	AND fileNo=#{fileNo}
+</select>
+
+<!-- 공지사항 -->
+<insert id="insertInquiry">
+INSERT INTO inquiry (title,content,userNo,writer)
+		VALUES (#{title},#{content},(SELECT userNo FROM user WHERE userId=#{writer} ),#{writer})
+</insert>
+<insert id="insertInquiryFile">
+INSERT INTO inquiryFile(inquiryNo,originFileName,storedFileName,fileSize)
+		VALUES ( (SELECT IFNULL(max(inquiryNo),1) FROM inquiry) ,#{originFileName},#{storedFileName},#{fileSize})
+</insert>
+
+<!-- 질문 -->
+<select id="selectInquiryList" resultType="com.dailyMarket.www.vo.InquiryVO">
+SELECT rnum,inquiryNo,userNo,writer,title,content,hitCnt,status, regDate,modDate,delDate,deleteYn
+	FROM (
+		SELECT inquiryNo,userNo,writer,title,content,hitCnt,status, regDate,modDate,delDate,deleteYn,
+			ROW_NUMBER() OVER(ORDER BY hitCnt DESC) AS rnum
+		FROM inquiry
+ 	) R
+WHERE 1=1
+AND deleteYn='N'
+AND rnum BETWEEN 1 AND 6 
+ORDER BY hitCnt DESC 
+</select>
+<select id="selectInquiryByWriter" resultType="com.dailyMarket.www.vo.InquiryVO">
+SELECT inquiryNo,userNo,writer,title,content,hitCnt,status, regDate,modDate,delDate,deleteYn
+	FROM inquiry
+WHERE 1=1
+AND deleteYn='N'
+AND writer=#{userId}
+</select>
+<update id="updateInquiryHitCnt">
+UPDATE inquiry SET hitCnt = hitCnt+1
+WHERE 1=1
+AND inquiryNo=#{inquiryNo}
+</update>
+<select id="selectInquiryByNo" resultType="com.dailyMarket.www.vo.InquiryVO">
+SELECT inquiryNo,userNo,writer,title,content,hitCnt,status, regDate,modDate,delDate,deleteYn
+	FROM inquiry
+WHERE 1=1
+AND deleteYn='N'
+AND inquiryNo=#{inquiryNo}
+</select>
+<select id="selectAnswerByInquiryNo" resultType="com.dailyMarket.www.vo.AnswerVO">
+SELECT answerNo,inquiryNo,title,content,regDate,deleteYn
+	FROM answer
+WHERE 1=1
+and inquiryNo=#{inquiryNo}
+and deleteYn='N'
+</select>
+<select id="selectInquirySearch" resultType="com.dailyMarket.www.vo.InquiryVO">
+SELECT inquiryNo,userNo,writer,title,content,hitCnt,status, regDate,modDate,delDate,deleteYn
+	FROM inquiry
+WHERE 1=1
+<include refid="inquirySearch" />
+AND deleteYn='N'
+ORDER BY inquiryNo DESC 
+</select>
+</mapper>

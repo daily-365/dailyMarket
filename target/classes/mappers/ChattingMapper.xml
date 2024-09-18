@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ChattingMapper">
+<select id="selectChattingList" resultType="com.dailyMarket.www.vo.ChattingRoomVO">
+SELECT chattingNo ,
+		(SELECT 
+			messageContent
+			FROM message M1
+			INNER JOIN chattingroom R1 
+			ON  M1.chattingNo = R1.chattingNo
+			WHERE memberNo = #{memberNo}
+			ORDER BY messageNo DESC 
+			) AS lastMessage
+		, DATE_FORMAT( (SELECT max(sendTime)
+			FROM message M2
+			INNER JOIN chattingroom R2
+			ON M2.chattingNo = R2.chattingNo
+			WHERE memberNo = #{memberNo}
+				),'%Y-%m-%d %H:%i:%s') AS sendTime
+		,(SELECT openMember 
+		  FROM chattingroom R3
+		  INNER JOIN user U1
+		  ON U1.userNo = R3.memberNo
+		  WHERE userNo =#{memberNo}
+		) AS targetNo
+		, (SELECT userNick
+			FROM user U2
+			INNER JOIN chattingroom R4
+			ON U2.userNo = R4.memberNo
+			WHERE userNo = #{memberNo}
+		) AS userNick
+		,(SELECT storedFileName
+			FROM userprofilefile F
+			INNER JOIN chattingroom R5
+			ON F.userNo = R5.memberNo
+			WHERE userNo =#{memberNo}
+			AND deleteYn='N'
+			) AS targetProfile
+		,(SELECT COUNT(*) 
+			FROM message M2
+			INNER JOIN chattingroom R6
+			ON M2.chattingNo = R6.chattingNo
+			AND M2.readFL!= 'N'
+			AND M2.sendNo=#{memberNo}
+			)AS notReadCount
+		,(SELECT MAX(messageNo) 
+			FROM message M3
+			INNER JOIN  chattingroom R7
+			ON M3.chattingNo = R7.chattingNo
+			) AS maxMessageNo
+					
+FROM chattingroom R
+	WHERE openMember = #{memberNo}
+ORDER BY maxMessageNo DESC 
+	
+</select>
+
+
+</mapper>

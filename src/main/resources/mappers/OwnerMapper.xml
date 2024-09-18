@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="OwnerMapper">
+<select id="selectBusiNumDupChk" resultType="int">
+Select Count(busiNum)
+From busi
+where busiNum = #{busiNum}
+</select>
+<insert id="insertOwnerRegist">
+Insert into busi (busiNum,writer,ownerName,busiTel,busiName,busiType,busiType1,busiType2,busiType3,storeTel,storeAddr,storeAddrDetail,agreeYn,introduce,homePage,title)
+		values (#{busiNum},#{writer},#{ownerName},#{busiTel},#{busiName},#{busiType},#{busiType1},#{busiType2},#{busiType3},#{storeTel},#{storeAddr},#{storeAddrDetail},#{agreeYn},#{introduce},#{homePage},#{title})
+</insert>
+<insert id="insertBusiFile">
+Insert into busiFile(busiNo,busiOriginFileName,busiStoredFileName,busiFileSize,writer)
+		values ( (SELECT IFNULL(max(busiNo),1)FROM busi), #{busiOriginFileName},#{busiStoredFileName},#{busiFileSize},#{writer})
+</insert>
+<insert id="insertStoreFile">
+Insert into storefile(busiNo,originFileName,storedFileName,fileSize,writer,regDate)
+		values ( #{busiNo}, #{originFileName},#{storedFileName},#{fileSize},#{writer},now())
+</insert>
+<select id="selectBusiByWriter" resultType="com.dailyMarket.www.vo.BusiVO">
+SELECT a.busiNo,a.busiNum,a.ownerName,a.busiTel,a.busiName,a.busiType,a.busiType1,a.busiType2,a.busiType3,a.storeTel,a.storeAddr,a.storeAddrDetail,a.agreeYn,a.status,a.regDate,a.modDate,a.delDate,a.deleteYn
+		,a.title,a.homePage,a.introduce
+		,b.busiStoredFileName
+FROM busi a
+INNER JOIN busifile b
+ON a.busiNo =b.busiNo
+	AND a.writer =#{writer}
+	AND a.deleteYn ='N'
+	AND b.deleteYn ='N'
+GROUP BY busiNo
+</select>
+<update id="deleteBusiFile">
+UPDATE busiFile SET modDate=now(),delDate=now(), deleteYn='Y'
+where busiFileNo = #{busiFileNo}
+</update>
+<update id="updateBusi">
+UPDATE busi SET ownerName=#{ownerName},busiTel=#{busiTel},busiName=#{busiName}
+				,busiType1=#{busiType1},busiType2=#{busiType2},busiType3=#{busiType3}
+				,storeTel=#{storeTel},storeAddr=#{storeAddr},storeAddrDetail=#{storeAddrDetail},agreeYn=#{agreeYn}
+				,modDate=now()
+				,homePage=#{homePage}
+				,introduce=#{introduce}
+where busiNo = #{busiNo}
+</update>
+<update id="deleteBusi">
+UPDATE busi SET modDate =now() ,delDate = now() , deleteYN='Y'
+where busiNo = #{busiNo}
+</update>
+<select id="selectStoreFile" resultType="com.dailyMarket.www.vo.StoreFileVO">
+SELECT fileNo,busiNo,originFileName,storedFileName,fileSize,writer,regDate,modDate,delDate,deleteYn
+FROM storeFile  
+WHERE busiNo=#{busiNo}
+AND deleteYn='N'
+</select>
+<update id="deleteStoreFile">
+UPDATE storeFile set deleteYn='Y', modDate =now() ,delDate =now()
+WHERE busiNo=#{busiNo}
+</update>
+<update id="deleteStoreFileByFileNo">
+UPDATE storeFile set deleteYn='Y' , modDate =now() ,delDate =now()
+WHERE fileNo=#{fileNo}
+</update>
+
+<!-- /owner/main 에서 메뉴 및 알바 등록 여부  -->
+<select id="selectMenuExist" resultType="int">
+SELECT COUNT(menuNo) 
+FROM menu
+WHERE busiNo=#{busiNo}
+</select>
+<select id="selectJobExist" resultType="int">
+SELECT COUNT(jobNo)
+FROM job
+WHERE jobWriter =#{uesrId}
+</select>
+
+<insert id="insertMenu">
+INSERT into menu (busiNo,name,price,count,content,deleveryYn,deleveryPrice,regDate)
+			values ( (SELECT IFNULL(max(busiNo),1)FROM busi) ,#{name},#{price},#{count},#{content},#{deleveryYn},#{deleveryPrice},now())
+</insert>
+
+<select id="selectMenuFileNoCnt" resultType="int">
+SELECT IFNULL(max(menuNo)+1,1) FROM menu 
+</select>
+
+<!--  다중 insert Mybatis Foreach 구문 (index 포함 ) --> 
+<insert id="insertMenuFile" parameterType="java.util.HashMap">
+INSERT into menuFile(menuNo,originFileName,storedFileName,fileSize,writer)
+	values 
+	<foreach item="item" collection="menuFileMap"   index="idx" open="(" close=")" separator=",">
+		#{item.menuNo} ,#{item.originFileName},#{item.storedFileName},#{item.fileSize},#{item.writer} 
+	</foreach>
+</insert>
+
+<select id="selectMenuList" resultType="com.dailyMarket.www.vo.MenuVO">
+SELECT a.menuNo,a.busiNo,a.name,a.price,a.count,a.content,a.deleveryYn,a.deleveryPrice,a.regDate,a.modDate,a.delDate,a.deleteYn
+		,b.fileNo,b.menuNo,b.originFileName,b.storedFileName,b.fileSize,b.fileSize,b.writer,b.regDate,b.modDate,b.delDate,b.deleteYn
+FROM menu a
+INNER JOIN menufile b
+ON a.menuNo = b.menuNo
+WHERE busiNo = #{busiNo}
+and a.deleteYn='N'
+and b.deleteYn='N'
+</select>
+<update id="updateMenuFile">
+UPDATE menuFile set  deleteYn='Y' , delDate=now()
+WHERE fileNo = #{fileNo}
+</update>
+<update id="deleteAllMenu">
+UPDATE menu SET deleteYn='Y' , delDate = now()
+WHERE busiNo=#{busiNo}
+</update>
+<update id="deleteAllMenuFile">
+UPDATE menufile SET deleteYn = 'Y' ,delDate =now()
+WHERE menuNo  BETWEEN  ( SELECT MIN(menuNo) FROM menu WHERE busiNo=#{busiNo}) AND  ( SELECT MAX(menuNo) FROM menu WHERE busiNo=#{busiNo})
+</update>
+
+<insert id="insertJob">
+Insert into job (jobWriter,jobCompany,jobTitle,jobType,jobMoney,jobLoc,jobLocDetail,jobWorkDate,jobWorkTime,jobContent,jobLocContent)
+		values (#{jobWriter}, #{jobCompany},#{jobTitle},#{jobType},#{jobMoney},#{jobLoc},#{jobLocDetail},#{jobWorkDate},#{jobWorkTime},#{jobContent},#{jobLocContent})
+</insert>
+<insert id="insertJobFile">
+Insert into jobFile(jobNo,writer,originFileName,storedFileName,fileSize)
+	values ( ( SELECT IFNULL(max(jobNo),1) From job )  ,#{writer},#{originFileName},#{storedFileName},#{fileSize})
+</insert>
+
+<select id="selectJobByWriter" resultType="com.dailyMarket.www.vo.JobVO">
+SELECT jobNo,jobWriter,jobCompany,jobTitle,jobType,jobMoney,jobLoc,jobLocDetail,jobWorkDate,jobWorkTime,jobLocContent,jobContent
+		,regDate,modDate,delDate,deleteYn
+FROM job 
+WHERE jobWriter = #{writer}
+AND deleteYn ='N'	
+</select>
+<select id="selectJobFile" resultType="com.dailyMarket.www.vo.JobFileVO">
+SELECT fileNo,jobNo,originFileName,storedFileName,fileSize,regDate,modDate,delDate,deleteYn
+FROM jobFile
+WHERE jobNo=#{jobNo}
+AND deleteYn ='N'
+</select>
+<update id="updateJobFile" >
+UPDATE jobFile SET deleteYn='Y',modDate =now()
+WHERE fileNo=#{fileNo}
+</update>
+<update id="updateJob">
+UPDATE job SET jobCompany=#{jobCompany},jobTitle=#{jobTitle},jobType=#{jobType},jobMoney=#{jobMoney},jobLoc=#{jobLoc},jobLocDetail=#{jobLocDetail}
+			,jobWorkDate=#{jobWorkDate},jobWorkTime=#{jobWorkTime},jobContent=#{jobContent},jobLocContent=#{jobLocContent}
+			,modDate =now()
+WHERE jobNo = #{jobNo}
+</update>
+<update id="deleteJob">
+UPDATE job SET deleteYn ='Y',delDate =now()
+	WHERE jobNo =#{jobNo}
+</update>
+<update id="deleteJobFile">
+UPDATE jobFile set deleteYn='Y',delDate =now()
+	WHERE jobNo=#{jobNo}
+</update>
+
+
+<insert id="insertCompanyNotice">
+Insert Into busiNotice (busiNo,title,subTitle,content,subContent,writer)
+	values (#{busiNo}, #{title},#{subTitle},#{content},#{subContent},#{writer})
+</insert>
+<insert id="insertCompanyNoticeFile">
+Insert Into busiNoticeFile (busiNoticeNo,originFileName,storedFileName,fileSize,writer)
+	values ((SELECT IFNULL(max(busiNoticeNo),1) FROM busiNotice ) ,#{originFileName},#{storedFileName},#{fileSize},#{writer})
+</insert>
+<!-- 사업자 구인정보 현황 확인 -->
+<select id="selectGetUserJobList" resultType="com.dailyMarket.www.vo.GetUserJobVO">
+SELECT a.getUserJobNo,a.jobNo,a.userId,a.status,a.regDate,a.modDate,a.delDate,a.deleteYn
+		,b.userJobNo,b.writer,b.lastName,b.firstName,b.tel,b.gender,b.birthYear,b.careerYn
+		,b.careerLoc,b.careerWork,b.careerYear,b.careerDiff,b.advantage,b.introduce,b.addInfo,b.regDate,b.modDate,b.delDate,b.deleteYn
+		,c.storedFileName
+FROM getUserJob a
+INNER JOIN userjob b
+ON a.userId = b.writer
+INNER JOIN userjobfile c
+ON b.userJobNo =c.userJobNo
+WHERE a.jobNo = #{jobNo}
+</select>
+<!-- 합격 / 불합격 처리 -->
+<update id="updateGetUserJobStatusY">
+Update getUSerJob set status ='Y' , modDate =now()
+Where getUserJobNo = #{getUserJobNo}
+</update>
+<update id="updateGetUserJobStatusN">
+Update getUSerJob set status ='N' , modDate =now()
+Where getUserJobNo = #{getUserJobNo}
+</update>
+
+</mapper>

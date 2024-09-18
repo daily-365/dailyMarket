@@ -1,0 +1,673 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="AdminMapper">
+
+<sql id="productSearch">
+<if test="searchType != null and !searchType.equals('')">
+	<if test="searchType=='all'.toString()">
+		AND ( title like CONCAT('%',#{keyword},'%')
+			OR <![CDATA[ price <= #{keyword}]]>
+			OR  location like CONCAT('%',#{keyword},'%')
+			OR  writer like CONCAT('%',#{keyword},'%')
+			<choose>
+				<when test="keyword=='판매'.toString()">OR type ='sale'</when>
+				<when test="keyword=='나눔'.toString()">OR type ='share'</when>
+				<otherwise>AND type=#{keyword}</otherwise>
+			</choose>
+			)
+	</if>
+	<if test="searchType=='title'.toString()">AND title like CONCAT('%',#{keyword},'%') </if>
+	<if test="searchType=='price'.toString()"> <![CDATA[AND price <= #{keyword}]]> </if>
+	<if test="searchType=='location'.toString()">AND location like CONCAT('%',#{keyword},'%') </if>
+	<if test="searchType=='writer'.toString()">AND writer like CONCAT('%',#{keyword},'%') </if>
+	<if test="searchType=='type'.toString()"> 
+		<choose>
+			<when test="keyword=='판매'.toString()">AND type ='sale'</when>
+			<when test="keyword=='나눔'.toString()">AND type ='share'</when>
+			<otherwise>AND type=#{keyword}</otherwise>
+		</choose>
+	</if>
+</if>
+<if test="startDate!=null and !startDate.equals('') and  endDate!=null and !endDate.equals('') ">
+	AND substring(regDate,1,10) BETWEEN #{startDate} AND #{endDate}
+</if>
+</sql>
+
+<sql id="busiSearch">
+<if test="searchType !=null and !searchType.equals('')">
+	<if test="searchType=='all'.toString()">
+		AND ( busiNum like CONCAT('%',#{keyword},'%') 
+			OR writer like CONCAT('%',#{keyword} ,'%')
+			OR ownerName like CONCAT('%',#{keyword},'%')
+			OR busiName like CONCAT('%',#{keyword},'%')
+			<choose>
+				<when test="keyword=='입점완료'.toString()">OR status = 'Y'</when>
+				<when test="keyword=='입점대기'.toString()">OR status = 'S'</when>
+				<otherwise>OR status='N'</otherwise>
+			</choose>
+			)
+	</if>
+	<if test="searchType=='busiNum'.toString()">
+		AND busiNum like CONCAT('%',#{keyword},'%')
+	</if>
+	<if test="searchType=='writer'.toString()">
+		AND writer like CONCAT('%',#{keyword} ,'%')
+	</if>
+	<if test="searchType=='ownerName'.toString()">
+		AND ownerName like CONCAT('%',#{keyword},'%')
+	</if>
+	<if test="searchType=='busiName'.toString()">
+		AND busiName like CONCAT('%',#{keyword},'%')
+	</if>
+	<if test="searchType=='status'.toString() ">
+		<choose>
+			<when test="keyword=='입점완료'.toString()">AND status = 'Y'</when>
+			<when test="keyword=='입점대기'.toString()">AND status = 'S'</when>
+			<otherwise>AND status='N'</otherwise>
+		</choose>
+	</if>
+</if>
+<if test="startDate!=null and !startDate.equals('') and endDate!=null and !endDate.equals('')">
+	AND substring(regDate,1,10) BETWEEN #{startDate} and #{endDate}
+</if>
+</sql>
+
+<sql id="jobSearch">
+<if test="searchType!=null and !searchType.equals('')">
+	<if test="searchType=='all'.toString()">
+		AND ( jobWriter like CONCAT('%',#{keyword},'%')
+			OR jobCompany like CONCAT('%',#{keyword},'%')
+			OR  jobType = #{keyword}
+			OR SUBSTRING(jobLoc,1,6) like CONCAT('%',#{keyword},'%')
+		)
+	</if>
+	<if test="searchType=='writer'.toString()">AND jobWriter like CONCAT('%',#{keyword},'%')</if>
+	<if test="searchType=='name'.toString()">AND jobCompany like CONCAT('%',#{keyword},'%')</if>
+	<if test="searchType=='type'.toString()">AND jobType = #{keyword}</if>
+	<if test="searchType=='loc'.toString()">AND SUBSTRING(jobLoc,1,6) like CONCAT('%',#{keyword},'%')</if>
+</if>
+<if test="startDate!=null and !startDate.equals('') and endDate!=null and !endDate.equals('')">
+	AND substring(regDate,1,10) BETWEEN #{startDate} AND #{endDate}
+</if>
+</sql>
+
+<sql id="estateSearch">
+<if test="searchType!=null and !searchType.equals('')">
+	<if test="searchType=='all'.toString()">
+		AND ( esWriter like CONCAT('%',#{keyword},'%')
+			OR esLoc like CONCAT('%',#{keyword},'%')
+			OR esHumType like CONCAT('%',#{keyword},'%')
+			OR esRoomType like CONCAT('%',#{keyword},'%')
+			OR esTradeType like CONCAT('%',#{keyword},'%')
+			 )
+	</if>
+	<if test="searchType=='writer'.toString()">AND esWriter like CONCAT('%',#{keyword},'%')  </if>
+	<if test="searchType=='loc'.toString()">AND esLoc like CONCAT('%',#{keyword},'%') </if>
+	<if test="searchType=='price'.toString()"><![CDATA[AND CAST(REPLACE(SUBSTRING_INDEX( esPrice,'/',1),',','') AS UNSIGNED)   <=#{keyword}]]>  </if>
+	<if test="searchType=='size'.toString()"><![CDATA[ AND TRUNCATE(esSize2,0)   <=#{keyword}]]>  </if>
+</if>
+<if test="startDate!=null and !startDate.equals('')and endDate!=null and !endDate.equals('')">
+	AND regDate3 between #{startDate} and DATE_ADD(#{endDate}, INTERVAL +1 DAY)
+</if>
+</sql>
+
+<sql id="carSearch">
+<if test="searchType!=null and !searchType.equals('')">
+	<if test="searchType=='type'.toString()">
+		AND(carType like CONCAT('%',#{keyword},'%')
+			OR carManuFacturing like CONCAT('%',#{keyword},'%')
+			OR carModel like CONCAT('%',#{keyword},'%')
+			OR carFuel like CONCAT('%',#{keyword},'%') 
+			OR  carLoc like CONCAT('%',#{keyword},'%')
+			OR carWriter like CONCAT('%',#{keyword},'%')
+			)
+	 </if>
+	<if test="searchType=='writer'.toString()">AND carWriter like CONCAT('%',#{keyword},'%')</if>
+	<if test="searchType=='type'.toString()">AND carType like CONCAT('%',#{keyword},'%')</if>
+	<if test="searchType=='company'.toString()">AND carManuFacturing like CONCAT('%',#{keyword},'%') </if>
+	<if test="searchType=='name'.toString()">AND carModel like CONCAT('%',#{keyword},'%')</if>
+	<if test="searchType=='fuel'.toString()">AND carFuel like CONCAT('%',#{keyword},'%') </if>
+	<if test="searchType=='distance'.toString()">AND TRUNCATE(carDistance,0) <![CDATA[<=]]>#{keyword} </if>
+	<if test="searchType=='loc'.toString()">AND carLoc like CONCAT('%',#{keyword},'%') </if>
+	
+</if>
+<if test="startDate!=null and !startDate.equals('') and endDate!=null and !endDate.equals('')">
+	AND substring(regDate,1,10) BETWEEN #{startDate} AND #{endDate}
+</if>
+</sql>
+
+<sql id="userSearch">
+<if test="searchType!=null and !searchType.equals('')">
+	<if test="searchType=='all'.toString()">
+		AND (  userId like CONCAT('%',#{keyword},'%')  
+		    OR userName like CONCAT('%',#{keyword},'%')
+			OR userNick like CONCAT('%',#{keyword},'%')  
+			OR userMail like CONCAT('%',#{keyword},'%')
+			OR userTel like CONCAT('%',#{keyword},'%')
+			OR userBirth like CONCAT('%',#{keyword},'%')
+			OR userAddr1 like CONCAT('%',#{keyword},'%')		
+				)
+	</if>
+	<if test="searchType=='id'.toString()">  AND userId like CONCAT('%',#{keyword},'%')   </if>
+	<if test="searchType=='name'.toString()"> AND userName like CONCAT('%',#{keyword},'%')    </if>
+	<if test="searchType=='nick'.toString()">AND userNick like CONCAT('%',#{keyword},'%')     </if>
+	<if test="searchType=='mail'.toString()">AND userMail like CONCAT('%',#{keyword},'%')  	</if>
+	<if test="searchType=='tel'.toString()">AND userTel like CONCAT('%',#{keyword},'%')  	</if>
+	<if test="searchType=='birth'.toString()">AND userBirth like CONCAT('%',#{keyword},'%')	</if>
+	<if test="searchType=='loc'.toString()">AND userAddr1 like CONCAT('%',#{keyword},'%')	</if>
+</if>
+<if test="startDate!=null and !startDate.equals('') and endDate!=null and !endDate.equals('')">
+	AND substring(regDate,1,10) BETWEEN #{startDate} AND #{endDate}
+</if>
+
+
+</sql>
+<sql id="eventSearch">
+<if test="searchType!=null and !searchType.equals('')">
+	<if test="searchType=='all'.toString()">
+		AND (  title like CONCAT('%',#{keyword},'%')  
+		    OR content like CONCAT('%',#{keyword},'%')
+				)
+	</if>
+	<if test="searchType=='title'.toString()">  AND title like CONCAT('%',#{keyword},'%')   </if>
+	<if test="searchType=='content'.toString()"> AND content like CONCAT('%',#{keyword},'%')    </if>
+</if>
+<if test="startDate!=null and !startDate.equals('') and endDate!=null and !endDate.equals('')">
+	AND substring(regDate,1,10) BETWEEN #{startDate} AND #{endDate}
+</if>
+</sql>
+
+
+<sql id="noticeSearch">
+<if test="searchType!=null and !searchType.equals('')">
+	<if test="searchType=='all'.toString()">
+		AND (  title like CONCAT('%',#{keyword},'%')  
+		    OR content like CONCAT('%',#{keyword},'%')
+				)
+	</if>
+	<if test="searchType=='title'.toString()">  AND title like CONCAT('%',#{keyword},'%')   </if>
+	<if test="searchType=='content'.toString()"> AND content like CONCAT('%',#{keyword},'%')    </if>
+</if>
+<if test="startDate!=null and !startDate.equals('') and endDate!=null and !endDate.equals('')">
+	AND substring(regDate,1,10) BETWEEN #{startDate} AND #{endDate}
+</if>
+</sql>
+
+<sql id="questionSearch">
+<if test="searchType!=null and !searchType.equals('')">
+	<if test="searchType=='all'.toString()">
+		AND (  title like CONCAT('%',#{keyword},'%')  
+		    OR content like CONCAT('%',#{keyword},'%')
+				)
+	</if>
+	<if test="searchType=='title'.toString()">  AND title like CONCAT('%',#{keyword},'%')   </if>
+	<if test="searchType=='content'.toString()"> AND content like CONCAT('%',#{keyword},'%')    </if>
+	<if test="searchType=='S'.toString()">AND status = 'S' </if>
+	<if test="searchType=='Y'.toString()">AND status = 'Y' </if>
+</if>
+<if test="startDate!=null and !startDate.equals('') and endDate!=null and !endDate.equals('')">
+	AND substring(regDate,1,10) BETWEEN #{startDate} AND #{endDate}
+</if>
+</sql>
+
+
+<select id="selectAdminLogin" resultType="int">
+SELECT COUNT(userId)
+FROM admin
+WHERE 1=1
+	AND userId=#{userId}
+	AND userPass=#{userPass}
+</select>
+
+
+<select id="selectProductList" resultType="com.dailyMarket.www.vo.ProductVO">
+SELECT rnum,productNo,title,CASE TYPE when 'sale' then '판매' when 'share' then '나눔' END AS TYPE 
+		, price,content,location,writer,hitCnt,regDate,modDate,delDate,deleteYn,tradeYn,tradeId,tradeDate
+FROM (
+	SELECT productNo,title,TYPE  
+		, price,content,location,writer,hitCnt,regDate,modDate,delDate,deleteYn,tradeYn,tradeId,tradeDate
+		,ROW_NUMBER() OVER(ORDER BY productNo DESC) AS rnum
+		FROM product 
+		WHERE 1=1
+			<include refid="productSearch"/>
+		) R
+WHERE 1=1 
+	And  rnum Between #{startRow} and #{endRow}
+	And  deleteYn='N'
+ORDER BY productNo DESC 
+</select>
+<select id="selectProductTotalCount" resultType="int">
+SELECT COUNT(productNo)
+FROM product
+WHERE 1=1
+	<include refid="productSearch"/>
+</select>
+<select id="selectProductByProductNo" resultType="com.dailyMarket.www.vo.ProductVO">
+SELECT productNo,title,type
+		, price,content,location,writer,hitCnt,regDate,modDate,delDate,deleteYn
+FROM product
+where productNo=#{productNo}
+</select>
+<select id="selectProductFile" resultType="com.dailyMarket.www.vo.ProductFileVO">
+SELECT productFileNo,productNo,productOriginFileName,productStoredFileName,productFileSize,productWriter,regDate,modDate,delDate,deleteYn
+FROM productfile
+WHERE productNo = #{productNo}
+</select>
+<update id="deleteProduct">
+UPDATE product SET deleteYn ='Y' , delDate =now()
+WHERE
+productNo =#{productNo}
+</update>
+<update id="updateProduct">
+UPDATE product SET deleteYn ='N' , modDate =now()
+WHERE
+productNo =#{productNo}
+</update>
+
+
+<select id="selectBusiList" resultType="com.dailyMarket.www.vo.BusiVO">
+SELECT rnum,busiNo,busiNum,writer,ownerName,busiTel,busiName,busiType1,busiType2,busiType3
+		,storeTel,storeAddr,storeAddrDetail,agreeYn
+		,CASE status when 'Y' then '입점완료'  when 'S' then '입점대기'  when 'N' then '반려 및 재검수 요청' END  AS status 
+		,regDate,modDate,delDate,deleteYn
+FROM (SELECT busiNo,busiNum,writer,ownerName,busiTel,busiName,busiType1,busiType2,busiType3
+		,storeTel,storeAddr,storeAddrDetail,agreeYn,status,regDate,modDate,delDate,deleteYn
+		,ROW_NUMBER()  OVER(ORDER BY busiNo DESC ) AS rnum 
+		FROM busi
+		WHERE 1=1
+		<include refid="busiSearch"/>
+	)R
+WHERE 1=1
+	AND rnum BETWEEN #{startRow} AND #{endRow}
+ORDER BY busiNo DESC 
+</select>
+<select id="selectBusiByBusiNo" resultType="com.dailyMarket.www.vo.BusiVO">
+SELECT busiNo,busiNum,writer,ownerName,busiTel,busiName,busiType1,busiType2,busiType3
+		,storeTel,storeAddr,storeAddrDetail,agreeYn,status,regDate,modDate,delDate,deleteYn
+FROM busi 
+WHERE busiNo =#{busiNo}
+</select>
+<update id="updateBusistatus" >
+UPDATE busi SET status=#{status}, modDate =now()
+WHERE busiNo =#{busiNo}
+</update>
+<select id="selectBusiTotalCount" resultType="int">
+SELECT COUNT(busiNo)
+FROM BUSI
+WHERE 1=1
+	<include refid="busiSearch"/>
+</select>
+<select id="selectBusiFile" resultType="com.dailyMarket.www.vo.BusiFileVO">
+SELECT busiFileNo,busiNo,busiOriginFileName,busiStoredFileName,busiFileSize,writer,regDate,modDate,delDate,deleteYn
+FROM busifile
+WHERE busiNo=#{busiNo}
+AND deleteYn='N'
+</select>
+<select id="selectStoreFile" resultType="com.dailyMarket.www.vo.StoreFileVO">
+SELECT fileNo,busiNo,originFileName,storedFileName,fileSize,regDate,modDate,delDate,deleteYn
+FROM storeFile
+where busiNo=#{busiNo}
+AND deleteYn='N'
+</select>
+<select id="selectMenuList" resultType="com.dailyMarket.www.vo.MenuVO">
+SELECT a.menuNo,a.busiNo,a.NAME,a.price,a.COUNT,a.content,a.deleveryYn,a.deleveryPrice,a.regDate,a.modDate,a.delDate,a.deleteYn
+		,b.storedFileName
+FROM menu a
+INNER JOIN menufile b
+ON a.menuNo =b.menuNo
+WHERE 1=1
+	AND a.busiNo=#{busiNo}
+	AND a.deleteYn='N'
+	AND b.deleteYn='N'
+</select>
+
+
+<select id="selectJobList" resultType="com.dailyMarket.www.vo.JobVO">
+SELECT rnum,jobNo,jobWriter,jobCompany,jobTitle,jobType,jobMoney
+		,jobLoc,jobLocDetail,jobWorkDate,jobWorkTime,jobLocContent,jobContent,hitCnt,regDate,modDate,delDate,deleteYn
+		FROM 
+			(SELECT jobNo,jobWriter,jobCompany,jobTitle,jobType,jobMoney
+					,jobLoc,jobLocDetail,jobWorkDate,jobWorkTime,jobLocContent,jobContent,hitCnt,regDate,modDate,delDate,deleteYn
+					,ROW_NUMBER() OVER(ORDER BY jobNo DESC ) AS rnum
+			FROM job
+			WHERE 1=1
+			 <include refid="jobSearch"/>
+		) R
+	WHERE 1=1
+		AND rnum BETWEEN #{startRow} AND #{endRow}
+	ORDER BY jobNo DESC 
+</select>
+<select id="selectJobTotalCount" resultType="int">
+SELECT COUNT(jobNo)
+	FROM job
+	WHERE 1=1
+	<include refid="jobSearch"/>
+</select>
+<select id="selectJobDetail" resultType="com.dailyMarket.www.vo.JobVO">
+SELECT jobNo,jobWriter,jobCompany,jobTitle,jobType,jobMoney
+		,jobLoc,jobLocDetail,jobWorkDate,jobWorkTime,jobLocContent,jobContent,hitCnt,regDate,modDate,delDate,deleteYn
+		FROM job
+	WHERE 1=1
+	AND jobNo=#{jobNo}
+</select>
+<select id="selectJobFile" resultType="com.dailyMarket.www.vo.JobFileVO">
+SELECT fileNo,jobNo,originFileName,storedFileName,fileSize,writer,regDate,modDate,delDate,deleteYn
+FROM jobFile
+WHERE 1=1
+AND jobNo=#{jobNo}
+AND deleteYN='N'
+</select>
+
+
+<select id="selectEstateList" resultType="com.dailyMarket.www.vo.EstateVO">
+SELECT rnum,esNo,esWriter,esHumType,esRoomType,esLoc,esLocDetail,esLocContent,esTradeType,esPrice,esPosiType
+		,esSize1,esSize2,esOption1,esOption2,esOption3,esCostYn,esCost,esCostChk,esSeperCostChk,esCostContent,esLoanYn,esAnimalYn,esParkingYn
+		,esMoveYn,esMoveDate,esFacility,esAdvantage,esHouseIntro,esTradeYn,hitCnt,regDate3,modDate3,delDate,deleteYn
+	FROM( 
+		SELECT esNo,esWriter,esHumType,esRoomType,esLoc,esLocDetail,esLocContent,esTradeType,esPrice,esPosiType
+			,esSize1,esSize2,esOption1,esOption2,esOption3,esCostYn,esCost,esCostChk,esSeperCostChk,esCostContent,esLoanYn,esAnimalYn,esParkingYn
+			,esMoveYn,esMoveDate,esFacility,esAdvantage,esHouseIntro,esTradeYn,hitCnt,regDate3,modDate3,delDate,deleteYn
+			,ROW_NUMBER() OVER(ORDER BY esNo DESC) AS rnum
+		FROM estate 
+		WHERE 1=1
+			<include refid="estateSearch"/>
+	)R
+	WHERE 1=1
+	AND rnum BETWEEN #{startRow} and #{endRow}
+ORDER BY esNo DESC 
+</select>
+<select id="selectEstateTotalCount" resultType="int">
+SELECT COUNT(esNo)
+	FROM estate
+	WHERE 1=1
+	<include refid="estateSearch"/>
+</select>
+<select id="selectEstateDetail" resultType="com.dailyMarket.www.vo.EstateVO">
+SELECT esNo,esWriter,esHumType,esRoomType,esLoc,esLocDetail,esLocContent,esTradeType,esPrice,esPosiType
+		,esSize1,esSize2,esOption1,esOption2,esOption3,esCostYn,esCost,esCostChk,esSeperCostChk,esCostContent,esLoanYn,esAnimalYn,esParkingYn
+		,esMoveYn,esMoveDate,esFacility,esAdvantage,esHouseIntro,esTradeYn,hitCnt,regDate3,modDate3,delDate,deleteYn
+	FROM
+		estate
+	WHERE 1=1
+	AND esNo=#{esNo}
+</select>
+<select id="selectEstateFile" resultType="com.dailyMarket.www.vo.EstateFileVO">
+SELECT fileNo,esNo,originFileName,storedFileName,fileSize,writer,regDate,modDate,delDate,deleteYn
+FROM estateFile
+	WHERE 1=1
+	AND esNo=#{esNo}
+	AND deleteYN='N'
+</select>
+
+
+
+<select id="selectCarList" resultType="com.dailyMarket.www.vo.CarVO">
+SELECT rnum,carNo,carWriter,carPrice,carTradeYn,carType,carManuFacturing,carModel,carRank,carDetailRank,carDiffDate
+		,carRegDate,carDistance,carDisplaceMent,carFuel,carTransMission,carAccidentCnt,carSpecialUseYn,carChangeCnt
+		,carOption1,carOption2,carOption3,carAdditionInfo,carIntro,carLoc,hitCnt,regDate,modDate,delDate,deleteYn
+	FROM (
+		 SELECT 	 carNo,carWriter,carPrice,carTradeYn,carType,carManuFacturing,carModel,carRank,carDetailRank,carDiffDate
+		,carRegDate,carDistance,carDisplaceMent,carFuel,carTransMission,carAccidentCnt,carSpecialUseYn,carChangeCnt
+		,carOption1,carOption2,carOption3,carAdditionInfo,carIntro,carLoc,hitCnt,regDate,modDate,delDate,deleteYn
+		,ROW_NUMBER() OVER(ORDER BY carNo DESC) AS rnum
+			FROM car
+		WHERE 1=1
+		<include refid="carSearch"/>
+		) R
+	WHERE 1=1
+		AND rnum  BETWEEN #{startRow} and #{endRow}
+ORDER BY carNo DESC
+</select>
+<select id="selectCarTotalCount" resultType="int">
+SELECT COUNT(carNo)
+FROM car
+WHERE 1=1
+<include refid="carSearch"/>
+</select>
+<select id="selectCarDetail"  resultType="com.dailyMarket.www.vo.CarVO">
+SELECT carNo,carWriter,carPrice,carTradeYn,carType,carManuFacturing,carModel,carRank,carDetailRank,carDiffDate
+		,carRegDate,carDistance,carDisplaceMent,carFuel,carTransMission,carAccidentCnt,carSpecialUseYn,carChangeCnt
+		,carOption1,carOption2,carOption3,carAdditionInfo,carIntro,carLoc,hitCnt,regDate,modDate,delDate,deleteYn
+	FROM car
+WHERE 1=1
+	AND carNo=#{carNo}
+</select>
+<select id="selectCarFile" resultType="com.dailyMarket.www.vo.CarFileVO">
+SELECT fileNo,carNo,writer,originFileName,storedFileName,fileSize,regDate,modDate,delDate,deleteYn
+	FROM carFile
+WHERE 1=1
+	AND carNo=#{carNo}
+	AND deleteYn='N'
+</select>
+
+
+<select id="selectUserList" resultType="com.dailyMarket.www.vo.UserVO">
+SELECT rnum,userId,userPass,userPassChk,userName,userNick,userMail,userTel,userBirth,userGender,userAddr1,userAddr2,userAgree1,userAgree2
+				,regDate,modDate,delDate,deleteYn
+		FROM( SELECT 
+			 	userId,userPass,userPassChk,userName,userNick,userMail,userTel,userBirth,userGender,userAddr1,userAddr2,userAgree1,userAgree2
+				,regDate,modDate,delDate,deleteYn
+				,ROW_NUMBER() OVER(order by regDate DESC ) AS rnum 
+			FROM user
+		WHERE 1=1
+		<include refid="userSearch"/>
+	) R
+WHERE 1=1
+AND rnum between #{startRow} and #{endRow}
+ORDER BY regDate DESC 
+</select>
+<select id="selectUserTotalCount" resultType="int">
+SELECT COUNT(userId)
+FROM user
+WHERE 1=1
+<include refid="userSearch"/>
+</select>
+<select id="selectUserDetail" resultType="com.dailyMarket.www.vo.UserVO">
+SELECT 	userId,userPass,userPassChk,userName,userNick,userMail,userTel,userBirth,userGender,userAddr1,userAddr2,userAgree1,userAgree2
+		 ,regDate,modDate,delDate,deleteYn
+	FROM user 
+	WHERE 1=1
+	AND userId=#{userId}
+</select>
+<select id="selectUserFile" resultType="com.dailyMarket.www.vo.UserProfileFileVO">
+ SELECT fileNo,userId,originFileName,storedFileName,fileSize,regDate,modDate,delDate,deleteYn
+ FROM  userProfileFile
+ WHERE 1=1
+ AND userId=#{userId}
+ AND deleteYn='N'
+</select>
+<select id="selectUserAccount" resultType="com.dailyMarket.www.vo.UserAccountVO">
+SELECT idx,userId,accountNum,tradeBank,saveMoney,modDate
+FROM userAccount 
+WHERE 1=1
+ AND userId=#{userId}  
+</select>
+<select id="selectUserTrade" resultType="com.dailyMarket.www.vo.UserTradeVO">
+SELECT idx,userId,productNo,title,content,price,location,likeDate,purChaseDate,regDate,modDate,delDate,deleteYn
+FROM usertrade 
+WHERE 1=1
+ AND userId=#{userId}
+</select>
+
+<insert id="insertEventData">
+INSERT INTO event (title,content)
+	VALUES (#{title},#{content} )
+</insert>
+<select id="selectEventList" resultType="com.dailyMarket.www.vo.EventVO">
+SELECT rnum, eventNo,title,content,regDate,modDate,delDate,deleteYn
+	FROM( SELECT eventNo,title,content,regDate,modDate,delDate,deleteYn
+				,ROW_NUMBER() OVER(ORDER BY eventNo DESC) as rnum
+			FROM event
+			WHERE 1=1
+			AND deleteYn ='N'
+			<include refid="eventSearch"/>
+		)R
+WHERE 1=1
+AND rnum BETWEEN #{startRow} AND #{endRow}
+ORDER BY eventNo DESC
+</select>
+<select id="selectEventTotalCnt" resultType="int">
+SELECT COUNT(eventNo)
+FROM event
+WHERE 1=1
+	<include refid="eventSearch"/>
+	AND deleteYn ='N'
+</select>
+<select id="selectEventVO" resultType="com.dailyMarket.www.vo.EventVO">
+SELECT eventNo,title,content,regDate,modDate,delDate,deleteYn
+	FROM event
+	WHERE 1=1
+	AND eventNo=#{eventNo}
+	AND deleteYn='N'
+</select>
+<update id="updateEventModify" >
+UPDATE event SET title=#{title},content=#{content}
+	WHERE 1=1
+	AND eventNo=#{eventNo}
+</update>
+<update id="updateEventDelete">
+UPDATE event SET deleteYn ='Y' ,delDate =now()
+	WHERE 1=1
+	AND eventNo=#{eventNo}
+</update>
+
+
+
+<insert id="insertNoticeWrite">
+INSERT INTO notice(title,content)
+		VALUES (#{title},#{content})
+</insert>
+<insert id="insertNoticeFile">
+INSERT INTO noticeFile(noticeNo,originFileName,storedFileName,fileSize)
+		VALUES ( (SELECT IFNULL(MAX(noticeNo)+1,1) FROM notice) , #{originFileName},#{storedFileName},#{fileSize}  )
+</insert>
+<select id="selectNoticeList" resultType="com.dailyMarket.www.vo.NoticeVO">
+SELECT rnum, noticeNo,title,content,regDate,modDate,delDate,deleteYn
+	FROM ( SELECT noticeNo,title,content,regDate,modDate,delDate,deleteYn
+					,ROW_NUMBER() OVER(ORDER BY noticeNo DESC ) AS rnum
+				FROM notice
+				WHERE 1=1
+				AND deleteYn ='N'
+				<include refid="noticeSearch"/>
+			) R
+	WHERE 1=1
+	AND rnum BETWEEN #{startRow} AND #{endRow}
+	ORDER BY noticeNo DESC 
+</select>
+<select id="selectNoticeTotalCnt" resultType="int">
+SELECT COUNT(noticeNo)
+	FROM notice
+	WHERE 1=1
+	<include refid="noticeSearch"/>
+	AND deleteYn ='N'
+</select>
+<select id="selectNoticeVO" resultType="com.dailyMarket.www.vo.NoticeVO">
+SELECT noticeNo,title,content,regDate,modDate,delDate,deleteYn
+		,ROW_NUMBER() OVER(ORDER BY noticeNo DESC ) AS rnum
+	FROM notice
+	WHERE 1=1
+	AND noticeNo=#{noticeNo}
+	AND deleteYn='N'
+</select>
+<select id="selectNoticeFile" resultType="com.dailyMarket.www.vo.NoticeFileVO">
+SELECT fileNo,noticeNo,originFileName,storedFileName,fileSize, regDate,modDate,delDate,deleteYn
+FROM noticeFile
+WHERE 1=1
+	AND noticeNo=#{noticeNo}
+	AND deleteYn='N'
+</select>
+<select id="selectNoticeFileNoMap" resultType="HashMap">
+SELECT fileNo,noticeNo,originFileName,storedFileName,fileSize, regDate,modDate,delDate,deleteYn
+FROM noticeFile
+WHERE 1=1
+	AND fileNo=#{fileNo}
+	AND deleteYn='N'
+</select>
+<update id="deleteNoticeFile">
+UPDATE noticeFile set deleteYn='Y', delDate =now()
+wHERE 1=1
+	AND fileNo=#{fileNo}
+</update>
+<update id="updateNoticeVO">
+UPDATE notice SET title=#{title},content=#{content},modDate =now()
+WHERE 1=1
+	AND noticeNo = #{noticeNo}
+</update>
+<update id="deleteNoticeVO">
+UPDATE notice SET deleteYn='Y',delDate=now()
+WHERE 1=1
+	AND noticeNo=#{noticeNo}
+</update>
+<update id="deleteNoticeFileVO">
+UPDATE noticeFile SET deleteYn='Y',delDate=now()
+WHERE 1=1
+	AND noticeNo=#{noticeNo}
+</update>
+
+<!-- 문의사항 -->
+<select id="selectInquiryList" resultType="com.dailyMarket.www.vo.InquiryVO">
+SELECT rnum,inquiryNo,userNo,writer,title,content,hitCnt,status, regDate,modDate,delDate,deleteYn
+	FROM (
+		SELECT inquiryNo,userNo,writer,title,content,hitCnt,status, regDate,modDate,delDate,deleteYn,
+			ROW_NUMBER() OVER(ORDER BY inquiryNo DESC) AS rnum
+		FROM inquiry
+		WHERE 1=1
+		AND deleteYn='N'
+		<include refid="questionSearch"/>
+ 	) R
+WHERE 1=1
+AND rnum BETWEEN #{startRow} AND #{endRow}
+ORDER BY inquiryNo DESC 
+</select>
+
+<select id="selectInquiryTotalCnt" resultType="int">
+SELECT COUNT(inquiryNo)
+FROM inquiry
+WHERE 1=1
+<include refid="questionSearch"/>
+AND deleteYn='N'
+</select>
+<select id="selectByInquiryNo" resultType="com.dailyMarket.www.vo.InquiryVO">
+SELECT inquiryNo,userNo,writer,title,content,hitCnt,status,regDate,modDate,delDate,deleteYn
+	FROM inquiry
+WHERE 1=1
+AND deleteYn='N'
+AND inquiryNo = #{inquiryNo}
+</select>
+<select id="selectInquiryFile" resultType="com.dailyMarket.www.vo.InquiryFileVO">
+SELECT fileNo,inquiryNo,originFileName,storedFileName,fileSize,regDate,modDate,delDate,deleteYn
+FROM inquiryfile
+WHERE 1=1
+AND deleteYn='N'
+AND inquiryNo = #{inquiryNo}
+</select>
+<insert id="insertAnswerByInquiryNo">
+INSERT INTO answer (title,content,inquiryNo)
+		VALUES (#{title},#{content},#{inquiryNo})
+</insert>
+<update id="updateInquiryStatus">
+UPDATE inquiry SET status='Y'
+WHERE 1=1
+AND inquiryNo = #{inquiryNo}
+</update>
+
+
+<select id="selectAnswerByInquiryNo" resultType="com.dailyMarket.www.vo.AnswerVO">
+SELECT answerNo,inquiryNo,title,content,regDate,deleteYn
+	FROM answer
+WHERE 1=1
+and inquiryNo=#{inquiryNo}
+and deleteYn='N'
+</select>
+<update id="updateAnswerByInquiryNo">
+UPDATE answer SET title=#{title}, content=#{content}, modDate=now()
+WHERE 1=1
+AND inquiryNo=#{inquiryNo}
+</update>
+<update id="deleteAnswerByInquiryNo">
+UPDATE answer SET delDate = now() , deleteYn='Y'
+WHERE 1=1
+AND inquiryNo=#{inquiryNo}
+</update>
+</mapper>
+
