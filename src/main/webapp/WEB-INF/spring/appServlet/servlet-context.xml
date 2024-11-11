@@ -49,23 +49,45 @@
 	<beans:bean id="multipartResolver"	class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 		<beans:property name="maxUploadSize" value="104857600" />
 	</beans:bean>
+ 
 	<interceptors>
 		<interceptor>
-			<mapping path="/admin/main" />
-			<mapping path="/admin/product/main" />
-			<mapping path="/admin/product/detail" />
-			<mapping path="/admin/product/delete" />
-			<mapping path="/admin/product/update" />
-			<mapping path="/admin/store/main" />
-			<mapping path="/admin/store/detail" />
-			<mapping path="/admin/store/detail/update" />
-			<mapping path="/admin/job/main" />
-			<mapping path="/admin/estate/main" />
-			<mapping path="/admin/car/main" />
-			<mapping path="/admin/user/main" />
+				<mapping path="/admin/main"/>
+				<mapping path="/admin/product/main"/>
+				<mapping path="/admin/product/detail"/>
+				<mapping path="/admin/store/main"/>
+				<mapping path="/admin/store/detail"/>
+				<mapping path="/admin/job/main"/>
+				<mapping path="/admin/job/detail"/>
+				<mapping path="/admin/estate/main"/>
+				<mapping path="/admin/estate/detail"/>
+				<mapping path="/admin/car/main"/>
+				<mapping path="/admin/car/detail"/>
+				<mapping path="/admin/user/main"/>
+				<mapping path="/admin/user/detail"/>
+				<mapping path="/admin/event/main"/>
+				<mapping path="/admin/event/detail"/>
+				<mapping path="/admin/notice/main"/>
+				<mapping path="/admin/notice/detail"/>
+				<mapping path="/admin/question/main"/>
+				<mapping path="/admin/question/detail"/>
+				<mapping path="/admin/advert/main"/>
+				<mapping path="/admin/advert/detail"/>
 			<beans:bean id="adminInterceptor" class="com.dailyMarket.www.utils.AdminInterceptor" />
 		</interceptor>
 		<interceptor>
+			<mapping path="/owner/main" />
+			<mapping path="/owner/company/detail" />
+			<mapping path="/owner/company/regist" />
+			<mapping path="/owner/company/menu/regist" />
+			<mapping path="/owner/company/menu/detail" />
+			<mapping path="/owner/job/main" />
+			<mapping path="/owner/job/regist" />
+			<mapping path="/owner/job/detail" />
+			<mapping path="/owner/job/list" />
+			<mapping path="/owner/notice/write" />
+			<mapping path="/owner/advert/write" />
+			
 			<mapping path="/user/main" />
 			<mapping path="/user/product/main" />
 			<mapping path="/user/product/write" />
@@ -75,50 +97,54 @@
 			<mapping path="/user/company/product/main" />
 			<mapping path="/user/company/notice/main" />
 			<mapping path="/user/company/notice/detail" />
-			<mapping path="/user/company/reivew/write" />
+			<mapping path="/user/company/review/write" />
 			<mapping path="/user/company/review/main" />
-			<mapping path="/user/job/main" />
-			<mapping path="/user/job/write" />
-			<mapping path="/user/job/detail" />
+			<mapping path="/user/company/review/detail" />
 			<mapping path="/user/estate/main" />
+			<mapping path="/user/estate/detail" />
 			<mapping path="/user/estate/writeOne" />
 			<mapping path="/user/estate/writeTwo" />
 			<mapping path="/user/estate/writeThree" />
-			<mapping path="/user/estate/detail" />
 			<mapping path="/user/car/main" />
-			<mapping path="/user/car/regist" />
 			<mapping path="/user/car/detail" />
+			<mapping path="/user/car/regist" />
+			<mapping path="/user/job/main" />
+			<mapping path="/user/job/detail" />
+			<mapping path="/user/job/write" />
+			<mapping path="/user/job/chk" />
+			<mapping path="/user/inquiry/main" />
+			<mapping path="/user/inquiry/detail" />
+			<mapping path="/user/company/inquiry/write" />
+			
 			<mapping path="/user/mypage/main" />
 			<mapping path="/user/mypage/profile" />
 			<mapping path="/user/mypage/profile/modpass" />
 			<mapping path="/user/mypage/account" />
+			<mapping path="/user/trade/main" />
+			<mapping path="/user/mypage/like" />
+			<mapping path="/user/mypage/sales" />
 			<mapping path="/user/mypage/location" />
-			<mapping path="/user/inquiry/write"/>
-			<mapping path="/user/inquiry/main"/>
-			<mapping path="/user/inquiry/detail"/>
-			<mapping path="/chatting"/>
-			<mapping path="/owner/main" />
-			<mapping path="/owner/company/regist" />
-			<mapping path="/owner/company/detail" />
-			<mapping path="/owner/company/update" />
-			<mapping path="/owner/company/delete" />
-			<mapping path="/owner/company/menu/regist" />
-			<mapping path="/owner/company/menu/detail" />
-			<mapping path="/owner/mypage/main" />
-			<mapping path="/owner/job/regist" />
-			<mapping path="/owner/job/deatil" />
-			<mapping path="/owner/notice/write" />
+			<mapping path="/user/mypage/event" />
+			<mapping path="/user/mypage/notice/main" />
+			<mapping path="/user/mypage/notice/detail" />
+			<mapping path="/user/mypage/neighborHood" />
+			<mapping path="/user/mypage/purchase/main"/>
+			<mapping path="/user/mypage/purchase/detail"/>
+			<mapping path="/chat/roomList"/>
+			<mapping path="/chat/room"/>
 			<beans:bean id="userInterceptor" class="com.dailyMarket.www.utils.UserInterceptor" />
 		</interceptor>
 	</interceptors>
+ 	
 	
 	<beans:bean id="chattingHandler" class="com.dailyMarket.www.utils.ChattingWebSocketHandler" />
-	<websocket:handlers>
-		<websocket:mapping handler="chattingHandler" path="/chatting"/>
+	<websocket:handlers allowed-origins="*">
+		<websocket:mapping handler="chattingHandler" path="/chat/room/send"/>
 			<websocket:handshake-interceptors>
 				<beans:bean class="org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor"></beans:bean>
 			</websocket:handshake-interceptors>
-		<websocket:sockjs/>
+		<websocket:sockjs websocket-enabled="true" />
 	</websocket:handlers>	
+	
 	
 </beans:beans>

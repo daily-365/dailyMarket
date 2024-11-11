@@ -115,9 +115,11 @@
 $(document).ready(function(){
 	
 	$("#keyword").on("keydown",function(e){
-		if(e.keyCode==13){
+		if(e.key=="Enter"){
 			self.location="/user/inquiry/main?keyword="+$("#keyword").val()
-			alert($("#keyword").val())
+		    return false;
+			// return false 추가시 alert 사용 안해도 작동.
+			// alert($("#keyword").val())
 		}
 	});
 });

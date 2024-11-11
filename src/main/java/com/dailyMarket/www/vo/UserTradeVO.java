@@ -2,6 +2,8 @@ package com.dailyMarket.www.vo;
 
 import java.util.Date;
 
+import org.springframework.web.bind.annotation.RequestParam;
+
 public class UserTradeVO {
 	
 	private int idx;
@@ -22,13 +24,24 @@ public class UserTradeVO {
 	
 	private String productStoredFileName;
 	
+	private int productUserNo;
+	
+	//상대 계좌 정보
+	private  int targetUserNo;
+	private String targetUserId;
+	private String targetUserName;
+	private String targetAccountNum;
+	private String targetTradeBank;
+	private int targetSaveMoney;
+	
+	private String tradeYn;
+	
 	public int getIdx() {
 		return idx;
 	}
 	public void setIdx(int idx) {
 		this.idx = idx;
 	}
-	
 	public int getUserNo() {
 		return userNo;
 	}
@@ -53,7 +66,6 @@ public class UserTradeVO {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	
 	public String getContent() {
 		return content;
 	}
@@ -66,7 +78,6 @@ public class UserTradeVO {
 	public void setPrice(int price) {
 		this.price = price;
 	}
-	
 	public String getLocation() {
 		return location;
 	}
@@ -115,6 +126,57 @@ public class UserTradeVO {
 	public void setProductStoredFileName(String productStoredFileName) {
 		this.productStoredFileName = productStoredFileName;
 	}
+	public int getProductUserNo() {
+		return productUserNo;
+	}
+	public void setProductUserNo(int productUserNo) {
+		this.productUserNo = productUserNo;
+	}
+	public int getTargetUserNo() {
+		return targetUserNo;
+	}
+	public void setTargetUserNo(int targetUserNo) {
+		this.targetUserNo = targetUserNo;
+	}
+	public String getTargetUserId() {
+		return targetUserId;
+	}
+	public void setTargetUserId(String targetUserId) {
+		this.targetUserId = targetUserId;
+	}
+	public String getTargetUserName() {
+		return targetUserName;
+	}
+	public void setTargetUserName(String targetUserName) {
+		this.targetUserName = targetUserName;
+	}
+	public String getTargetAccountNum() {
+		return targetAccountNum;
+	}
+	public void setTargetAccountNum(String targetAccountNum) {
+		this.targetAccountNum = targetAccountNum;
+	}
+	public String getTargetTradeBank() {
+		return targetTradeBank;
+	}
+	public void setTargetTradeBank(String targetTradeBank) {
+		this.targetTradeBank = targetTradeBank;
+	}
+	public int getTargetSaveMoney() {
+		return targetSaveMoney;
+	}
+	public void setTargetSaveMoney(int targetSaveMoney) {
+		this.targetSaveMoney = targetSaveMoney;
+	}
+	public String getTradeYn() {
+		return tradeYn;
+	}
+	public void setTradeYn(String tradeYn) {
+		this.tradeYn = tradeYn;
+	}
+	
+	
+
 	
 	
 	

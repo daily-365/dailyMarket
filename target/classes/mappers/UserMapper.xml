@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="UserMapper">
-
+<!-- 회원가입 / 로그인 -->
 <insert id="insertUserRegist">
 Insert Into user (	userId,userPass,userPassChk,userName,userNick,userMail,userTel,userBirth,userGender
 					,userAddr1,userAddr2,userAgree1,userAgree2
@@ -19,15 +19,15 @@ where 1=1
 	and userPass=#{userPass}
 </select>
 <select id="selectUserByUserId" resultType="com.dailyMarket.www.vo.UserVO">
-Select userId,userPass,userPassChk,userName,userNick,userMail,userTel,userBirth,userGender
+Select userNo,userId,userPass,userPassChk,userName,userNick,userMail,userTel,userBirth,userGender
 		,userAddr1,userAddr2,userAgree1,userAgree2
 FROM user
 WHERE userId=#{userId}
 </select> 
 
 <insert id="insertUserProduct">
-Insert into product(title,type,price,content,location,writer)
-	values(#{title},#{type},#{price},#{content},#{location},#{writer})
+Insert into product(userNo,title,type,price,content,location,writer)
+	values(#{userNo},#{title},#{type},#{price},#{content},#{location},#{writer})
 </insert>
 
 <insert id="insertUserFile">
@@ -35,20 +35,23 @@ Insert into productFile(productNo, productOriginFileName,productStoredFileName,p
 	values ( (SELECT IFNULL((SELECT max(productNo)+1),1) From product) ,#{productOriginFileName},#{productStoredFileName},#{productFileSize},#{productWriter})
 </insert>
 
+<!-- 중고 거래 -->
 <select id="selectProductList" resultType="com.dailyMarket.www.vo.ProductVO">
-SELECT rnum,productNo,title,type,price,content,location,writer,hitCnt,likeCnt,regDate,modDate,delDate,deleteYn,productStoredFileName
+SELECT rnum,productNo,userNo,title,type,price,content,location,writer,hitCnt,likeCnt,regDate,modDate,delDate,deleteYn,productStoredFileName,
+	   tradeYn,tradeUserNo,tradeDate
 FROM (
 	SELECT 
-		 p.productNo,p.title,p.type,p.price,p.content,p.location,p.writer,p.hitCnt,p.likeCnt,p.regDate,p.modDate,p.delDate,p.deleteYn,
-		 f.productStoredFileName
-		 ,ROW_NUMBER() OVER (ORDER BY productNo DESC ) AS rnum
+		 p.productNo,p.userNo,p.title,p.type,p.price,p.content,p.location,p.writer,p.hitCnt,p.likeCnt,p.regDate,p.modDate,p.delDate,p.deleteYn,
+		 p.tradeYn,p.tradeUserNo,p.tradeDate,
+		 f.productStoredFileName,
+		 ROW_NUMBER() OVER (ORDER BY productNo DESC ) AS rnum
 	FROM product p
 	LEFT OUTER JOIN productFile f
 	ON p.productNo = f.productNo
 	WHERE 1=1
 	<if test="keyword!=null and !keyword.equals('')">
-		AND a.title like CONCAT('%',#{keyword},'%')
-		OR a.location like CONCAT('%',#{keyword},'%')
+		AND p.title like CONCAT('%',#{keyword},'%')
+		OR p.location like CONCAT('%',#{keyword},'%')
 	</if>
 ) R
 WHERE 1=1
@@ -91,11 +94,15 @@ WHERE 1=1
 </update>
 
 <select id="selectProductDetail" resultType="com.dailyMarket.www.vo.ProductVO">
-SELECT a.productNo,a.title,a.type,a.price,a.content,a.location,a.writer,a.hitCnt,a.likeCnt,a.regDate,a.modDate,a.delDate,a.deleteYn
+SELECT a.productNo,a.userNo,a.title,a.type,a.price,a.content,a.location,a.writer,a.hitCnt,a.likeCnt,a.regDate,a.modDate,a.delDate,a.deleteYn
+	,a.tradeYn,a.tradeUserNo,a.tradeDate
 	,b.storedFileName as profileFile
+	,c.roomNo
 FROM product a
-INNER JOIN userProFileFile b
+LEFT OUTER  JOIN userProFileFile b
 ON a.writer =b.userId
+LEFT OUTER  JOIN chatroom c
+ON a.userNo=c.targetUserNo
 WHERE 1=1
 	AND a.productNo =#{productNo}
 	AND a.deleteYn ='N'
@@ -108,6 +115,8 @@ FROM productfile
 WHERE productNo = #{productNo}
 </select>
 
+
+<!-- 업체 -->
 <sql id="searchBusiType">
 <if test="busiType!=null and !busiType.equals('')">
 	<if test="busiType=='식당'.toString()">AND busiType = #{busiType}</if>
@@ -115,6 +124,12 @@ WHERE productNo = #{productNo}
 	<if test="busiType=='용달/이사'.toString()">AND busiType = #{busiType}</if>
 	<if test="busiType=='뷰티/미용'.toString()">AND busiType = #{busiType}</if>
 	<if test="busiType=='헬스/필라테스/요가'.toString()">AND busiType = #{busiType}</if>
+</if>
+</sql>
+
+<sql id="searchKeywordForBusi">
+<if test="keyword!=null and !keyword.equals('')">
+	AND busiName like CONCAT('%',#{keyword},'%')
 </if>
 </sql>
 
@@ -127,11 +142,11 @@ WHERE productNo = #{productNo}
 </sql>
 
 <select id="selectBusiList" resultType="com.dailyMarket.www.vo.BusiVO">
-SELECT rnum,busiNo,busiNum,writer,ownerName,busiTel,busiName,busiType,busiType1,busiType2,busiType3,storeTel,storeAddr,storeAddrDetail
+SELECT rnum,busiNo,busiNum,userNo,writer,ownerName,busiTel,busiName,busiType,busiType1,busiType2,busiType3,storeTel,storeAddr,storeAddrDetail
 	  ,agreeYn,status,homepage,introduce,regDate,modDate,delDate,deleteYn,title,storedFileName,hitCnt
 	FROM (
 		SELECT 
-			a.busiNo,a.busiNum,a.writer,a.ownerName,a.busiTel,a.busiName,a.busiType,a.busiType1,a.busiType2,a.busiType3,a.storeTel
+			a.busiNo,a.busiNum,a.userNo,a.writer,a.ownerName,a.busiTel,a.busiName,a.busiType,a.busiType1,a.busiType2,a.busiType3,a.storeTel
 			,a.storeAddr,a.storeAddrDetail,a.agreeYn,a.status,a.homepage,a.introduce,a.regDate,a.modDate,a.delDate,a.deleteYn,a.title
 			,b.storedFileName,a.hitCnt
 			,ROW_NUMBER() OVER (ORDER BY hitCnt DESC ) rnum
@@ -140,25 +155,30 @@ SELECT rnum,busiNo,busiNum,writer,ownerName,busiTel,busiName,busiType,busiType1,
 	ON a.busiNo = b.busiNo	
 	WHERE 1=1
 	<include refid="searchBusiType"/>
+	<include refid="searchKeywordForBusi"/>
 		AND a.deleteYn='N'
 		AND b.deleteYn='N'
 		AND a.status = 'Y'
 	) R
 WHERE 1=1
-	AND rnum BETWEEN 1 AND 8
-	
 GROUP BY busiNo
 ORDER BY hitCnt DESC
+LIMIT 0, #{endRow}
 </select>
 
 
 <select id="selectByBusiNo" resultType="com.dailyMarket.www.vo.BusiVO">
-SELECT busiNo,busiNum,writer,ownerName,busiTel,busiName,busiType1,busiType2,busiType3,storeTel,storeAddr,storeAddrDetail,introduce,homePage,agreeYn,status
-		,regDate,modDate,delDate,deleteYn,title,hitCnt
-FROM busi
+SELECT a.busiNo,a.busiNum,a.userNo,a.writer,a.ownerName,a.busiTel,a.busiName,a.busiType1,a.busiType2,a.busiType3
+		,a.storeTel,a.storeAddr,a.storeAddrDetail,a.introduce,a.homePage,a.agreeYn,a.status
+		,a.regDate,a.modDate,a.delDate,a.deleteYn,a.title,a.hitCnt
+		,b.roomNo,(SELECT COUNT(*) FROM chatroom WHERE userType ='owner' AND userNo=#{userNo}) AS userType
+FROM busi a
+LEFT OUTER JOIN chatroom b
+ON a.userNo =b.targetUserNo
 WHERE 1=1
 	AND busiNo= #{busiNo}
 	AND deleteYn='N'
+GROUP BY busiNo
 </select>
 
 <select id="selectStoreList" resultType="com.dailyMarket.www.vo.StoreFileVO">
@@ -189,9 +209,52 @@ AND deleteYn='N'
 UPDATE busi SET hitCnt = IFNULL(hitCnt+1,1)
 WHERE busiNo=#{busiNo}
 </update>
+<!-- 업체 추천검색어 -->
+<select id="selectBusiKeywordList" resultType="com.dailyMarket.www.vo.AdvertVO">
+SELECT a.advertNo,a.busiNo,a.userNo,a.content,a.location,a.age,a.gender,a.priceType,a.price,a.startType,a.days
+		,a.endDateYn,a.detailYn,a.payStatus,a.approveStatus,a.regDate,a.modDate,a.delDate,a.deleteYn
+		,b.busiName
+FROM advert a
+INNER JOIN busi b
+ON a.busiNo=b.busiNo
+WHERE 1=1
+AND a.deleteYn ='N'
+AND b.deleteYn= 'N'
+AND payStatus ='Y'
+AND approveStatus ='Y'
+
+AND price >= 100
+</select>
+<!-- 업체 추천 검색어 (busiNo 기준) -->
+<select id="selectBusiKeywordByAdvertNo" resultType="com.dailyMarket.www.vo.AdvertVO">
+SELECT a.advertNo,a.busiNo,a.userNo,a.content,a.location,a.age,a.gender,a.priceType,a.price,a.startType,a.days
+		,a.endDateYn,a.detailYn,a.payStatus,a.approveStatus,a.regDate,a.modDate,a.delDate,a.deleteYn
+		,b.storedFileName,b.deleteYn
+		,c.busiName
+FROM advert a
+INNER JOIN advertfile b
+ON a.advertNo =b.advertNo
+INNER JOIN busi c
+ON a.busiNo=c.busiNo
+WHERE a.advertNo=#{advertNo}
+AND a.deleteYn ='N'
+AND b.deleteYn='N'
+AND c.deleteYn= 'N'
+AND payStatus ='Y'
+AND approveStatus ='Y'
+
+AND price >= 100
+</select>
+<!-- 광고비 차감 -->
+<update id="updateDeductAdvert">
+UPDATE advert SET price = price-100 ,modDate = NOW()
+WHERE advertNo = #{advertNo}
+
+AND price >= 100
+</update>
 
 
-
+<!-- 부동산 -->
 <insert id="insertEstateOne">
 INSERT INTO estate(esWriter,esHumType,esRoomType,esLoc,esLocDetail,esLocContent,regDate1)
 	VALUES (#{esWriter}, #{esHumType},#{esRoomType},#{esLoc},#{esLocDetail},#{esLocContent},NOW())
@@ -278,7 +341,7 @@ UPDATE estate SET hitCnt=hitCnt+1
 WHERE esNo=#{esNo}
 </update>
 
-
+<!-- 중고차 -->
 <insert id="insertCarRegist">
 Insert Into car (carUserId,carWriter,carPrice,carType,carManuFacturing,carModel,carRank,carDetailRank,carDiffDate,carRegDate
 			,carDistance,carDisplaceMent,carFuel,carTransMission,carAccidentCnt,carSpecialUseYn
@@ -348,7 +411,7 @@ UPDATE car SET hitCnt=hitCnt+1
 WHERE carNo=#{carNo}
 </update>
 
-
+<!-- 알바 -->
 <select id="selectJobList" resultType="com.dailyMarket.www.vo.JobVO">
 SELECT rnum,jobNo,jobWriter,jobCompany,jobTitle,jobType,jobMoney,jobLoc,jobLocDetail,jobWorkTime,jobLocContent,hitCnt
 		,regDate,modDate,delDate,deleteYn,storedFileName
@@ -393,6 +456,7 @@ UPDATE job SET hitCnt=hitCnt+1
 WHERE jobNo=#{jobNo}
 </update>
 
+<!-- 공지사항 -->
 <select id="selectCompanyNoticeList" resultType="com.dailyMarket.www.vo.BusiNoticeVO"> 
 SELECT a.busiNoticeNo,a.busiNo,a.title,a.subTitle,a.content,a.subContent,a.regDate,a.modDate,a.delDate,a.deleteYn,a.hitCnt
 		,b.storedFileName
@@ -419,13 +483,13 @@ WHERE busiNoticeNo=#{busiNoticeNo}
 AND deleteYn='N'
 </select>
 
-
 <update id="updateNoticeHitCnt">
 UPDATE busiNotice SET hitCnt = hitCnt+1
 WHERE 1=1
 	AND busiNoticeNo=#{busiNoticeNo}
 </update>
 
+<!-- 리뷰 작성 -->
 <insert id="insertCompanyReview">
 Insert into busiReview (busiNo,title,content,writer)
 	values(#{busiNo},#{title},#{content},#{writer})
@@ -481,7 +545,7 @@ WHERE 1=1
 	AND b.deleteYn='N'
 	AND c.deleteYn='N'
 GROUP BY busiReviewNo
-ORDER BY hitCnt DESC
+ORDER BY regDate DESC
 limit 0,#{endRow}
 </select>
 
@@ -505,7 +569,7 @@ WHERE 1=1
 	AND busiReviewNo=#{busiReviewNo}
 </update>
 
-
+<!-- 구직(알바) -->
 <insert id="insertUserJob">
 Insert into userJob (writer,lastName,firstName,tel,gender,birthYear
 					,careerYn,careerLoc,careerWork,careerYear,careerDiff,advantage,introduce,addInfo)
@@ -545,12 +609,12 @@ UPDATE userJob set delDate = now() ,deleteYn='Y'
 UPDATE userJobFile set delDate = now() ,deleteYn='Y'
 	WHERE writer=#{writer}
 </update>
+<!-- 이력서 작성여부 -->
 <select id="selectUserJobWrtieYn" resultType="int">
 SELECT COUNT(userJobNo)
 FROM userjob
 WHERE writer =#{writer}
 </select>
-
 <!-- 알바 지원 -->
 <insert id="insertGetUserJob">
 Insert Into getUserJob (jobNo,userId,status)
@@ -563,6 +627,7 @@ FROM getUserJob
 WHERE 1=1 
 AND userId = #{userId}
 AND jobNo = #{jobNo}
+AND deleteYn='N'
 </select>
 
 <!-- 마이페이지 : 회원정보 불러오기 -->
@@ -629,64 +694,137 @@ WHERE userId = #{userId}
 UPDATE user SET userPass=#{userPass},userPassChk=#{userPassChk} ,modDate = now()
 WHERE userId =#{userId}
 </update>
+
 <!--계좌 충전 -->
 <insert id="insertAccount" >
-Insert into userAccount (userId,userName,accountNum,tradeBank,saveMoney)
-	values (#{userId},#{userName},#{accountNum},#{tradeBank},#{saveMoney})
+Insert into userAccount (userNo,userId,userName,accountNum,tradeBank,saveMoney,moneyType,targetUserNo,userType)
+	values (#{userNo},#{userId},#{userName},#{accountNum},#{tradeBank},#{saveMoney},'입금',#{targetUserNo},#{userType})
 </insert>
-
-<select id="selectAccount" resultType="com.dailyMarket.www.vo.UserAccountVO">
-SELECT userId,accountNum,tradeBank,SUM(saveMoney) AS saveMoney
-FROM userAccount
-WHERE userId=#{userId}
-GROUP BY accountNum
+<!-- 계좌 생성 -->
+<insert id="insertSumAccount" >
+Insert into userSumAccount(userNo,tradeBank,accountNum,saveMoney)
+		values (#{userNo},#{tradeBank},#{accountNum},#{saveMoney})
+</insert>
+<!-- 계좌 생성 여부 -->
+<select id="selectSumAccountCnt" resultType="int">
+SELECT COUNT(*)
+FROM usersumaccount
+WHERE accountNum =#{accountNum}
+</select>
+<!-- 계좌 입금  -->
+<update id="updateUserSumAccountPlus">
+UPDATE userSumAccount SET saveMoney =saveMoney+#{saveMoney}
+WHERE userNo=#{userNo}
+	AND tradeBank=#{tradeBank}
+	AND accountNum=#{accountNum}
+</update>
+<!-- 계좌 총액 구하기 / 등록된 계좌 -->
+<select id="selectSumAccountList" resultType="com.dailyMarket.www.vo.UserSumAccountVO">
+SELECT a.idx,a.userNo,a.tradeBank,a.accountNum,a.saveMoney,a.modDate
+		,b.userName
+FROM usersumaccount a
+INNER JOIN user b
+ON a.userNo=b.userNo
+WHERE a.userNo =#{userNo}
+</select>
+<!-- 구매 정보 -->
+<select id="selectAccountByProductNo" resultType="com.dailyMarket.www.vo.ProductVO">
+SELECT a.productNo,a.userNo,a.title,a.type,a.price,a.content,a.location,a.writer,a.tradeYn,a.tradeUserNo,a.tradeDate
+		,a.hitCnt,a.likeCnt,a.regDate,a.modDate,a.delDate,a.deleteYn
+		,b.tradeBank,b.accountNum,b.tradeBank
+		,c.userName
+FROM product a
+INNER JOIN usersumaccount b
+ON a.userNo = b.userNo
+INNER JOIN user c
+ON b.userNo =c.userNo
+WHERE a.productNo = #{productNo}
 </select>
 
 <!-- 물품 구매 -->
 <insert id="insertUserTrade">
-INSERT INTO userTrade(userId,productNo,title,content,price,location, likeDate)
-		VALUES (#{userId},#{productNo},#{title},#{content} ,#{price},#{location}, now())
+INSERT INTO userTrade(userNo,userId,productUserNo,productNo,title,content,price,location, likeDate)
+		VALUES (#{userNo},#{userId},#{productUserNo},#{productNo},#{title},#{content} ,#{price},#{location}, now())
 </insert>
 <!-- 찜하기 -->
 <update id="updateUserLike">
-UPDATE product SET likeCnt = likeCnt+1
-WHERE productNo =#{productNo} 
+UPDATE product SET likeCnt = likeCnt+1 
+WHERE productNo =#{productNo}  
 </update>
 <!-- 찜하기 조회 -->
 <select id="selectProductByNo" resultType="com.dailyMarket.www.vo.ProductVO">
-SELECT userId,productNo,title,content,price,location,likeDate,purChaseDate,regDate,modDate,delDate,deleteYn
+SELECT userNo,userId,productNo,title,content,price,location,likeDate,purChaseDate,regDate,modDate,delDate,deleteYn
 FROM userTrade
 WHERE  productNo =#{productNo}
 AND deleteYn='N'
 </select>
 <!-- 찜하기 취소 -->
 <update id="updateUserLikeCancle">
-UPDATE userTrade set deleteYn='Y' , delDate =now()
+UPDATE userTrade set deleteYn='Y' , likeDelDate =now()
 WHERE  productNo =#{productNo}
 </update>
 <!-- 관심목록 조회 -->
 <select id="selectLikeList" resultType="com.dailyMarket.www.vo.UserTradeVO">
-SELECT a.idx,a.userId,a.productNo,a.title,a.content,a.price,a.location, a.likeDate,a.purChaseDate,a.regDate,a.modDate,a.delDate,a.deleteYn
-		,b.productStoredFileName
+SELECT a.idx,a.userNo,a.userId,	a.productUserNo,a.productNo,a.title,a.content,a.price,a.location,
+		 a.likeDate,a.purChaseDate,a.regDate,a.modDate,a.delDate,a.deleteYn,
+		 b.productNo,b.tradeYn,
+		 c.productStoredFileName
 FROM usertrade a
-INNER JOIN productfile b
+INNER JOIN product  b
 ON a.productNo =b.productNo
-WHERE a.userId=#{userId}
+INNER JOIN productfile c
+ON b.productNo =c.productNo
+WHERE a.userNo =#{userNo}
 AND a.deleteYn='N'
-GROUP BY productNo
+GROUP BY a.productNo
+ORDER BY idx DESC
 </select>
 <!-- 판매내역 -->
 <select id="selectProductSalesList" resultType="com.dailyMarket.www.vo.ProductVO">
-SELECT a.productNo,a.title,a.type,a.price,a.content,a.location,a.writer
-		,a.tradeYn,a.tradeId,a.tradeDate,a.hitCnt,a.likeCnt,a.regDate,a.modDate,a.delDate,a.deleteYn
+SELECT a.productNo,a.userNo,a.title,a.type,a.price,a.content,a.location,a.writer
+		,a.tradeYn,a.tradeUserNo,a.tradeDate,a.hitCnt,a.likeCnt,a.regDate,a.modDate,a.delDate,a.deleteYn
 		,b.productStoredFileName
 FROM product a
 INNER JOIN productfile b
 ON a.productNo =b.productNo
-WHERE a.writer=#{userId}
+WHERE a.userNo =#{uesrNo}
 AND a.deleteYn='N'
 GROUP BY productNo
 </select>
+
+<!-- 판매 취소 -->
+<update id="updateProductSaleCancle">
+UPDATE product SET deleteYn='Y',delDate = now()
+WHERE productNo=#{productNo}
+</update>
+
+<!-- 물품구매 (결제) -->
+
+<update id="updatePurchaseTrade">
+UPDATE usertrade SET purChaseDate = NOW() ,STATUS ='Y'
+	WHERE productNo = #{productNo}
+</update>
+<update id="updatePurchaseProduct" >
+ UPDATE product SET tradeYn='Y' , tradeUserNo =#{tradeUserNo}, tradeDate = now() 
+	WHERE productNo = #{productNo}
+</update>
+<insert id="insertPurchaseAccount" >
+Insert into userAccount (userNo,userId,userName,accountNum,tradeBank,saveMoney,moneyType,targetUserNo,userType)
+	values (#{userNo},#{userId},#{userName},#{accountNum},#{tradeBank},#{saveMoney},'출금',#{targetUserNo},'self')
+</insert>
+<update id="updatePurchaseSumAccount">
+UPDATE usersumaccount  SET  saveMoney= saveMoney-#{saveMoney}
+  WHERE accountNum=#{accountNum}
+</update>
+<!-- 상대방 계좌 -->
+<insert id="insertSalesAccount">
+Insert into userAccount (userNo,userId,userName,accountNum,tradeBank,saveMoney,targetUserNo,userType,moneyType)
+	values (#{salesUserNo},#{targetUserId},#{targetUserName},#{targetAccountNum},#{targetTradeBank},#{targetSaveMoney},#{salesTargetUserNo},'user','입금')
+</insert>
+<update id="updateSalesSumAccount">
+UPDATE usersumaccount  SET  saveMoney=saveMoney+#{targetSaveMoney}
+  WHERE accountNum=#{targetAccountNum}
+</update>
 
 <!-- 이벤트 -->
 <select id="selectEventList" resultType="com.dailyMarket.www.vo.EventVO">
@@ -802,4 +940,155 @@ WHERE 1=1
 AND deleteYn='N'
 ORDER BY inquiryNo DESC 
 </select>
+
+<!-- 단골 맺기 -->
+<insert id="insertConnexion">
+Insert into connexion (busiNo,userNo)
+	values (#{busiNo},#{userNo})
+</insert>
+<!-- 단골 여부 -->
+<select id="selectConnexionYn" resultType="int">
+SELECT COUNT(connexionNo) 
+FROM connexion
+WHERE busiNo=#{busiNo}
+and userNo=#{userNo}
+and deleteYn='N'
+</select>
+<!-- 단골 취소 -->
+<update id="updateConnexionDel">
+UPDATE connexion SET deleteYn='Y',delDate=now()
+WHERE busiNo=#{busiNo}
+and userNo=#{userNo}
+</update>
+<!-- 지원한내역 리스트 -->
+<select id="selectGetJobList" resultType="com.dailyMarket.www.vo.GetUserJobVO">
+SELECT a.getUserJobNo,a.jobNo,a.userId,a.status,a.regDate,a.modDate,a.delDate,a.deleteYn
+       ,b.jobNo,b.userNo,b.jobWriter,b.jobCompany,b.jobTitle,b.jobType,b.jobMoney
+		 ,b.jobLoc,b.jobLocDetail,b.jobWorkDate,b.jobWorkTime,b.jobLocContent,b.jobContent
+       ,b.hitCnt,b.regDate,b.modDate,b.delDate,b.deleteYn
+FROM getuserjob a
+INNER JOIN job b 
+ON a.jobNo=b.jobNo
+WHERE userId = #{userId}
+AND a.deleteYn='N'
+ORDER BY a.regDate DESC
+</select>
+<!-- 지원 취소 -->
+<update id="updateGetjobDel">
+UPDATE getUserJob SET deleteYn='Y' , delDate = now()
+WHERE jobNo=#{jobNo}
+</update>
+
+<!--내 동네생활 -->
+<!-- 1.내 단골 -->
+<select id="selectConnexionList" resultType="com.dailyMarket.www.vo.ConnexionVO">
+SELECT a.busiNo,a.busiNum,a.writer,a.ownerName,a.busiTel,a.busiName,a.busiType,a.busiType1,a.busiType2,a.busiType3,
+		a.storeTel,a.storeAddr,a.storeAddrDetail,a.title,a.introduce,a.homePage,a.agreeYn,a.status,a.hitCnt,
+		a.regDate,a.modDate,a.delDate,a.deleteYn,
+		b.noticeYn,b.connexionNo,b.busiNo,b.userNo
+FROM busi a
+INNER JOIN connexion b
+ON a.busiNo = b.busiNo
+WHERE b.deleteYn ='N'
+AND b.userNo =#{userNo}
+</select>
+<!-- 알림 받기 -->
+<update id="updateConnexionNoticeY">
+UPDATE connexion SET noticeYn='Y' , modDate = now()
+WHERE userNo = #{userNo}
+AND busiNo=#{busiNo}
+</update>
+<!-- 알림 받기 해제 -->
+<update id="updateConnexionNoticeN">
+UPDATE connexion SET noticeYn='N' , modDate = now()
+WHERE userNo = #{userNo}
+AND busiNo=#{busiNo}
+</update>
+
+<!-- 2. 단골 소식 -->
+<select id="selectBusiNoticeList" resultType="com.dailyMarket.www.vo.BusiNoticeVO">
+SELECT a.busiNoticeNo,a.busiNo,a.title,a.subTitle,a.content,a.subContent,a.writer,a.hitCnt,a.likeCnt,a.replyCnt
+	   ,b.storedFileName
+	   ,d.busiName
+FROM busiNotice a
+INNER JOIN businoticefile b
+ON a.busiNoticeNo =b.busiNoticeNo
+INNER JOIN connexion c
+ON a.busiNo = c.busiNo
+INNER JOIN busi d
+ON c.busiNo =d.busiNo
+WHERE a.deleteYn ='N'
+AND b.deleteYn='N'
+AND c.deleteYn='N'
+AND c.userNo=#{userNo}
+GROUP BY busiNoticeNo
+</select>
+
+<!-- 3.내가쓴글(review) -->
+<select id="selectReviewList" resultType="com.dailyMarket.www.vo.BusiReviewVO">
+SELECT a.busiReviewNo,a.busiNo,a.title,a.content,a.writer,a.hitCnt,a.regDate,a.modDate,a.delDate,a.deleteYn
+      ,b.busiNo,b.busiName
+FROM busireview a
+INNER JOIN busi b
+ON a.busiNo=b.busiNo
+WHERE a.writer= #{userId}
+AND a.deleteYn='N'
+</select>
+
+<!-- 채팅 여부 -->
+<select id="selectChatYn" resultType="int">
+SELECT COUNT(*)
+FROM chatRoom
+WHERE targetUserNo=#{targetUserNo}
+AND STATUS ='Y'
+</select>
+
+<!-- 구매 목록 -->
+<select id="selectPurchaseList" resultType="com.dailyMarket.www.vo.ProductVO">
+SELECT 
+	 p.productNo,p.userNo,p.title,p.type,p.price,p.content,p.location,p.writer,p.hitCnt,p.likeCnt,p.regDate,p.modDate,p.delDate,p.deleteYn,
+	 p.tradeYn,p.tradeUserNo,p.tradeDate,
+	 f.productStoredFileName,
+	 t.title,t.content,t.price,t.location,
+	 a.userName,a.accountNum,a.tradeBank,a.saveMoney,a.moneyType
+FROM product p
+	LEFT OUTER JOIN productFile f
+	ON p.productNo = f.productNo
+	LEFT OUTER JOIN usertrade t
+	ON p.productNo =t.productNo
+	LEFT OUTER JOIN useraccount a
+	ON p.tradeUserNo =a.userNo
+WHERE 1=1
+	AND p.tradeUserNo =#{userNo}
+	AND  p.deleteYn='N'
+	AND p.tradeYn='Y'
+GROUP BY p.productNo
+ORDER BY p.tradeDate DESC
+</select>
+<select id="selectPurchaseDetail" resultType="com.dailyMarket.www.vo.ProductVO">
+SELECT 
+	 p.productNo,p.userNo,p.title,p.type,p.price,p.content,p.location,p.writer,p.hitCnt,p.likeCnt,p.regDate,p.modDate,p.delDate,p.deleteYn,
+	 p.tradeYn,p.tradeUserNo,p.tradeDate,
+	 f.productStoredFileName,
+	 t.title,t.content,t.price,t.location,
+	 a.userName,a.accountNum,a.tradeBank,a.saveMoney,a.moneyType,
+	 u.userName,u.userTel,u.userAddr1,u.userAddr2
+FROM product p
+	LEFT OUTER JOIN productFile f
+	ON p.productNo = f.productNo
+	LEFT OUTER JOIN usertrade t
+	ON p.productNo =t.productNo
+	LEFT OUTER JOIN useraccount a
+	ON p.tradeUserNo =a.userNo
+	LEFT OUTER JOIN user u
+	ON p.tradeUserNo = u.userNo
+WHERE 1=1
+	AND p.productNo =#{productNo}
+	AND p.tradeUserNo =#{tradeUserNo}
+	AND  p.deleteYn='N'
+	AND p.tradeYn='Y'
+GROUP BY p.productNo
+ORDER BY p.tradeDate DESC
+</select>
+
 </mapper>

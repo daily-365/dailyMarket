@@ -97,7 +97,7 @@
 		<tr>
 			<td>${list.rnum }</td>
 			<td>${list.userId }</td>
-			<td><a href="/admin/user/detail?userId=${list.userId}">${list.userName}</a></td>
+			<td><a href="/admin/user/detail?userNo=${list.userNo}">${list.userName}</a></td>
 			<td>${list.userNick}</td>
 			<td>${list.userMail}</td>
 			<td>${list.userTel }</td>

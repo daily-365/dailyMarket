@@ -140,38 +140,45 @@ $(document).ready(function(){
 		count +=8;
 		$("#locCarEndRow").val(count)
 		
-		var carLoc = localStorage.getItem("roadNameAddr").substring(0,8)
-
-		$.ajax({
-			url :"/user/car/main/loc",
-			type:"post",
-			data : {"endRow" : $("#locCarEndRow").val(),
-					"carLoc" :carLoc},
-			success:function(result){
-				
-				var moreLocCarContent =''
-				
-				result.forEach(function(item){
-				
-					moreLocCarContent+='<div class="col-3">'
-		  			moreLocCarContent+='<img src="/resources/upload/user/car/'+item.storedFileName+'" style="width:120px; height: 120px;">'
-		  			moreLocCarContent+='<br><br>'
-		  			moreLocCarContent+='<a href="/user/car/detail?carNo='+item.carNo+'" class="fw-bold text-dark">'+item.carModel+'</a>'
-		  			moreLocCarContent+='<br><br>'
-		  			moreLocCarContent+='<p><span class="fw-bold">'+ item.carRegDate.substring(2,4) +'년식</span>&nbsp;&nbsp;&nbsp;&nbsp;'
-		  			moreLocCarContent+='<span class="fw-bold">'+item.carDistance +'만km</span>'
-		  			moreLocCarContent+='</p>'
-		  			moreLocCarContent+='<p><span class="fw-bold">'+item.carLoc.substring(0,6)+'</span></p>'
-		  			moreLocCarContent+='<p class="fw-bold">￦ '+Number(item.carPrice.replaceAll(',','')/10000).toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,",") +' 만원</p>'
-					moreLocCarContent+='</div>'
-					
-					$("#moreLocCarWrap").html(moreLocCarContent)
-				
-				});
-			
+		if(!localStorage.getItem("roadNameAddr")){
+			if(!confirm("위치가 설정되어있지 않습니다. 위치 설정페이지로 이동할까요?")){
+				return false;
+			}else{
+				location.href="/user/mypage/location"	
 			}
-		
-		});
+		}else{
+			
+			$.ajax({
+				url :"/user/car/main/loc",
+				type:"post",
+				data : {"endRow" : $("#locCarEndRow").val(),
+						"carLoc" :localStorage.getItem("roadNameAddr").substring(0,8)},
+				success:function(result){
+					
+					var moreLocCarContent =''
+					
+					result.forEach(function(item){
+					
+						moreLocCarContent+='<div class="col-3">'
+			  			moreLocCarContent+='<img src="/resources/upload/user/car/'+item.storedFileName+'" style="width:120px; height: 120px;">'
+			  			moreLocCarContent+='<br><br>'
+			  			moreLocCarContent+='<a href="/user/car/detail?carNo='+item.carNo+'" class="fw-bold text-dark">'+item.carModel+'</a>'
+			  			moreLocCarContent+='<br><br>'
+			  			moreLocCarContent+='<p><span class="fw-bold">'+ item.carRegDate.substring(2,4) +'년식</span>&nbsp;&nbsp;&nbsp;&nbsp;'
+			  			moreLocCarContent+='<span class="fw-bold">'+item.carDistance +'만km</span>'
+			  			moreLocCarContent+='</p>'
+			  			moreLocCarContent+='<p><span class="fw-bold">'+item.carLoc.substring(0,6)+'</span></p>'
+			  			moreLocCarContent+='<p class="fw-bold">￦ '+Number(item.carPrice.replaceAll(',','')/10000).toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,",") +' 만원</p>'
+						moreLocCarContent+='</div>'
+						
+						$("#moreLocCarWrap").html(moreLocCarContent)
+					
+					});
+				
+				}
+			
+			});
+		}
 	
 	});
 	

@@ -34,7 +34,6 @@ public class BusiReviewVO extends BusiReviewFileVO{
 	private String reviewStoredFileName;
 	private String userStoredFileName;
 	
-	
 	public int getBusiReviewNo() {
 		return busiReviewNo;
 	}
@@ -162,7 +161,8 @@ public class BusiReviewVO extends BusiReviewFileVO{
 	public void setUserStoredFileName(String userStoredFileName) {
 		this.userStoredFileName = userStoredFileName;
 	}
-
+	
+	
 	
 	
 	

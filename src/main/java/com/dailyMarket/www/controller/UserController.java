@@ -28,6 +28,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.dailyMarket.www.service.UserService;
 import com.dailyMarket.www.utils.PageMaker;
 import com.dailyMarket.www.utils.SearchCriteria;
+import com.dailyMarket.www.vo.AdminChatVO;
+import com.dailyMarket.www.vo.AdvertVO;
 import com.dailyMarket.www.vo.BusiFileVO;
 import com.dailyMarket.www.vo.BusiNoticeFileVO;
 import com.dailyMarket.www.vo.BusiNoticeVO;
@@ -36,6 +38,7 @@ import com.dailyMarket.www.vo.BusiReviewVO;
 import com.dailyMarket.www.vo.BusiVO;
 import com.dailyMarket.www.vo.CarFileVO;
 import com.dailyMarket.www.vo.CarVO;
+import com.dailyMarket.www.vo.ConnexionVO;
 import com.dailyMarket.www.vo.EstateFileVO;
 import com.dailyMarket.www.vo.EstateVO;
 import com.dailyMarket.www.vo.EventVO;
@@ -52,6 +55,7 @@ import com.dailyMarket.www.vo.StoreFileVO;
 import com.dailyMarket.www.vo.UserAccountVO;
 import com.dailyMarket.www.vo.UserJobVO;
 import com.dailyMarket.www.vo.UserProfileFileVO;
+import com.dailyMarket.www.vo.UserSumAccountVO;
 import com.dailyMarket.www.vo.UserTradeVO;
 import com.dailyMarket.www.vo.UserVO;
 
@@ -101,10 +105,13 @@ public class UserController {
 		
 		boolean login = userService.selectUserLogin(userVO);
 		
+		UserVO user= userService.selectUserByUserId(userVO.getUserId());
+		
 		if(login) {
 			session.setAttribute("userId",userVO.getUserId());
-			session.setAttribute("userNo",userVO.getUserNo());
-			session.setAttribute("userNick",userVO.getUserNick());
+			session.setAttribute("userNo",user.getUserNo());
+			session.setAttribute("userNick",user.getUserNick());
+			
 			return "redirect:/user/main";
 		}else {
 			rttr.addFlashAttribute("failMsg","아이디와 비밀번호를 확인해 주세요");
@@ -148,8 +155,13 @@ public class UserController {
 		return "user/product/write";
 	}
 	@RequestMapping(value = "product/write",method =RequestMethod.POST)
-	public String postProudctWrite(ProductVO productVO)throws Exception{
+	public String postProudctWrite(HttpSession session,ProductVO productVO)throws Exception{
+		int userNo = (int)session.getAttribute("userNo");
+		
+		productVO.setUserNo(userNo);
+		
 		userService.insertUserProduct(productVO);
+		
 		return "redirect:/user/main";
 	}
 	@ResponseBody
@@ -199,19 +211,28 @@ public class UserController {
 		List<ProductFileVO> productFile = userService.selectProductFile(productNo);
 		model.addAttribute("productFile", productFile);
 		
+		boolean chatYn = userService.selectChatYn(detail.getUserNo());
+		model.addAttribute("chatYn",chatYn);
+		
 		//조회수
 		userService.updateProductHitCnt(productNo);
+		
+		
 		
 		return "user/product/detail";
 	}
 	
 	@RequestMapping(value = "company/main" ,method = RequestMethod.GET)
 	public String getcompanyMain(BusiVO busiVO,Model model,HttpSession session)throws Exception{
+		busiVO.setEndRow(8);
 		List<BusiVO> list = userService.selectBusiList(busiVO);
 		model.addAttribute("list",list);
 		
 		List<BusiReviewVO> review = userService.selectCompanyReviewList();
 		model.addAttribute("review", review);
+		
+		List<AdvertVO> advert = userService.selectBusiKeywordList();
+		model.addAttribute("advert",advert);
 		
 		
 		return "user/company/main";
@@ -222,6 +243,7 @@ public class UserController {
 	public List<BusiVO> postCompanyMain(@RequestParam("busiType")String busiType)throws Exception{
 		
 		BusiVO busiVO = new BusiVO();
+		busiVO.setEndRow(8);
 		busiVO.setBusiType(busiType);
 		
 		List<BusiVO> list = userService.selectBusiList(busiVO);
@@ -230,15 +252,23 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "company/detail" ,method = RequestMethod.GET)
-	public String getcompanyDetail(@RequestParam("busiNo")int busiNo,HttpSession session
+	public String getcompanyDetail(@RequestParam("busiNo")int busiNo,HttpSession session,BusiVO busi
 									,Model model)throws Exception{
 		
-		BusiVO busiVO = userService.selectByBusiNo(busiNo);
+		int userNo = (int)session.getAttribute("userNo");
+	
+		//업체
+		busi.setUserNo(userNo);
+		busi.setBusiNo(busiNo);
+		
+		BusiVO busiVO = userService.selectByBusiNo(busi);
 		model.addAttribute("busiVO",busiVO);
 		
+		//가게
 		List<StoreFileVO> store = userService.selectStoreList(busiNo);
 		model.addAttribute("store",store);
 		
+		//메뉴
 		List<MenuVO> menu = userService.selectMenuList(busiNo);
 		model.addAttribute("menu",menu);
 		
@@ -246,6 +276,7 @@ public class UserController {
 		busiNoticeVO.setEndRow(4);
 		busiNoticeVO.setBusiNo(busiNo);
 		
+		//소식
 		List<BusiNoticeVO> notice = userService.selectCompanyNoticeList(busiNoticeVO);
 		model.addAttribute("notice",notice);
 		
@@ -253,15 +284,50 @@ public class UserController {
 		busiReviewVO.setEndRow(3);
 		busiReviewVO.setBusiNo(busiNo);
 		
+		//리뷰
 		List<BusiReviewVO> review = userService.selectCompanyReviewByBusiNo(busiReviewVO);
 		model.addAttribute("review",review);
+	
+		//단골 여부
+		ConnexionVO connexionVO = new ConnexionVO();
+		connexionVO.setBusiNo(busiNo);
+		connexionVO.setUserNo(userNo);
 		
+		boolean connexionYn = userService.selectConnexionYn(connexionVO);
+		model.addAttribute("connexionYn",connexionYn);
 		
+				
 		//조회수
 		userService.updateBusiHitCnt(busiNo);
 		
 		return "user/company/detail";
 	}
+	
+	//추천 검색어
+	@ResponseBody
+	@RequestMapping(value = "company/advert",method = RequestMethod.POST)
+	public List<AdvertVO> postAdvertVOList()throws Exception{
+	
+		List<AdvertVO> list = userService.selectBusiKeywordList();
+		return list;
+	}
+	//광고 토스트
+	@ResponseBody
+	@RequestMapping(value = "company/advert/busiNo",method = RequestMethod.POST)
+	public AdvertVO postAdvertVOByBusiNo(@RequestParam("advertNo")int advertNo)throws Exception{
+		
+		AdvertVO advertVO = userService.selectBusiKeywordByAdvertNo(advertNo);
+		
+		if(advertVO.getPrice()!=0) 
+			//광고비 차감
+			userService.updateDeductAdvert(advertNo);
+			
+		//광고비 잔액이 없을경우 Mapper에서 (Query 상) Where절로 조건. ( 토스트 노출도 안되고 차감도 안되는 방식 )
+		
+		return advertVO;
+	}
+	
+	
 	
 	@ResponseBody
 	@RequestMapping(value = "company/detail/reviewMore" ,method = RequestMethod.POST)
@@ -288,7 +354,30 @@ public class UserController {
 		return notice;
 	}
 	
-
+	//단골맺기
+	@ResponseBody
+	@RequestMapping(value = "company/detail/connexion/insert", method = RequestMethod.POST,produces = "application/text; charset=UTF-8;")
+	public String postConnexionReg(@RequestParam("busiNo")int busiNo ,@RequestParam("userNo")int userNo,ConnexionVO connexionVO)throws Exception{
+		connexionVO.setBusiNo(busiNo);
+		connexionVO.setUserNo(userNo);
+		
+		userService.insertConnexion(connexionVO);
+		
+		return "단골 맺기 성공-!";
+	}
+	//단골 취소
+	@ResponseBody
+	@RequestMapping(value = "company/detail/connexion/delete",method = RequestMethod.POST,produces = "application/text; charset=UTF-8;")
+	public String postConnexionDel(@RequestParam("busiNo")int busiNo,@RequestParam("userNo")int userNo,ConnexionVO connexionVO)throws Exception{
+		connexionVO.setBusiNo(busiNo);
+		connexionVO.setUserNo(userNo);
+		
+		userService.updateConnexionDel(connexionVO);
+		
+		return "단골 취소";
+	}
+	
+	
 	@RequestMapping(value = "company/product/main" ,method = RequestMethod.GET)
 	public String getProductMain(@RequestParam("busiNo")int busiNo,Model model)throws Exception{
 		List<MenuVO> menu = userService.selectMenuList(busiNo);
@@ -956,7 +1045,7 @@ public class UserController {
 		String userId = (String)session.getAttribute("userId");
 
 		jobVO.setEndRow(4);
-		
+		jobVO.setJobLoc("강서구");
 		List<JobVO> list = userService.selectJobList(jobVO);
 		model.addAttribute("list",list);
 		
@@ -967,7 +1056,7 @@ public class UserController {
 		//지원 여부
 		GetUserJobVO jobYnVO = new GetUserJobVO();
 		
-		jobYnVO.setWriter(userId);
+		jobYnVO.setuserId(userId);
 		jobYnVO.setJobNo(jobNo);
 		
 		boolean getJobYn = userService.selectGetUserJobYn(jobYnVO);
@@ -975,6 +1064,7 @@ public class UserController {
 		
 		//조회수
 		userService.updateJobHitCnt(jobNo);
+		
 		
 		return "user/job/detail";
 	}
@@ -1011,6 +1101,28 @@ public class UserController {
 	
 		return "지원이 완료되었습니다.";
 	}
+	
+	//알바 지원 확인하러 가기
+	@RequestMapping(value = "job/chk",method = RequestMethod.GET)
+	public String getUserJobChk(HttpSession session,Model model)throws Exception{
+		
+		String userId = (String)session.getAttribute("userId");
+		
+		List<GetUserJobVO> list = userService.selectGetJobList(userId);
+		model.addAttribute("list",list);
+		
+		return "user/job/chk";
+	}
+	//알바 지원 취소
+	@ResponseBody
+	@RequestMapping(value = "job/chk/del",method = RequestMethod.POST,produces = "application/text; charset=UTF-8")
+	public String postJobChkDel(@RequestParam("jobNo")int jobNo)throws Exception{
+		
+		userService.updateGetjobDel(jobNo);
+		
+		return "지원이 취소되었습니다.";
+	}
+	
 	
 	//문의사항
 	@RequestMapping(value = "inquiry/main",method = RequestMethod.GET)
@@ -1095,9 +1207,11 @@ public class UserController {
 	@RequestMapping(value = "mypage/main",method =RequestMethod.GET)
 	public String getMypageMain(HttpSession session,Model model)throws Exception{
 		String userId = (String) session.getAttribute("userId");
+		int userNo = (int)session.getAttribute("userNo");
+		
 		model.addAttribute("profileFile",userService.selectUserProfileYn(userId));
 
-		model.addAttribute("account",userService.selectAccount(userId));
+		model.addAttribute("account",userService.selectSumAccountList(userNo));
 		
 		return "user/mypage/main";
 	}
@@ -1248,35 +1362,61 @@ public class UserController {
 									@RequestParam("userName")String userName,
 									@RequestParam("accountNum")String accountNum,
 									@RequestParam("tradeBank")String tradeBank,
-									@RequestParam("saveMoney")String saveMoney)throws Exception{
+									@RequestParam("saveMoney")String saveMoney,
+									@RequestParam("targetUserNo")int targetUserNo,
+									@RequestParam("userType")String userType)throws Exception{
 		String userId = (String)session.getAttribute("userId");
+		int userNo = (int)session.getAttribute("userNo");
 		
 		UserAccountVO userAccountVO = new UserAccountVO();
+		userAccountVO.setUserNo(userNo);
 		userAccountVO.setUserId(userId);
 		userAccountVO.setUserName(userName);
 		userAccountVO.setAccountNum(accountNum);
 		userAccountVO.setTradeBank(tradeBank);
 		userAccountVO.setSaveMoney(Integer.parseInt(saveMoney));
+		userAccountVO.setTargetUserNo(targetUserNo);
+		userAccountVO.setUserType(userType);
 		
 		userService.insertAccount(userAccountVO);
 		
+		UserSumAccountVO sumAccountVO = new UserSumAccountVO();
+		sumAccountVO.setUserNo(userNo);
+		sumAccountVO.setTradeBank(tradeBank);
+		sumAccountVO.setAccountNum(accountNum);
+		sumAccountVO.setSaveMoney(Integer.parseInt(saveMoney));
+		
+		int exsitChk = userService.selectSumAccountCnt(accountNum);
+		
+		if(exsitChk==0) {
+			userService.insertSumAccount(sumAccountVO);
+		}else {
+			userService.updateUserSumAccountPlus(sumAccountVO);
+		}
+
+		
 		return "충전 되었습니다.";
 	}
+	
 	
 	@ResponseBody
 	@RequestMapping(value = "product/like",method = RequestMethod.POST,produces = "application/text; charset=utf-8;")
 	public String postProductLike(HttpSession session ,@RequestParam("productNo")int productNo ,@RequestParam("price")int price,
 									@RequestParam("title")String title,@RequestParam("content")String content,
-									@RequestParam("location")String location)throws Exception{
+									@RequestParam("location")String location,
+									@RequestParam("productUserNo")int productUesrNo)throws Exception{
 		String userId = (String)session.getAttribute("userId");
+		int userNo = (int)session.getAttribute("userNo");
 		
 		UserTradeVO userTradeVO = new UserTradeVO();
+		userTradeVO.setUserNo(userNo);
 		userTradeVO.setUserId(userId);
 		userTradeVO.setProductNo(productNo);
 		userTradeVO.setTitle(title);
 		userTradeVO.setContent(content);
 		userTradeVO.setPrice(price);
 		userTradeVO.setLocation(location);
+		userTradeVO.setProductUserNo(productUesrNo);
 		
 		userService.insertUserTrade(userTradeVO);
 		userService.updateUserLike(productNo);
@@ -1294,26 +1434,47 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "trade/main",method = RequestMethod.GET)
-	public String getUserTradeMain(@RequestParam("productNo")int productNo,Model model)throws Exception{
-		model.addAttribute("product",userService.selectProductDetail(productNo));
-
+	public String getUserTradeMain(@RequestParam("productNo")int productNo,Model model,HttpSession session)throws Exception{
+		
+		ProductVO product = userService.selectProductDetail(productNo);
+		model.addAttribute("product",product);
+		
+		int userNo = (int)session.getAttribute("userNo");
+		model.addAttribute("account",userService.selectSumAccountList(userNo));
+		
+		model.addAttribute("remit",userService.selectAccountByProductNo(productNo));
+		
+		
 		return "user/trade/main";
 	}
 	
 	
 	@RequestMapping(value = "mypage/like" ,method = RequestMethod.GET)
 	public String getUserMypageLike(HttpSession session,Model model)throws Exception{
-		String userId = (String)session.getAttribute("userId");
-		model.addAttribute("likeList",userService.selectLikeList(userId));
+		int userNo = (int)session.getAttribute("userNo");
+		
+		model.addAttribute("likeList",userService.selectLikeList(userNo));
+		
+		//boolean chatYn = userService.selectChatYn(targetUserNo);
+		//model.addAttribute("chatYn",chatYn);
 		
 		return "user/mypage/like";
 	}
 	@RequestMapping(value = "mypage/sales" ,method = RequestMethod.GET)
 	public String getUserMypageSales(HttpSession session,Model model)throws Exception{
-		String userId = (String)session.getAttribute("userId");
-		model.addAttribute("salesList",userService.selectProductSalesList(userId));
+		int userNo = (int)session.getAttribute("userNo");
+		model.addAttribute("salesList",userService.selectProductSalesList(userNo));
 		
 		return "user/mypage/sales";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "mypage/sales/cancle" ,method = RequestMethod.POST,produces = "application/text; charset=UTF-8;")
+	public String postUserMypageSalesCancle(@RequestParam("productNo")int productNo)throws Exception{
+		userService.updateProductSaleCancle(productNo);
+		
+		return "판매가 취소되었습니다.";
+		
 	}
 	@RequestMapping(value = "mypage/location")
 	public String getMypageLocation(HttpSession session,Model model)throws Exception{
@@ -1324,6 +1485,7 @@ public class UserController {
 	
 	@RequestMapping(value = "mypage/event",method = RequestMethod.GET)
 	public String getEventList(SearchCriteria scri,Model model)throws Exception{
+		
 		List<EventVO> list = userService.selectEventList(scri);
 		model.addAttribute("list",list);
 	
@@ -1336,6 +1498,7 @@ public class UserController {
 		
 		scri.setStartRow(0);
 		scri.setEndRow(endRow);
+		
 		List<EventVO> list = userService.selectEventList(scri);
 		
 		return list;
@@ -1379,4 +1542,142 @@ public class UserController {
 		response.getOutputStream().flush();
 		response.getOutputStream().close();
 	}
+	
+	@RequestMapping(value = "mypage/neighborHood" ,method =RequestMethod.GET)
+	public String getNeighborHood(Model model ,HttpSession session)throws Exception{
+		int userNo = (int)session.getAttribute("userNo");
+		List<ConnexionVO> connexion = userService.selectConnexionList(userNo);
+		model.addAttribute("connexion",connexion);
+		
+		String userId = (String)session.getAttribute("userId");
+		List<BusiReviewVO> review = userService.selectReviewList(userId);
+		model.addAttribute("review",review);
+		
+		List<BusiNoticeVO> notice = userService.selectBusiNoticeList(userNo);
+		model.addAttribute("notice",notice);
+		
+		return "user/mypage/neighborHood";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "mypage/connexion/noticeY" ,method = RequestMethod.POST,produces = "application/text; charset=UTF-8;")
+	public String getConnexionNoticeY(HttpSession session,@RequestParam("busiNo")int busiNo)throws Exception{
+		int userNo = (int)session.getAttribute("userNo");
+		
+		ConnexionVO connexionVO = new ConnexionVO();
+		connexionVO.setUserNo(userNo);
+		connexionVO.setBusiNo(busiNo);
+		
+		userService.updateConnexionNoticeY(connexionVO);
+		
+		return "알림을 받습니다.";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "mypage/connexion/noticeN",method = RequestMethod.POST, produces = "application/text; charset=UTF-8;")
+	public String getConnexionNoticeN(HttpSession session,@RequestParam("busiNo")int busiNo)throws Exception{
+		int userNo = (int)session.getAttribute("userNo");
+		
+		ConnexionVO connexionVO = new ConnexionVO();
+		connexionVO.setUserNo(userNo);
+		connexionVO.setBusiNo(busiNo);
+		
+		userService.updateConnexionNoticeN(connexionVO);
+		
+		return "알림을 받기를 해제합니다.";
+		
+	}
+	
+	@RequestMapping(value = "mypage/purchase/main",method = RequestMethod.GET)
+	public String getMypagePurChase(HttpSession session,Model model)throws Exception{
+		int tradeUserNo = (int)session.getAttribute("userNo");
+		
+		List<ProductVO> list = userService.selectPurchaseList(tradeUserNo);
+		model.addAttribute("list",list);
+		
+		return "user/mypage/purchase/main";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "mypage/purchase/main",method = RequestMethod.POST,produces = "application/text; charset=UTF-8;")
+	public String postPurChase(HttpSession session
+							,@RequestParam("userNo")int userNo
+							,@RequestParam("userId")String userId
+							,@RequestParam("productNo")int productNo
+							,@RequestParam("userName")String userName
+							,@RequestParam("accountNum")String accountNum
+							,@RequestParam("tradeBank")String tradeBank
+							,@RequestParam("saveMoney")int saveMoney
+							,@RequestParam("targetUserName")String targetUserName
+							,@RequestParam("targetAccountNum")String targetAccountNum
+							,@RequestParam("targetTradeBank")String targetTradeBank
+							,@RequestParam("targetUserNo")int targetUserNo
+							,@RequestParam("targetUserId")String targetUserId
+							,@RequestParam("targetSaveMoney")int targetSaveMoney
+							)throws Exception{
+							
+		
+		
+		//거래 상태 및 내역 변경
+		UserTradeVO tradeVO = new UserTradeVO();
+		tradeVO.setProductNo(productNo);
+		userService.updatePurchaseTrade(tradeVO);
+		
+		ProductVO productVO = new ProductVO();
+		productVO.setProductNo(productNo);
+		productVO.setTradeUserNo(userNo);
+		userService.updatePurchaseProduct(productVO);
+		
+		//사용자 계좌 정보 변경
+		UserAccountVO accountVO = new UserAccountVO();
+		accountVO.setUserNo(userNo);
+		accountVO.setUserId(userId);
+		accountVO.setUserName(userName);
+		accountVO.setAccountNum(accountNum);
+		accountVO.setTradeBank(tradeBank);
+		accountVO.setSaveMoney(saveMoney);
+		accountVO.setTargetUserNo(targetUserNo);
+		userService.insertPurchaseAccount(accountVO);
+		
+		UserSumAccountVO sumAccountVO = new UserSumAccountVO();
+		sumAccountVO.setSaveMoney(saveMoney);
+		sumAccountVO.setAccountNum(accountNum);
+		userService.updatePurchaseSumAccount(sumAccountVO);
+
+		
+		//송금 계좌 정보 변경
+		UserAccountVO targetAccountVO = new UserAccountVO();
+		targetAccountVO.setSalesUserNo(targetUserNo);
+		targetAccountVO.setTargetUserId(targetUserId);
+		targetAccountVO.setTargetUserName(targetUserName);
+		targetAccountVO.setTargetAccountNum(targetAccountNum);
+		targetAccountVO.setTargetTradeBank(targetTradeBank);
+		targetAccountVO.setTargetSaveMoney(targetSaveMoney);
+		targetAccountVO.setSalesTargetUserNo(userNo);
+		userService.insertSalesAccount(targetAccountVO);
+		
+		UserSumAccountVO targetSumAccountVO = new UserSumAccountVO();
+		targetSumAccountVO.setTargetSaveMoney(targetSaveMoney);
+		targetSumAccountVO.setTargetAccountNum(targetAccountNum);
+		userService.updateSalesSumAccount(targetSumAccountVO);
+		
+		
+		return "구매가 완료되었습니다.";
+	}
+	
+	@RequestMapping(value = "mypage/purchase/detail" ,method = RequestMethod.GET)
+	public String getMypagePayment(HttpSession session,Model model
+									,@RequestParam("productNo")int productNo
+									,@RequestParam("tradeUserNo")int tradeUserNo)throws Exception{
+		
+		ProductVO productVO = new ProductVO();
+		productVO.setProductNo(productNo);
+		productVO.setTradeUserNo(tradeUserNo);
+		
+		model.addAttribute("detail",userService.selectPurchaseDetail(productVO));
+		
+		
+		return "user/mypage/purchase/detail";
+	}
+
 }

@@ -51,6 +51,27 @@
        	 <form class="d-flex justify-content-right" id="searchForm" >
         	<input id="keyword" value="${param.keyword }" class="form-control col-md-4 me-4 text-center text-dark fw-bold" type="search" placeholder="물품이나 동네를 검색해보세요" aria-label="Search">
         	<button id="searchBtn" type="button" class="btn btn-outline-dark col-md-4" type="button" >검색</button>
+			<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+			<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+			<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+ 		 	<script type="text/javascript">
+ 		 	$(document).ready(function(){
+ 		 		//enter로 검색 결과 찾기
+ 		 		$("#keyword").on("keydown",function(e){
+ 		 			if(e.key=="Enter"){
+	 		 			location.href="/user/product/main?keyword="+$("#keyword").val()
+	 					return false;
+	 		 		}
+ 		 		});
+ 		 		//검색 버튼 클릭으로 검색 결과 찾기
+ 		 		$("#searchBtn").on("click",function(){
+ 		 			location.href="/user/product/main?keyword="+$("#keyword").val()
+ 		 		});
+ 		 		
+ 		 	});
+ 		 	
+ 		 	</script>
+ 		 
  		 </form>
         </li>
       </ul>

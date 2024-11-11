@@ -210,6 +210,59 @@
 </if>
 </sql>
 
+<sql id="advertSearch">
+<if test="searchType!=null and !searchType.equals('')">
+	<if test="searchType=='all'.toString()">
+		AND (  
+		    location like CONCAT('%',#{keyword},'%')  
+		    OR age=#{keyword} 
+		    OR gender=#{keyword}
+		    OR priceType=#{keyword}
+		    OR price <![CDATA[<=#{keyword} ]]> 
+		    OR startType=#{keyword}
+		    OR days  <![CDATA[<=#{keyword}]]>
+		    OR payStatus=#{keyword}
+		    OR approveStatus=#{keyword}
+				)
+	</if>
+	<if test="searchType=='loc'.toString()">  AND location like CONCAT('%',#{keyword},'%')   </if>
+	<if test="searchType=='age'.toString()"> AND age=#{keyword}     </if>
+	<if test="searchType=='gen'.toString()">  AND gender=#{keyword}</if>
+	<if test="searchType=='pType'.toString()"> AND priceType=#{keyword}   </if>
+	<if test="searchType=='price'.toString()"> AND price <![CDATA[<=#{keyword} ]]>     </if>
+	<if test="searchType=='sType'.toString()"> AND startType=#{keyword}    </if>
+	<if test="searchType=='days'.toString()"> AND days  <![CDATA[<=#{keyword}]]>   </if>
+	<if test="searchType=='payS'.toString()"> AND payStatus=#{keyword} </if>
+	<if test="searchType=='approveS'.toString()"> AND approveStatus=#{keyword}   </if>
+</if>
+<if test="startDate!=null and !startDate.equals('') and endDate!=null and !endDate.equals('')">
+	AND substring(regDate,1,10) BETWEEN #{startDate} AND #{endDate}
+</if>
+</sql>
+<sql id="chatSearch">
+<if test="searchType==null or searchType.equals('')">
+	GROUP BY targetUserNo
+</if>
+<if test="searchType!=null and !searchType.equals('')">
+	<if test="searchType=='all'.toString()">
+		AND userId like CONCAT('%',#{keyword},'%')
+		GROUP BY targetUserNo
+		HAVING COUNT(case when readYn='N' then 1 END ) <![CDATA[>=]]> #{keyword}
+	</if>
+	<if test="searchType=='userId'.toString()">
+		AND userId like CONCAT('%',#{keyword},'%')
+		GROUP BY targetUserNo
+	</if>
+	<if test="searchType=='notReadCnt'.toString()">
+		GROUP BY targetUserNo
+		HAVING COUNT(case when readYn='N' then 1 END ) <![CDATA[>=]]> #{keyword}
+	</if>
+</if>
+<if test="startDate!=null and !startDate.equals('') and endDate!=null and !endDate.equals('') ">
+	AND substring(createDate,1,10) BETWEEN #{startDate} and #{endDate}
+</if>
+</sql>
+
 
 <select id="selectAdminLogin" resultType="int">
 SELECT COUNT(userId)
@@ -222,10 +275,10 @@ WHERE 1=1
 
 <select id="selectProductList" resultType="com.dailyMarket.www.vo.ProductVO">
 SELECT rnum,productNo,title,CASE TYPE when 'sale' then '판매' when 'share' then '나눔' END AS TYPE 
-		, price,content,location,writer,hitCnt,regDate,modDate,delDate,deleteYn,tradeYn,tradeId,tradeDate
+		, price,content,location,writer,hitCnt,regDate,modDate,delDate,deleteYn,tradeYn,tradeUserNo,tradeDate
 FROM (
 	SELECT productNo,title,TYPE  
-		, price,content,location,writer,hitCnt,regDate,modDate,delDate,deleteYn,tradeYn,tradeId,tradeDate
+		, price,content,location,writer,hitCnt,regDate,modDate,delDate,deleteYn,tradeYn,tradeUserNo,tradeDate
 		,ROW_NUMBER() OVER(ORDER BY productNo DESC) AS rnum
 		FROM product 
 		WHERE 1=1
@@ -442,10 +495,10 @@ WHERE 1=1
 
 
 <select id="selectUserList" resultType="com.dailyMarket.www.vo.UserVO">
-SELECT rnum,userId,userPass,userPassChk,userName,userNick,userMail,userTel,userBirth,userGender,userAddr1,userAddr2,userAgree1,userAgree2
+SELECT rnum,userNo,userId,userPass,userPassChk,userName,userNick,userMail,userTel,userBirth,userGender,userAddr1,userAddr2,userAgree1,userAgree2
 				,regDate,modDate,delDate,deleteYn
 		FROM( SELECT 
-			 	userId,userPass,userPassChk,userName,userNick,userMail,userTel,userBirth,userGender,userAddr1,userAddr2,userAgree1,userAgree2
+			 	userNo,userId,userPass,userPassChk,userName,userNick,userMail,userTel,userBirth,userGender,userAddr1,userAddr2,userAgree1,userAgree2
 				,regDate,modDate,delDate,deleteYn
 				,ROW_NUMBER() OVER(order by regDate DESC ) AS rnum 
 			FROM user
@@ -463,30 +516,38 @@ WHERE 1=1
 <include refid="userSearch"/>
 </select>
 <select id="selectUserDetail" resultType="com.dailyMarket.www.vo.UserVO">
-SELECT 	userId,userPass,userPassChk,userName,userNick,userMail,userTel,userBirth,userGender,userAddr1,userAddr2,userAgree1,userAgree2
+SELECT 	userNo,userId,userPass,userPassChk,userName,userNick,userMail,userTel,userBirth,userGender,userAddr1,userAddr2,userAgree1,userAgree2
 		 ,regDate,modDate,delDate,deleteYn
 	FROM user 
 	WHERE 1=1
-	AND userId=#{userId}
+	AND userNo=#{userNo}
 </select>
 <select id="selectUserFile" resultType="com.dailyMarket.www.vo.UserProfileFileVO">
  SELECT fileNo,userId,originFileName,storedFileName,fileSize,regDate,modDate,delDate,deleteYn
  FROM  userProfileFile
  WHERE 1=1
- AND userId=#{userId}
+ AND userNo=#{userNo}
  AND deleteYn='N'
 </select>
 <select id="selectUserAccount" resultType="com.dailyMarket.www.vo.UserAccountVO">
-SELECT idx,userId,accountNum,tradeBank,saveMoney,modDate
-FROM userAccount 
+SELECT idx,userNo,tradeBank,accountNum,saveMoney,modDate
+FROM userSumAccount 
 WHERE 1=1
- AND userId=#{userId}  
+AND userNo=#{userNo}
 </select>
+<select id="selectUserAccountDetail" resultType="com.dailyMarket.www.vo.UserAccountVO">
+SELECT idx,userNo,userId,userName,accountNum,tradeBank,saveMoney,moneyType,modDate
+FROM useraccount 
+WHERE 1=1
+AND userNo=#{userNo}
+AND accountNum=#{accountNum}
+</select>
+
 <select id="selectUserTrade" resultType="com.dailyMarket.www.vo.UserTradeVO">
 SELECT idx,userId,productNo,title,content,price,location,likeDate,purChaseDate,regDate,modDate,delDate,deleteYn
 FROM usertrade 
 WHERE 1=1
- AND userId=#{userId}
+ AND userNo=#{userNo}
 </select>
 
 <insert id="insertEventData">
@@ -669,5 +730,102 @@ UPDATE answer SET delDate = now() , deleteYn='Y'
 WHERE 1=1
 AND inquiryNo=#{inquiryNo}
 </update>
+
+
+
+<select id="selectAdvertList" resultType="com.dailyMarket.www.vo.AdvertVO">
+SELECT advertNo,busiNo,userNo,content,location,age,gender,priceType,price,startType,days,
+	   endDateYn,detailYn,approveStatus,payStatus,regDate,modDate,delDate,deleteYn
+	FROM advert 
+WHERE 1=1
+<include refid="advertSearch"/>
+AND deleteYn='N'
+</select>
+<select id="selectAdvertTotalCnt" resultType="int">
+SELECT COUNT(advertNo) 
+	FROM advert
+WHERE 1=1
+<include refid="advertSearch"/>
+AND deleteYn='N'
+</select>
+<select id="SelectAdvertDetail" resultType="com.dailyMarket.www.vo.AdvertVO">
+SELECT a.advertNo,a.busiNo,a.userNo,a.content,a.location,a.age,a.gender,a.priceType,a.price,a.startType,a.days
+		,a.endDateYn,a.detailYn,a.approveStatus,a.payStatus,a.regDate,a.modDate,a.delDate,a.deleteYn
+		,b.storedFileName
+		,c.tradeBank,c.accountNum,c.saveMoney,c.moneyType,c.regDate
+	FROM advert a
+INNER JOIN advertfile b
+ON a.advertNo= b.advertNo
+INNER JOIN adminaccount c
+ON a.userNo = c.userNo
+WHERE 1=1
+AND a.deleteYn='N'
+AND b.deleteYn='N'
+AND a.advertNo=#{advertNo}
+GROUP BY advertNo
+</select>
+<update id="updatePriceAgree">
+UPDATE advert SET payStatus ='Y' , modDate = now()
+WHERE advertNo=#{advortNo}
+</update>
+<update id="updatePriceDisAgree">
+UPDATE advert SET payStatus ='N' , modDate = now()
+WHERE advertNo=#{advortNo}
+</update>
+<update id="updateApproveAgree">
+UPDATE advert SET approveStatus ='Y' , modDate = now()
+WHERE advertNo=#{advortNo}
+</update>
+<update id="updateApproveDisAgree">
+UPDATE advert SET approveStatus ='N' , modDate = now()
+WHERE advertNo=#{advortNo}
+</update>
+
+
+<!-- 채팅 입력 -->
+<insert id="insertChatMessage">
+INSERT INTO adminChat(targetUserNo,userId,message)
+		VALUES (#{targetUserNo},#{userId}, #{message})
+</insert>
+<!-- 채팅 리스트 -->
+<select id="selectChatList" resultType="com.dailyMarket.www.vo.AdminChatVO">
+SELECT chatNo,userId,targetUserNo,message,createDate,deleteYn,readYn,
+		REPLACE(REPLACE(DATE_FORMAT(createDate,'%Y-%m-%d %r'),'AM','오전'),'PM','오후')  AS createTime
+FROM adminChat
+WHERE targetUserNo =#{targetUserNo}
+</select>
+
+<!-- 채팅 목록 그룹화 -->
+<select id="selectChatRoom" resultType="com.dailyMarket.www.vo.AdminChatVO">
+SELECT R.*
+	FROM ( SELECT 	ROW_NUMBER() OVER(ORDER BY  chatNo DESC) AS rnum  
+			,chatNo,targetUserNo,userId,createDate
+			,COUNT(case when readYn='N' then 1 END ) AS notReadCnt
+		FROM adminchat 
+		WHERE 1=1
+		<include refid="chatSearch"/>
+		
+	) R
+ORDER BY rnum 
+</select>
+<!-- 전체 채팅 목록 갯수 -->
+<select id="selectChatRoomTotalCnt" resultType="int">
+SELECT R.*,COUNT(rnum) AS totalCnt
+ FROM (
+ 	SELECT ROW_NUMBER() OVER(ORDER BY  a.chatNo DESC) AS rnum  
+	 FROM adminchat a
+	 INNER JOIN user b
+	ON a.targetUserNo =b.userNo 
+	WHERE 1=1
+	GROUP BY targetUserNo
+ ) R
+
+</select>
+<!-- 답변하기 클릭시 메세지 읽음 처리  -->
+<update id="updateReadMessage">
+UPDATE adminChat SET readYn='Y'
+WHERE targetUserNo =#{targetUserNo}
+</update>
+
 </mapper>
 

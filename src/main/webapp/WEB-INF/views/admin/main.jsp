@@ -238,7 +238,7 @@ body {
 			  </ul>
 			</div>
           </li>
-           <li class="nav-item dropdown">
+          <li class="nav-item dropdown">
             <div class="dropdown text-dark">
 			  <span class="dropdown-toggle nav-link fw-bold align-text-bottom" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 			   	공지사항
@@ -249,19 +249,43 @@ body {
 			  </ul>
 			</div>
           </li>
-            <li class="nav-item">
+           <li class="nav-item">
             <a class="nav-link fw-bold" href="/admin/question/main">
               <span data-feather="layers" class="align-text-bottom"></span>
               	문의사항
             </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link fw-bold" href="/admin/logout">
+        </ul>
+        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
+          <span class="fw-bold">Owner Info</span>
+          <a class="link-secondary" href="#" aria-label="Add a new report">
+            <span data-feather="plus-circle" class="align-text-bottom"></span>
+          </a>
+        </h6>
+        <ul class="nav flex-column mb-2">
+       	  <li class="nav-item">
+            <a class="nav-link fw-bold" href="#">
               <span data-feather="file-text" class="align-text-bottom"></span>
-              	로그아웃
+              	비즈프로필
             </a>
           </li>
-        </ul>
+          <li class="nav-item">
+            <a class="nav-link fw-bold" href="/admin/advert/main">
+              <span data-feather="file-text" class="align-text-bottom"></span>
+              	광고
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link fw-bold" href="/admin/chat/main">
+              <span data-feather="file-text" class="align-text-bottom"></span>
+              	채팅 문의
+            </a>
+          </li>
+         </ul>
+         <h6 class="text-dark h5">
+          &nbsp;
+          <span class="fw-bold" id="admLogoutBtn">LogOut</span>
+        </h6>
       </div>
     </nav>
 
@@ -300,7 +324,7 @@ body {
 	            <c:forEach var="event" items="${event }" varStatus="status">
 	            	<tr>
 	            		<td>${status.count }</td>
-	            		<td><a class="text-dark" href="/admin/event/detail?eventNo=${event.eventNo }">${fn:substring(event.title,0,10)}...</a></td>
+	            		<td><a class="text-dark fw-bold" href="/admin/event/detail?eventNo=${event.eventNo }">${fn:substring(event.title,0,10)}...</a></td>
 	            		<td><fmt:formatDate value="${event.regDate }" pattern="yyyy-MM-dd"/> </td>
 	            	</tr>
 	            </c:forEach>
@@ -323,7 +347,7 @@ body {
 	            <c:forEach var="notice" items="${notice }" varStatus="status">
 	            	<tr>
 	            		<td>${status.count }</td>
-	            		<td><a class="text-dark" href="/admin/notice/detail?noticeNo=${notice.noticeNo }">${fn:substring(notice.title,0,10)}...</a></td>
+	            		<td><a class="text-dark fw-bold" href="/admin/notice/detail?noticeNo=${notice.noticeNo }">${fn:substring(notice.title,0,10)}...</a></td>
 	            		<td><fmt:formatDate value="${notice.regDate }" pattern="yyyy-MM-dd"/> </td>
 	            	</tr>
 	            </c:forEach>
@@ -334,112 +358,22 @@ body {
       <div class="col-4">
        <h2>Q&A</h2>
 	      <div class="table-responsive">
-	        <table class="table  table-sm">
-	          <thead>
+	        <table class="table  text-dark  table-sm">
+	          <thead class="fw-bold">
 	            <tr>
 	              <th scope="col">#</th>
-	              <th scope="col">Header</th>
-	              <th scope="col">Header</th>
-	              <th scope="col">Header</th>
+	              <th scope="col">제목</th>
+	              <th scope="col">작성일</th>
 	            </tr>
 	          </thead>
 	          <tbody>
-	            <tr>
-	              <td>1,001</td>
-	              <td>random</td>
-	              <td>data</td>
-	              <td>placeholder</td>
-	            </tr>
-	            <tr>
-	              <td>1,002</td>
-	              <td>placeholder</td>
-	              <td>irrelevant</td>
-	              <td>visual</td>
-	            </tr>
-	            <tr>
-	              <td>1,003</td>
-	              <td>data</td>
-	              <td>rich</td>
-	              <td>dashboard</td>
-	            </tr>
-	            <tr>
-	              <td>1,003</td>
-	              <td>information</td>
-	              <td>placeholder</td>
-	              <td>illustrative</td>
-	            </tr>
-	            <tr>
-	              <td>1,004</td>
-	              <td>text</td>
-	              <td>random</td>
-	              <td>layout</td>
-	            </tr>
-	            <tr>
-	              <td>1,005</td>
-	              <td>dashboard</td>
-	              <td>irrelevant</td>
-	              <td>text</td>
-	            </tr>
-	            <tr>
-	              <td>1,006</td>
-	              <td>dashboard</td>
-	              <td>illustrative</td>
-	              <td>rich</td>
-	            </tr>
-	            <tr>
-	              <td>1,007</td>
-	              <td>placeholder</td>
-	              <td>tabular</td>
-	              <td>information</td>
-	            </tr>
-	            <tr>
-	              <td>1,008</td>
-	              <td>random</td>
-	              <td>data</td>
-	              <td>placeholder</td>
-	            </tr>
-	            <tr>
-	              <td>1,009</td>
-	              <td>placeholder</td>
-	              <td>irrelevant</td>
-	              <td>visual</td>
-	            </tr>
-	            <tr>
-	              <td>1,010</td>
-	              <td>data</td>
-	              <td>rich</td>
-	              <td>dashboard</td>
-	            </tr>
-	            <tr>
-	              <td>1,011</td>
-	              <td>information</td>
-	              <td>placeholder</td>
-	              <td>illustrative</td>
-	            </tr>
-	            <tr>
-	              <td>1,012</td>
-	              <td>text</td>
-	              <td>placeholder</td>
-	              <td>layout</td>
-	            </tr>
-	            <tr>
-	              <td>1,013</td>
-	              <td>dashboard</td>
-	              <td>irrelevant</td>
-	              <td>text</td>
-	            </tr>
-	            <tr>
-	              <td>1,014</td>
-	              <td>dashboard</td>
-	              <td>illustrative</td>
-	              <td>rich</td>
-	            </tr>
-	            <tr>
-	              <td>1,015</td>
-	              <td>random</td>
-	              <td>tabular</td>
-	              <td>information</td>
-	            </tr>
+	            <c:forEach var="inquiry" items="${inquiry }" varStatus="status">
+	            	<tr>
+	            		<td>${status.count }</td>
+	            		<td><a class="text-dark fw-bold" href="/admin/question/detail?inquiryNo=${inquiry.inquiryNo }">${fn:substring(inquiry.title,0,10)}...</a></td>
+	            		<td><fmt:formatDate value="${inquiry.regDate }" pattern="yyyy-MM-dd"/> </td>
+	            	</tr>
+	            </c:forEach>
 	          </tbody>
 	        </table>
 	      </div>
@@ -480,6 +414,16 @@ var ctx = document.getElementById('myChart').getContext('2d');;
 	  }
  	})
   
+  $(document).ready(function(){
+	 $("#admLogoutBtn").on("click",function(){
+		if(!confirm("로그아웃 하시겠습니까?")){
+			return false;
+		}else{
+			alert("로그아웃 되었습니다.")
+			location.href='/admin/logout'
+		}
+	 }); 
+  });
 
 
 </script>

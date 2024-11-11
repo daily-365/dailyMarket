@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.dailyMarket.www.utils.SearchCriteria;
+import com.dailyMarket.www.vo.AdminChatVO;
 import com.dailyMarket.www.vo.AdminVO;
+import com.dailyMarket.www.vo.AdvertVO;
 import com.dailyMarket.www.vo.AnswerVO;
 import com.dailyMarket.www.vo.BusiFileVO;
 import com.dailyMarket.www.vo.BusiVO;
@@ -68,6 +70,7 @@ public interface AdminService {
 	public UserVO selectUserDetail(String userId)throws Exception;
 	public List<UserProfileFileVO> selectUserFile(String userId)throws Exception;
 	public List<UserAccountVO>selectUserAccount(String userId)throws Exception;
+	public List<UserAccountVO> selectUserAccountDetail(UserAccountVO accountVO)throws Exception;
 	public List<UserTradeVO>selectUserTrade(String userId)throws Exception;
 	
 	public void insertEventData(EventVO eventVO)throws Exception;
@@ -97,5 +100,21 @@ public interface AdminService {
 	public AnswerVO selectAnswerByInquiryNo(int inquirtNo)throws Exception;
 	public void updateAnswerByInquiryNo(AnswerVO answerVO)throws Exception;
 	public void deleteAnswerByInquiryNo(int inquirtNo)throws Exception;
+	
+	public List<AdvertVO>selectAdvertList(SearchCriteria scri)throws Exception;
+	public int selectAdvertTotalCnt(SearchCriteria scri)throws Exception;
+	public AdvertVO SelectAdvertDetail(int advertNo)throws Exception;
+	
+	public void updatePriceAgree(int advertNo)throws Exception;
+	public void updatePriceDisAgree(int advertNo)throws Exception;
+	public void updateApproveAgree(int advertNo)throws Exception;
+	public void updateApproveDisAgree(int advertNo)throws Exception;
+	
+	
+	public void insertChatMessage(AdminChatVO chatVO)throws Exception;
+	public List<AdminChatVO>selectChatList(int targetUserNo)throws Exception;
+	public List<AdminChatVO>selectChatRoom(SearchCriteria scri)throws Exception;
+	public int selectChatRoomTotalCnt(SearchCriteria scri)throws Exception;
+	public void updateReadMessage(int targetUserNo)throws Exception;
 
 }

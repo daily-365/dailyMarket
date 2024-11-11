@@ -100,28 +100,76 @@ h1, h2, h3, h4, h5, h6 {
   </header>
 
   <div class="nav-scroller py-1 mb-2">
-    <nav class="nav justify-content-center fw-bold ">
-    	<c:choose>
-    		<c:when test="${not empty busiVO.status  }">
-    			<a class="p-2 link-warning" href="/owner/company/detail?busiNo=${busiVO.busiNo }">업체정보 수정</a>
-				<c:if test="${busiVO.status eq 'Y' }">
-					<c:if test="${menuExist eq false }"><a class="p-2 link-primary" href="/owner/company/menu/regist">메뉴등록</a> </c:if>
-					<c:if test="${menuExist eq true}"><a class="p-2 link-warning" href="/owner/company/menu/detail?busiNo=${busiVO.busiNo }">메뉴수정</a></c:if>
-   					<c:if test="${jobExsit eq false }"><a class="p-2 link-primary" href="/owner/job/regist">알바구인</a> </c:if>
-     				<c:if test="${jobExsit eq true }"><a class="p-2 link-warning" href="/owner/job/detail">구인정보수정</a> </c:if>
-      				<a class="p-2 link-warning" href="/owner/notice/write">소식등록</a>
-      			</c:if>
-      			<c:if test="${busiVO.status eq 'S' }">
-       				<a class="p-2 link-warning" href="/owner/company/detail?busiNo=${busiVO.busiNo }">업체 등록 대기중</a>
-      			</c:if>
-      			<c:if test="${busiVO.status eq 'N' }">
-      				<a class="p-2 link-danger" href="/owner/company/detail?busiNo=${busiVO.busiNo }">업체 재 등록</a>
-     			 </c:if>
-    		</c:when>
-    		<c:otherwise>
-    			<a class="p-2 link-primary" href="/owner/company/regist">업체등록</a>
-    		</c:otherwise>
-    	</c:choose>
+    <nav class="nav justify-content-center ">
+		<c:if test="${empty busiVO.busiNo }">
+  			<a class="p-2 btn btn-light fw-bold" href="/owner/company/regist">비즈프로필 등록</a>&nbsp;
+  		</c:if>
+  		<c:if test="${not empty busiVO.busiNo }">
+  			<c:if test="${ busiVO.status eq 'S'}">
+  				<a class="p-2 btn btn-light fw-bold" href="/owner/company/detail?busiNo=${busiVO.busiNo }">업체 등록 대기중</a>&nbsp;
+  			</c:if>
+  			<c:if test="${  busiVO.status eq 'Y'}">
+				<div class="btn-group ">
+				  <button type="button" class="fw-bold btn btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+				    등록
+				  </button>
+				  <ul class="dropdown-menu">
+				  	<li>
+				  	<c:if test="${empty busiVO.menuNo }">
+ 						<a class="p-2 btn  fw-bold" href="/owner/company/menu/regist">물품등록</a> &nbsp;
+		 			</c:if>
+		 			</li>
+				  	<li>
+				 	<c:if test="${empty busiVO.jobNo }">
+						<a class="p-2 btn  fw-bold" href="/owner/job/regist">알바구인</a>&nbsp;
+					</c:if>
+					</li>
+				    <li>
+				    <c:if test="${empty advertVO.advertNo }">
+				    	<a class="p-2 btn  fw-bold" href="/owner/advert/write?busiNo=${busiVO.busiNo }">광고등록</a>&nbsp;
+				    </c:if>
+				    </li>
+				    <li><a class="p-2 btn  fw-bold" href="/owner/notice/write">소식등록</a>&nbsp;</li>
+				  </ul>
+				</div>
+				&nbsp;&nbsp;
+				<div class="btn-group ">
+				  <button type="button" class="fw-bold btn btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+				    수정
+				  </button>
+				  <ul class="dropdown-menu">
+				    <li>
+				    	<a class="p-2 btn  fw-bold" href="/owner/company/detail?busiNo=${busiVO.busiNo }">비즈프로필 수정</a>&nbsp;&nbsp;</li>
+				     <li>
+				    <c:if test="${ busiVO.status eq 'N'}">
+  						<a class="p-2 btn  fw-bold" href="/owner/company/detail?busiNo=${busiVO.busiNo }">업체 재 등록</a> 
+  					</c:if>
+  					</li>
+  					<li>
+  						<c:if test="${not empty advertVO.advertNo }">
+  							<a class="p-2 btn  fw-bold" href="/owner/advert/write?busiNo=${busiVO.busiNo }">광고 수정</a>&nbsp;&nbsp;&nbsp;</li>
+  						</c:if>
+				     <li>
+				     <li>
+				     <c:if test="${not empty busiVO.jobNo }">
+		 				<a class="p-2 btn  fw-bold" href="/owner/job/detail">구인정보수정</a>&nbsp;
+		 			</c:if>
+		 			</li>
+				  </ul>
+				</div>
+  				&nbsp;&nbsp;
+				<div class="btn-group ">
+				  <button type="button" class="fw-bold btn btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+				    채팅
+				  </button>
+				  <ul class="dropdown-menu">
+				    <li>
+				    	<a class="p-2 btn  fw-bold" href="/chat/roomList">채팅</a>&nbsp;&nbsp;</li>
+				     <li>
+  				
+  			</c:if>
+  			
+  		</c:if>
     </nav>
   </div>
 </div>
@@ -209,8 +257,8 @@ h1, h2, h3, h4, h5, h6 {
 	<div class="col-6">
 	     <article class="blog-post">
 <pre class="blog-post-title mb-1 h4 fw-bold">
-마이페이지에서 가게 정보를 
-손쉽게 변경할 수 있어요.
+더욱 편리하고 손쉽게 
+가게 정보를 변경할 수 있어요.
 </pre>
 	       <br>
 	       <img class="img-thumbnail w-50" src="/resources/img/mypage.jpg">

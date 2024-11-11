@@ -39,9 +39,15 @@
 		<br>
 		<div class="row justify-content-center">
 			<div class="col-6 text-center"> 
-				<a class="form-control btn btn-dark" href="/admin/question/write?inquiryNo=${inquiryVO.inquiryNo}">답변 작성</a>
+				<c:if test="${empty answerVO.answerNo }">
+					<a class="form-control btn btn-secondary" href="/admin/question/write?inquiryNo=${inquiryVO.inquiryNo}">답변 작성</a>
+				</c:if>
+				<c:if test="${not empty answerVO.answerNo }">
+					<a class="form-control btn btn-light" href="/admin/question/write?inquiryNo=${inquiryVO.inquiryNo}">답변 보기</a>
+				</c:if>
 			</div>
 		</div>
+		<br><br>
 	</main>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>

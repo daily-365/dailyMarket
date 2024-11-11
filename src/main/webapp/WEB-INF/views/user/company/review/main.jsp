@@ -106,15 +106,32 @@ $(document).ready(function(){
 				
 				var reviewContent =''
 				
-				result.forEach(function(item,index){
+				var date=''
 				
+				result.forEach(function(item,index){
+					
+					if(item.regYear!=0){
+						date=item.regYear+"년전"
+					}else if(item.regMonth!=0){
+						date=item.regMonth+"달전"
+					}else if(item.regWeek!=0){
+						date=item.regWeek+"주전"
+					}else if(item.regDay!=0){
+						date=item.regDay+"일전"
+					}else if(item.regHour!=0){
+						date=item.regHour+"시간전"
+					}else if(item.regMinute!=0){
+						date=item.regMinute+"분전"
+					}
+					
+					
 					reviewContent+='<div class="col-3"></div>'
 					reviewContent+='<div class="col-6">'
 					reviewContent+='<img  class="bg-secondary rounded-circle"  src="/resources/upload/user/profile/'+item.userStoredFileName+'" style="width :100px; height: 100px;"> '
 					reviewContent+='<br><br>'
 					reviewContent+='<div class="fw-bold">' 	
 					reviewContent+=	'<span>'+item.userAddr1.substring(3,6)+'</span>'
-					reviewContent+=	'&nbsp;<span id="regDate_'+index +'">'
+					reviewContent+=	'&nbsp;'+date
 					reviewContent+=	'</span>'
 					reviewContent+='</div>'
 					reviewContent+='<br>'
@@ -126,31 +143,6 @@ $(document).ready(function(){
 					reviewContent+='</div>'
 					reviewContent+='<div class="col-3"></div>'
 				
-				
-					if(item.regMinute!=0 && item.regMinute<=60){
-						$("#regDate_"+index).html(item.regMinute+"분 전")
-						console.log(item.regMinute)
-					}if(item.regHour!=0 && item.regHour<=24){
-						$("#regDate_"+index).html(item.regHour+"시간 전")
-						console.log(item.regHour)
-					}
-					if(item.regDay!=0 && item.regDay<=7){
-						$("#regDate_"+index).html(item.regDay+"일 전")
-						console.log(item.regDay)
-					}
-					if(item.regWeek!=0 && item.regMinute<=4){
-						$("#regDate_"+index).html(item.regWeek+"주 전")
-						console.log(item.regWeek)
-					}
-					if(item.regMonth!=0 && item.regMonth<=12){
-						$("#regDate_"+index).html(item.regMonth+"달 전")
-						console.log(item.regMonth)
-					}
-					if(item.regYear!=0 ){
-						$("#regDate_"+index).html(item.regYear+"년 전")
-						console.log(item.regYear)
-					}
-					
 					
 					$("#reviewWrap").html(reviewContent)
 				

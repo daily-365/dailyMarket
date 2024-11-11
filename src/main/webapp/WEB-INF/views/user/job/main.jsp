@@ -61,7 +61,7 @@
   		</div>
   	</div>
   	<br><br>
-  	<div id="locListWrap" class="row justify-content-center text-center">
+  	<div id="locListWrap" class="row text-center">
 		<c:forEach var="locList" items="${locList }">
  				<div class="col-3">
  					<img  src="/resources/upload/owner/company/job/${locList.storedFileName }" style="width: 120px; height: 120px;">
@@ -90,6 +90,7 @@
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script type="text/javascript">
+
 $(document).ready(function(){
 
 	var count =8;
@@ -130,33 +131,40 @@ $(document).ready(function(){
 		count +=8;
 		$("#endRow").val(count)
 		
-		var location = localStorage.getItem("roadNameAddr").substring(0,8)
-
-		$.ajax({
-			url :"/user/job/main/loc",
-			type: "post",
-			data : {"endRow" :$("#endRow").val(),
-					"jobLoc" :location },
-			success:function(result){
-				
-			var locMoreContent =''
-			
-				result.forEach(function(item){
-			
-					locMoreContent+='<div class="col-3">'
-  					locMoreContent+='<img  src="/resources/upload/owner/company/job/'+item.storedFileName +'" style="width: 120px; height: 120px;">'
-  					locMoreContent+='<br><br>'
-	  				locMoreContent+='<a href="/user/job/detail?jobNo='+item.jobNo +'" class="fw-bold text-dark">'+item.jobTitle+'</a>'
-	  				locMoreContent+='<br><br>'
-	  				locMoreContent+='<p>'+item.jobLoc.substring(0,6)+'</p>'
-	  				locMoreContent+='<p class="fw-bold">'+item.jobType+' '+item.jobMoney +'원</p>'
-	  				locMoreContent+='</div>'
-				
-					$("#locListWrap").html(locMoreContent)
-				
-				});
+		if(!localStorage.getItem("roadNameAddr")){
+			if(!confirm("위치가 설정되어있지 않습니다. 위치 설정페이지로 이동할까요?")){
+				return false;
+			}else{
+				location.href="/user/mypage/location"	
 			}
-		});
+		}else{
+		
+			$.ajax({
+				url :"/user/job/main/loc",
+				type: "post",
+				data : {"endRow" :$("#endRow").val(),
+						"jobLoc" :localStorage.getItem("roadNameAddr").substring(0,8) },
+				success:function(result){
+					
+				var locMoreContent =''
+				
+					result.forEach(function(item){
+				
+						locMoreContent+='<div class="col-3">'
+	  					locMoreContent+='<img  src="/resources/upload/owner/company/job/'+item.storedFileName +'" style="width: 120px; height: 120px;">'
+	  					locMoreContent+='<br><br>'
+		  				locMoreContent+='<a href="/user/job/detail?jobNo='+item.jobNo +'" class="fw-bold text-dark">'+item.jobTitle+'</a>'
+		  				locMoreContent+='<br><br>'
+		  				locMoreContent+='<p>'+item.jobLoc.substring(0,6)+'</p>'
+		  				locMoreContent+='<p class="fw-bold">'+item.jobType+' '+item.jobMoney +'원</p>'
+		  				locMoreContent+='</div>'
+					
+						$("#locListWrap").html(locMoreContent)
+					
+					});
+				}
+			});
+		}
 	});
 });
 

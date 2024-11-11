@@ -28,6 +28,21 @@
     </div>
   </section>
 </main>
+
+<!-- 토스트 생성 -->
+<div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center w-100">
+  <!-- Then put toasts within -->
+  <div id="advertToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+      <img id="toastImg" style="width:300px;" src="" class="rounded me-2" alt="...">
+      <strong id='toastBusiName' class="me-auto fw-bold text-dark"></strong>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div id='toastContent' class="toast-body text-dark fw-bold">
+    </div>
+  </div>
+</div>
+
  <div class="container-fluid bg-light">
  	<div class="container">
 	 	<div class="text-center">
@@ -35,13 +50,23 @@
 	  	<h5 class="text-dark fw-bold">다양한 동네 업체를 볼 수 있어요</h5>
 	  	<form class="form form-inline">
 	  		<br>
-	  		<button type="button" class="btn btn-dark busiType" >전체</button>
+	  		<button type="button" class="btn btn-dark busiType" value="all" >전체</button>
 	  		<button type="button" class="btn btn-outline-dark busiType"  value="식당" >식당</button>
 	  		<button type="button" class="btn btn-outline-dark busiType"  value="카페">카페</button>
 	  		<button type="button" class="btn btn-outline-dark busiType"  value="용달/이사">용달/이사</button>
 	  		<button type="button" class="btn btn-outline-dark busiType" value="뷰티/미용">뷰티/미용</button>
 	  		<button type="button" class="btn btn-outline-dark busiType"  value="헬스/필라테스/요가">헬스/필라테스/요가</button>
-	  		<br><br><br><br>
+	  		<br><br>
+	  		<div class="row">
+	  			<div class="col-4 offset-md-3">
+	  				<input id="searchBusiInput" type="text" value="${param.keyword }" class="form-control text-center fw-bold" placeholder="추천 업체를 검색해 보세요">
+	  				<div id="searchBusiAdvertList" class="form-control fw-bold text-dark" ></div>
+	  			</div>
+	  			<div class="col-2">
+	  				<button type="button" class="btn btn-secondary form-control" id="busiSearchBtn">검색</button>
+	  			</div>
+	  		</div>
+	  		<br><br>
 	  		<div class="row" id="busiListWrap">
 	  			<c:forEach var="list" items="${list }">
 	  			<div class="col-3">
@@ -60,6 +85,9 @@
 		</div>
 	</div>
 </div>
+
+
+
 <div class="container-fluid">
 	<div class="container">
 		<br><br>
@@ -86,7 +114,7 @@
 				  		<p class="fw-bold text-center h5">${review.busiName }</p><br>
 			  			<img class="img-thumbnail" style="margin-left:50px; width: 200px; height: 150px;" src="/resources/upload/user/company/review/${review.reviewStoredFileName }">
 			  			<br><br>
-			  			<p class="fw-bold text-center "><a class="text-dark" href="/user/company/review/detail?busiReviewNo=${review.busiReviewNo }">${review.title }</a></p>
+			  			<p class="fw-bold text-center "><a class="text-dark" href="/user/company/review/detail?busiNo=${review.busiNo }&busiReviewNo=${review.busiReviewNo }">${review.title }</a></p>
 				  		<div> 
 				  		${fn:substring(review.content,0,90)}...
 			  			</div>
@@ -109,8 +137,9 @@
 		</div>
 	<br><br>
 	</div>
+	
 
-
+<input type="hidden" id="advertNo">
 
 <%@include file="/resources/common/user/footer.jsp" %>
 </body>
@@ -124,7 +153,7 @@ $(document).ready(function(){
 	$(".busiType").on("click",function(e){
 	
 	var busiList = ''	
-		
+	
 		$.ajax({
 			url : "/user/company/main/list",
 			type :"post",
@@ -132,10 +161,10 @@ $(document).ready(function(){
 			success:function(result){
 				
 				result.forEach(function(item){
-				
+								
 					busiList+='<div class="col-3">'
 	  				busiList+='<img class="img-thumbnail" src="/resources/upload/owner/company/'+item.storedFileName+'" style="width:200px; height: 200px;">'
-  					busiList+='<br><br>'
+	  				busiList+='<br><br>'
 	  				busiList+='<p>'
 	  				busiList+='<a href="/user/company/detail?busiNo='+item.busiNo +'" class="fw-bold h5 text-dark">'+item.busiName+'</a>'
 	  				busiList+='<span class="text-dark fw-bold">&nbsp;( '+item.storeAddr.substr(0,6)+' )</span>'
@@ -146,13 +175,64 @@ $(document).ready(function(){
 					
 					$("#busiListWrap").html(busiList)
 				});
-				
 			}
-		
 		});
 	
 	});
 	
+	
+	
+	$("#searchBusiAdvertList").hide()
+	
+	//추천검색어
+	$("#searchBusiInput").on("focus",function(){
+		
+		var busiAdvertList =''
+		
+		$.ajax({
+			url :"/user/company/advert",
+			type:"post",
+			success:function(result){
+				
+				result.forEach(function(item){
+					
+					busiAdvertList+='<button type="button" class="advertBusiNoBtn form-control btn btn-light fw-bold" value='+item.advertNo+'>'+item.busiName+'</button><br>'
+					$("#searchBusiAdvertList").html(busiAdvertList)
+					$("#searchBusiAdvertList").show()
+					
+					$(".advertBusiNoBtn").on("click",function(){
+						//인풋에 값 삽입	
+						$("#advertNo").val($(this).val())
+						
+						//토스트	
+						$.ajax({
+							url :'/user/company/advert/busiNo',
+							type:'post',
+							data:{ "advertNo": $("#advertNo").val()  },
+							success:function(result){
+								
+								$("#toastBusiName").html('<a class="btn btn-light fw-bold form-control"  href="/user/company/detail?busiNo='+result.busiNo+'">'+ result.busiName+'</a>')
+								$("#toastContent").html(result.content)
+								$("#toastImg").attr("src","/resources/upload/owner/company/advert/"+result.storedFileName)
+								
+								$("#searchBusiInput").val(result.busiName)
+								
+							}
+						})
+						$("#advertToast").toast('show')
+					
+					})
+					
+				});
+			}
+		})
+	});
+	
+	
+	//검색
+	$("#busiSearchBtn").on("click",function(){
+		self.location="/user/company/main?keyword="+$("#searchBusiInput").val()
+	});
 });
 
 </script>

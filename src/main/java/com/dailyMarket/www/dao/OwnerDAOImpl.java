@@ -8,6 +8,11 @@ import java.util.Map;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import com.dailyMarket.www.vo.AdminAccountVO;
+import com.dailyMarket.www.vo.AdminSumAccountVO;
+import com.dailyMarket.www.vo.AdvertFileVO;
+import com.dailyMarket.www.vo.AdvertVO;
 import com.dailyMarket.www.vo.BusiNoticeVO;
 import com.dailyMarket.www.vo.BusiVO;
 import com.dailyMarket.www.vo.GetUserJobVO;
@@ -15,6 +20,8 @@ import com.dailyMarket.www.vo.JobFileVO;
 import com.dailyMarket.www.vo.JobVO;
 import com.dailyMarket.www.vo.MenuVO;
 import com.dailyMarket.www.vo.StoreFileVO;
+import com.dailyMarket.www.vo.UserAccountVO;
+import com.dailyMarket.www.vo.UserSumAccountVO;
 
 @Repository
 public class OwnerDAOImpl implements OwnerDAO {
@@ -68,15 +75,7 @@ public class OwnerDAOImpl implements OwnerDAO {
 	public void deleteStoreFileByFileNo(int fileNo) throws Exception {
 		sqlSession.update("OwnerMapper.deleteStoreFileByFileNo",fileNo);
 	}
-	
-	@Override
-	public int selectMenuExist(int busiNo) throws Exception {
-		return sqlSession.selectOne("OwnerMapper.selectMenuExist");
-	}
-	@Override
-	public int selectJobExist(String userId) throws Exception {
-		return sqlSession.selectOne("OwnerMapper.selectJobExist");
-	}
+
 	@Override
 	public void insertMenu( Map<String,Object>map) throws Exception {
 		sqlSession.insert("OwnerMapper.insertMenu",map);
@@ -168,7 +167,52 @@ public class OwnerDAOImpl implements OwnerDAO {
 	public void updateGetUserJobStatusN(int getUserJobNo) throws Exception {
 		sqlSession.update("OwnerMapper.updateGetUserJobStatusN",getUserJobNo);
 	}
-
+	@Override
+	public void insertAdvert(AdvertVO advertVO) throws Exception {
+		sqlSession.insert("OwnerMapper.insertAdvert",advertVO);
+	}
+	@Override
+	public void insertAdvertFile(Map<String,Object>map) throws Exception {
+		sqlSession.insert("OwnerMapper.insertAdvertFile",map);
+	}
+	@Override
+	public AdvertVO selectAdvertByuserNo(int userNo) throws Exception {
+		return sqlSession.selectOne("OwnerMapper.selectAdvertByuserNo",userNo);
+	}
+	@Override
+	public UserAccountVO selectUserAcoount(UserAccountVO accountVO) throws Exception {
+		return sqlSession.selectOne("OwnerMapper.selectUserAcoount",accountVO);
+	}
+	@Override
+	public void updateUserSumAccountMinus(UserSumAccountVO sumAccountVO) throws Exception {
+		sqlSession.update("OwnerMapper.updateUserSumAccountMinus",sumAccountVO);
+	}
+	@Override
+	public void insertUserAccountMinus(UserAccountVO accountVO) throws Exception {
+		sqlSession.insert("OwnerMapper.insertUserAccountMinus",accountVO);
+	}
+	@Override
+	public void insertAdminAccount(AdminAccountVO admAccountVO) throws Exception {
+		sqlSession.insert("OwnerMapper.insertAdminAccount",admAccountVO);
+		
+	}
+	@Override
+	public void updateAdminSumAccount(AdminSumAccountVO admSumAccountVO) throws Exception {
+		sqlSession.update("OwnerMapper.updateAdminSumAccount",admSumAccountVO);
+	}
+	@Override
+	public void updateAdvertModify(AdvertVO advertVO) throws Exception {
+		sqlSession.update("OwnerMapper.updateAdvertModify",advertVO);
+	}
+	@Override
+	public void updateAdvertDelete(int userNo) throws Exception {
+		sqlSession.update("OwnerMapper.updateAdvertDelete",userNo);
+	}
+	@Override
+	public void updatePrevAdvertFileDelete(int fileNo) throws Exception {
+		sqlSession.update("OwnerMapper.updatePrevAdvertFileDelete",fileNo);
+	}
+	
 	
 	
 }

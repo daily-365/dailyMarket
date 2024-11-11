@@ -7,6 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dailyMarket.www.dao.OwnerDAO;
+import com.dailyMarket.www.vo.AdminAccountVO;
+import com.dailyMarket.www.vo.AdminSumAccountVO;
+import com.dailyMarket.www.vo.AdvertFileVO;
+import com.dailyMarket.www.vo.AdvertVO;
 import com.dailyMarket.www.vo.BusiFileVO;
 import com.dailyMarket.www.vo.BusiNoticeVO;
 import com.dailyMarket.www.vo.BusiVO;
@@ -15,6 +19,8 @@ import com.dailyMarket.www.vo.JobFileVO;
 import com.dailyMarket.www.vo.JobVO;
 import com.dailyMarket.www.vo.MenuVO;
 import com.dailyMarket.www.vo.StoreFileVO;
+import com.dailyMarket.www.vo.UserAccountVO;
+import com.dailyMarket.www.vo.UserSumAccountVO;
 
 @Service
 public class OwnerServiceImpl implements OwnerService {
@@ -73,28 +79,7 @@ public class OwnerServiceImpl implements OwnerService {
 	public void deleteStoreFileByFileNo(int fileNo) throws Exception {
 		ownerDAO.deleteStoreFileByFileNo(fileNo);
 	}
-	
-	
-	@Override
-	public boolean selectMenuExist(int busiNo) throws Exception {
-		int count = ownerDAO.selectMenuExist(busiNo);
-		System.out.println(count);
-		if(count>0) {
-			return true;
-		}else {
-			return false;
-		}
-	}
-	@Override
-	public boolean selectJobExist(String userId) throws Exception {
-		int count = ownerDAO.selectJobExist(userId);
-		System.out.println(count);
-		if(count>0) {
-			return true;
-		}else {
-			return false;
-		}
-	}
+
 	@Override
 	public void insertMenu( Map<String,Object>map) throws Exception {
 		ownerDAO.insertMenu(map);
@@ -177,6 +162,51 @@ public class OwnerServiceImpl implements OwnerService {
 	@Override
 	public void updateGetUserJobStatusN(int getUserJobNo) throws Exception {
 		ownerDAO.updateGetUserJobStatusN(getUserJobNo);
+	}
+	@Override
+	public void insertAdvert(AdvertVO advertVO) throws Exception {
+		ownerDAO.insertAdvert(advertVO);
+	}
+	@Override
+	public void insertAdvertFile(Map<String,Object>map) throws Exception {
+		ownerDAO.insertAdvertFile(map);
+	}
+	@Override
+	public AdvertVO selectAdvertByuserNo(int userNo) throws Exception {
+		return ownerDAO.selectAdvertByuserNo(userNo);
+	}
+	@Override
+	public UserAccountVO selectUserAcoount(UserAccountVO accountVO) throws Exception {
+		return ownerDAO.selectUserAcoount(accountVO);
+		
+	}
+	@Override
+	public void updateUserSumAccountMinus(UserSumAccountVO sumAccountVO) throws Exception {
+		ownerDAO.updateUserSumAccountMinus(sumAccountVO);
+	}
+	@Override
+	public void insertUserAccountMinus(UserAccountVO accountVO) throws Exception {
+		ownerDAO.insertUserAccountMinus(accountVO);
+	}
+	@Override
+	public void insertAdminAccount(AdminAccountVO admAccountVO) throws Exception {
+		ownerDAO.insertAdminAccount(admAccountVO);		
+	}
+	@Override
+	public void updateAdminSumAccount(AdminSumAccountVO admSumAccountVO) throws Exception {
+		ownerDAO.updateAdminSumAccount(admSumAccountVO);
+	}
+	@Override
+	public void updateAdvertModify(AdvertVO advertVO) throws Exception {
+		ownerDAO.updateAdvertModify(advertVO);
+	}
+	@Override
+	public void updateAdvertDelete(int userNo) throws Exception {
+		ownerDAO.updateAdvertDelete(userNo);
+	}
+	@Override
+	public void updatePrevAdvertFileDelete(int fileNo) throws Exception {
+		ownerDAO.updatePrevAdvertFileDelete(fileNo);
 	}
 
 	

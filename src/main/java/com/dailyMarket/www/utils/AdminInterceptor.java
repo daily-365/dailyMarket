@@ -17,7 +17,7 @@ public class AdminInterceptor implements HandlerInterceptor {
 			if(obj!=null&&obj.equals("admin"))
 				return true;
 		}
-		response.sendRedirect(request.getContextPath()+"/admin/login");
+		response.sendRedirect("/admin/login");
 		return false;
 		
 	}

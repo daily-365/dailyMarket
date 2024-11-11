@@ -18,7 +18,7 @@ public class UserInterceptor implements HandlerInterceptor{
 			if(obj!=null &&!obj.equals("admin")) 
 				return true;
 		}
-		response.sendRedirect(request.getContextPath()+"/user/login");
+		response.sendRedirect("/user/login");
 		return false;
 	}
 

@@ -68,6 +68,7 @@
 		</div>
 	</div>
 	<br><br>
+		
 	<div class="row">
 		<div class="col-3">
 		</div>
@@ -83,7 +84,12 @@
 		</div>
 		<div class="col-2">
 		<br>
-		<button class="fw-bold btn btn-danger text-light" type="button">+ 단골맺기</button>
+		<c:if test="${connexionYn eq false }">
+			<button class="fw-bold btn btn-danger text-light" type="button" id="connexionBtn">+ 단골맺기</button>
+		</c:if>
+		<c:if test="${connexionYn eq true }">
+			<button class="fw-bold btn btn-warning text-light" type="button" id="connexionCancleBtn"> 단골취소</button>
+		</c:if>
 		</div>
 	</div>	
 	<br><br>
@@ -116,8 +122,16 @@
   				<path d="M2.678 11.894a1 1 0 0 1 .287.801 11 11 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8 8 0 0 0 8 14c3.996 0 7-2.807 7-6s-3.004-6-7-6-7 2.808-7 6c0 1.468.617 2.83 1.678 3.894m-.493 3.905a22 22 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a10 10 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105"/>
 			</svg>
 			<br>
-			<p class="fw-bold text-dark">채팅문의</p>
+			<c:if test="${busiVO.userType eq 0 }">
+				<p class="fw-bold text-dark"  data-bs-toggle="modal" data-bs-target=".chatModal" >채팅문의</p>
+			</c:if>
+			<c:if test="${busiVO.userType ne 0 }">
+				<input type="hidden" id="roomNo" value="${busiVO.roomNo }">
+				<p class="fw-bold text-dark"  id="moveChatRoomBtn" >채팅문의</p>
+			</c:if>
+			
 		</div>
+		
 		<div class="col-3" onclick="javascript: location.href='/user/company/review/write?busiNo=${param.busiNo}&busiNoticeNo=${param.busiNoticeNo}';">
 			<svg class="svg" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
   				<path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
@@ -266,9 +280,9 @@
 </c:forEach>
 </div>
 	<input type="hidden" id="reviewMoreInput">
-	<div class="row">
+	<div class="row ">
 		<div class="col-2"></div>
-		<div id="reviewMoreBtn" class="col form-control text-center fw-bold">후기 더보기</div>
+		<div id="reviewMoreBtn" class="form-control text-center fw-bold">후기 더보기</div>
 		<div class="col-2"></div>
 	</div>
 	<br>
@@ -291,18 +305,38 @@
 					<br><br>
 				</div>
 		</c:forEach>
-		</div>
 	</div>
 	<br>
 	<input id="noticeMoreInput" type="hidden">
 	<div class="row">
-			<div class="col-2"></div>
 		<div id="noticeMoreBtn" class="col form-control text-center fw-bold bg-light">소식 더보기</div>
-		<div class="col-2"></div>
 	</div>
 	<br>
 </div>
+
+<!-- 채팅 모달 -->
+<div class="modal fade chatModal modal-dialog modal-fullscreen-sm-down" id="chatModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">채팅방 만들기</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="text" class="title form-control" id="title" placeholder="채팅방 제목을 입력해 주세요">
+      </div>
+      <div class="modal-footer">
+      	<button type="button" id="createChatRoomBtn" class="btn btn-primary " >채팅방 만들기</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
 <input type="hidden" value="${param.busiNo }" id="busiNo">
+<input type="hidden" value="${busiVO.userNo }" id="targetUserNo">
+
+<input type="hidden" value="<%=session.getAttribute("userNo")%>" id="userNo">
+
 <%@ include file="/resources/common/user/footer.jsp" %>	
 </body>
 
@@ -382,8 +416,24 @@ $("#reviewMoreBtn").on("click",function(){
 				"busiNo" : $("#busiNo").val()
 				},
 		success:function(result){
-		
+			
+			//날짜를 담을 변수
+			var date = "";
+			
 			result.forEach(function(item){
+				
+				if(item.regYear!=0){
+					date=item.regYear+"년전"
+				}else if(item.regMonth!=0){
+					date=item.regMonth+"달전"
+				}else if(item.regWeek!=0){
+					date=item.regWeek+"주전"
+				}else if(item.regHour!=0){
+					date=item.regHour+"시간전"
+				}else if(item.regMinute!=0){
+					date=item.regMinute+"분전"
+				}
+				
 				reviewMoreContent+='<div class="row">'
 				reviewMoreContent+='<div class="col-2">'
 				reviewMoreContent+='</div>'
@@ -391,7 +441,8 @@ $("#reviewMoreBtn").on("click",function(){
 				reviewMoreContent+='<img  class="bg-secondary rounded-circle"  src="/resources/upload/user/profile/'+item.userStoredFileName +'" style="width :100px; height: 100px;">'
 				reviewMoreContent+='<br>'
 				reviewMoreContent+='<p class="fw-bold">'+item.writer+'<span class="fw-bold h5 text-dark"> ( 단골 ) </span></p>'
-				reviewMoreContent+='<p class="fw-bold">'+item.userAddr1.substring(3,6)+'  조회수 ( '+ item.hitCnt +' ) 회  /'
+				reviewMoreContent+='<p class="fw-bold">'+item.userAddr1.substring(3,6)+'  조회수 ( '+ item.hitCnt +' ) 회  /'+" "
+				reviewMoreContent+=date
 				reviewMoreContent+='</p>'
 				reviewMoreContent+='<br>'
 				reviewMoreContent+='</div>'
@@ -419,7 +470,7 @@ $("#reviewMoreBtn").on("click",function(){
 
 });
 
-//소식 더보기
+    //소식 더보기
 	var noticeCount =4;
 	
 	$("#noticeMoreBtn").on("click",function(){
@@ -435,7 +486,6 @@ $("#reviewMoreBtn").on("click",function(){
 					"busiNo" : $("#busiNo").val() },
 			success:function(result){
 				
-				
 				result.forEach(function(item){
 					noticeMoreContent+='<div class="col-2 ">'
 					noticeMoreContent+='<img style="width: 150px; height: 150px; margin-left: 25px;"  src="/resources/upload/owner/company/notice/'+item.storedFileName +'" class="img-thumbnail" >'
@@ -443,17 +493,81 @@ $("#reviewMoreBtn").on("click",function(){
 					noticeMoreContent+='<a href="/user/company/notice/detail?busiNo='+item.busiNo+'&busiNoticeNo='+item.busiNoticeNo+'"  class="fw-bold text-dark">'+item.title +'</a>'
 					noticeMoreContent+='<br><br>'
 					noticeMoreContent+='</div>'
-			
 					$("#noticeWrap").html(noticeMoreContent)
 					
 				});
-				
 			}
-		
 		})
-	
-	
 	});
-
+	
+	//단골 맺기
+	$("#connexionBtn").on("click",function(){
+		if(!confirm("단골을 맺으시겠습니까?")){
+			return false;
+		}else{
+			var params={
+				"busiNo": $("#busiNo").val(),
+				"userNo" : $("#userNo").val()
+			}
+			$.ajax({
+				url:"/user/company/detail/connexion/insert",
+				type:"post",
+				data : params,
+				success:function(result){
+					alert(result)
+					location.reload(true)
+				}
+				
+			})
+		}
+		
+	});
+	//단골 취소
+	$("#connexionCancleBtn").on("click",function(){
+		if(!confirm("단골을 취소하시겠습니까?")){
+			return false;
+		}else{
+			var params ={ 
+						"busiNo": $("#busiNo").val(),
+						"userNo": $("#userNo").val()
+						}
+			$.ajax({
+				url:"/user/company/detail/connexion/delete",
+				type:"post",
+				data : params,
+				success:function(result){
+					alert(result)
+					location.reload(true);
+				}
+				
+			})
+		}
+	})
+	
+	//채팅 문의 
+	$("#createChatRoomBtn").on("click",function(){
+		
+		var params={
+					"title" : $("#title").val(),
+					"targetUserNo" : $("#targetUserNo").val(),
+					"userType" : "owner"
+				}
+		
+		$.ajax({
+			url:"/chat/openChatRoom",
+			type:"post",
+			data : params,
+			success:function(result){
+				location.href='/chat/room?roomNo='+result
+			}
+		})
+	});
+	
+	//채팅방 이동 (기존채팅방이 있는 경우)
+	$("#moveChatRoomBtn").on("click",function(){
+		location.href="/chat/room?roomNo="+$("#roomNo").val()
+		
+	});
+	
 </script>
 </html>

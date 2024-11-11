@@ -3,6 +3,10 @@ package com.dailyMarket.www.dao;
 import java.util.List;
 import java.util.Map;
 
+import com.dailyMarket.www.vo.AdminAccountVO;
+import com.dailyMarket.www.vo.AdminSumAccountVO;
+import com.dailyMarket.www.vo.AdvertFileVO;
+import com.dailyMarket.www.vo.AdvertVO;
 import com.dailyMarket.www.vo.BusiFileVO;
 import com.dailyMarket.www.vo.BusiNoticeVO;
 import com.dailyMarket.www.vo.BusiVO;
@@ -11,6 +15,8 @@ import com.dailyMarket.www.vo.JobFileVO;
 import com.dailyMarket.www.vo.JobVO;
 import com.dailyMarket.www.vo.MenuVO;
 import com.dailyMarket.www.vo.StoreFileVO;
+import com.dailyMarket.www.vo.UserAccountVO;
+import com.dailyMarket.www.vo.UserSumAccountVO;
 
 public interface OwnerDAO {
 	public int selectBusiNumDupChk(String busiNum)throws Exception;
@@ -24,8 +30,6 @@ public interface OwnerDAO {
 	public List<StoreFileVO> selectStoreFile(int busiNo)throws Exception;
 	public void deleteStoreFile(int busiNo)throws Exception;
 	public void deleteStoreFileByFileNo(int fileNo)throws Exception;
-	public int selectMenuExist(int busiNo)throws Exception;
-	public int selectJobExist (String userId)throws Exception;
 	public void insertMenu(Map<String,Object>map)throws Exception;
 	public int insertMenuFile(Map<String,Object>map)throws Exception;
 	public int menuFileNoCnt()throws Exception;
@@ -46,4 +50,16 @@ public interface OwnerDAO {
 	public List<GetUserJobVO>selectGetUserJobList(int jobNo)throws Exception;
 	public void updateGetUserJobStatusY(int getUserJobNo)throws Exception;
 	public void updateGetUserJobStatusN(int getUserJobNo)throws Exception;
+	public void insertAdvert(AdvertVO advertVO)throws Exception;
+	public void insertAdvertFile(Map<String,Object>map)throws Exception;
+	public AdvertVO selectAdvertByuserNo(int userNo)throws Exception;
+	public UserAccountVO selectUserAcoount(UserAccountVO accountVO)throws Exception;
+	public void updateUserSumAccountMinus(UserSumAccountVO sumAccountVO)throws Exception;
+	public void insertUserAccountMinus(UserAccountVO accountVO)throws Exception;
+	public void insertAdminAccount(AdminAccountVO admAccountVO)throws Exception;
+	public void updateAdminSumAccount(AdminSumAccountVO admSumAccountVO)throws Exception;
+	public void updateAdvertModify(AdvertVO advertVO)throws Exception;
+	public void updateAdvertDelete(int userNo)throws Exception;
+	public void updatePrevAdvertFileDelete(int fileNo)throws Exception;
+	
 }

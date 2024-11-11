@@ -46,7 +46,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.dailyMarket.www.service.AdminService;
 import com.dailyMarket.www.utils.PageMaker;
 import com.dailyMarket.www.utils.SearchCriteria;
+import com.dailyMarket.www.vo.AdminChatVO;
 import com.dailyMarket.www.vo.AdminVO;
+import com.dailyMarket.www.vo.AdvertVO;
 import com.dailyMarket.www.vo.AnswerVO;
 import com.dailyMarket.www.vo.BusiFileVO;
 import com.dailyMarket.www.vo.BusiVO;
@@ -91,6 +93,7 @@ public class AdminController {
 		
 		model.addAttribute("event",adminService.selectEventList(scri));
 		model.addAttribute("notice",adminService.selectNoticeList(scri));
+		model.addAttribute("inquiry",adminService.selectInquiryList(scri));
 		
 		return "admin/main";
 	}
@@ -299,20 +302,32 @@ public class AdminController {
 		return "admin/user/main";
 	}
 	@RequestMapping(value = "user/detail")
-	public String getUserDetail(@RequestParam("userId")String userId,Model model)throws Exception{
-		UserVO userVO = adminService.selectUserDetail(userId);
+	public String getUserDetail(@RequestParam("userNo")String userNo,Model model)throws Exception{
+		UserVO userVO = adminService.selectUserDetail(userNo);
 		model.addAttribute("userVO",userVO);
 		
-		List<UserProfileFileVO> file = adminService.selectUserFile(userId);
+		List<UserProfileFileVO> file = adminService.selectUserFile(userNo);
 		model.addAttribute("file",file);
 		
-		List<UserAccountVO> account = adminService.selectUserAccount(userId);
+		List<UserAccountVO> account = adminService.selectUserAccount(userNo);
 		model.addAttribute("account",account);
 		
-		List<UserTradeVO> trade = adminService.selectUserTrade(userId);
+		List<UserTradeVO> trade = adminService.selectUserTrade(userNo);
 		model.addAttribute("trade",trade);
 		
 		return "admin/user/detail";
+	}
+	
+	@RequestMapping(value = "user/account")
+	public String getUserAccount(@RequestParam("userNo")int userNo,@RequestParam("accountNum")String accountNum,Model model)throws Exception{
+		UserAccountVO accountVO = new UserAccountVO();
+		accountVO.setUserNo(userNo);
+		accountVO.setAccountNum(accountNum);
+		
+		List<UserAccountVO> accountDetail = adminService.selectUserAccountDetail(accountVO);
+		model.addAttribute("list",accountDetail);
+		
+		return "admin/user/account";
 	}
 	
 	
@@ -466,7 +481,7 @@ public class AdminController {
 				dataCell.setCellValue("판매취소");
 			}
 			dataCell = dataRow.createCell(9);
-			dataCell.setCellValue(list.get(i).getTradeId());
+			dataCell.setCellValue(list.get(i).getWriter() );
 			dataCell = dataRow.createCell(10);
 			dataCell.setCellValue(list.get(i).getTradeDate());
 			dataCell = dataRow.createCell(11);
@@ -2095,6 +2110,9 @@ public class AdminController {
 		List<InquiryFileVO> file = adminService.selectInquiryFile(inquiryNo);
 		model.addAttribute("file",file);
 		
+		AnswerVO answerVO = adminService.selectAnswerByInquiryNo(inquiryNo);
+		model.addAttribute("answerVO",answerVO);
+		
 		return "admin/question/detail";
 	}
 	
@@ -2147,4 +2165,415 @@ public class AdminController {
 		
 		return "삭제되었습니다.";
 	}
+	
+	
+	@RequestMapping(value = "advert/main",method = RequestMethod.GET)
+	public String getAdvertMain(Model model ,@ModelAttribute("scri") SearchCriteria scri)throws Exception {
+		
+		List<AdvertVO> list = adminService.selectAdvertList(scri);
+		model.addAttribute("list",list);
+		
+		PageMaker pageMaker = new PageMaker();
+		pageMaker.setCri(scri);
+		pageMaker.setTotalCount(adminService.selectAdvertTotalCnt(scri));
+		
+		model.addAttribute("pageMaker",pageMaker);
+		
+		return "admin/advert/main";
+	}
+	@RequestMapping(value = "advert/detail",method = RequestMethod.GET)
+	public String getAdvertDetail(@RequestParam("advertNo")int advertNo,Model model)throws Exception{
+		AdvertVO advertVO= adminService.SelectAdvertDetail(advertNo);
+		model.addAttribute("advertVO",advertVO);
+		
+		return "admin/advert/detail";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "advert/payStatusY" ,method = RequestMethod.POST,produces = "application/text; charset=UTF-8;")
+	public String postPayStatusY(@RequestParam("advertNo")int advertNo)throws Exception{
+		adminService.updatePriceAgree(advertNo);
+		return "확인 되었습니다.";		
+	}
+	@ResponseBody
+	@RequestMapping(value = "advert/payStatusN" ,method = RequestMethod.POST,produces = "application/text; charset=UTF-8;")
+	public String postPayStatusㅜ(@RequestParam("advertNo")int advertNo)throws Exception{
+		adminService.updatePriceDisAgree(advertNo);
+		return "확인 불가 처리 되었습니다.";		
+	}
+	@ResponseBody
+	@RequestMapping(value = "advert/approveStatusY" ,method = RequestMethod.POST,produces = "application/text; charset=UTF-8;")
+	public String postApproveStatusY(@RequestParam("advertNo")int advertNo)throws Exception{
+		adminService.updateApproveAgree(advertNo);
+		return "승인 되었습니다.";		
+	}
+	@ResponseBody
+	@RequestMapping(value = "advert/approveStatusN" ,method = RequestMethod.POST,produces = "application/text; charset=UTF-8;")
+	public String postApproveStatusN(@RequestParam("advertNo")int advertNo)throws Exception{
+		adminService.updateApproveDisAgree(advertNo);
+		return "승인 불가 처리 되었습니다.";		
+	}
+	
+	@RequestMapping(value = "advert/excelDown",method = RequestMethod.POST)
+	public void postAdvertExcelDown(@RequestParam( "keyword")String keyword
+							,@RequestParam("searchType")String searchType
+							,@RequestParam("startDate")String startDate
+							,@RequestParam("endDate")String endDate
+							,HttpServletResponse response
+							,HttpServletRequest request
+							)throws Exception{
+		
+		SearchCriteria scri = new SearchCriteria();
+		scri.setKeyword(keyword);
+		scri.setSearchType(searchType);
+		scri.setStartDate(startDate);
+		scri.setEndDate(endDate);
+		
+		//list.size를 위함 - 데이터 건수는 (조건포함) 처음부터 전체건수 까지
+		scri.setPagePerNum(adminService.selectAdvertTotalCnt(scri));
+		
+		
+		List<AdvertVO> list = adminService.selectAdvertList(scri);
+		
+		
+		XSSFWorkbook wb = new XSSFWorkbook();
+		Sheet sheet = wb.createSheet("Sheet");
+		
+		CellStyle style =wb.createCellStyle();
+		Font font =wb.createFont();
+		
+		font.setBold(true);
+		font.setFontHeight((short)(16*18));
+		font.setFontName("맑은 고딕");
+		
+		style.setAlignment(HorizontalAlignment.CENTER);
+		style.setWrapText(true);
+		style.setFont(font);
+		
+		Row titleRow = sheet.createRow(0);
+		Cell titleCell = titleRow.createCell(0);
+		titleCell.setCellValue("Advert DATA");
+		sheet.addMergedRegion(new CellRangeAddress(0,0,0,6));
+		titleCell.setCellStyle(style);
+		
+		int rowNum =4;
+		Row dataRow = null;
+		Cell dataCell = null;
+		
+		Row totalCntRow = sheet.createRow(1);
+		Cell totalCntCell = totalCntRow.createCell(0);
+		totalCntCell.setCellValue("총 데이터 건수 : "+adminService.selectAdvertTotalCnt(scri)+" 건");
+		sheet.addMergedRegion(new CellRangeAddress(1,1,0,6));
+		totalCntCell.setCellStyle(style);
+		
+		Row headerRow = sheet.createRow(2);
+		Cell headerCell = null;
+		
+		CellStyle headerStyle = wb.createCellStyle();
+		headerStyle.setFont(font);
+		
+		headerCell = headerRow.createCell(1);
+		headerCell.setCellValue("#");
+		headerCell.setCellStyle(headerStyle);
+		headerCell = headerRow.createCell(2);
+		headerCell.setCellValue("번호");
+		headerCell.setCellStyle(headerStyle);
+		headerCell = headerRow.createCell(3);
+		headerCell.setCellValue("내용");
+		headerCell.setCellStyle(headerStyle);
+		headerCell = headerRow.createCell(4);
+		headerCell.setCellValue("위치");
+		headerCell.setCellStyle(headerStyle);
+		headerCell = headerRow.createCell(5);
+		headerCell.setCellValue("연령");
+		headerCell.setCellStyle(headerStyle);
+		headerCell = headerRow.createCell(6);
+		headerCell.setCellValue("성별");
+		headerCell.setCellStyle(headerStyle);
+		headerCell = headerRow.createCell(7);
+		headerCell.setCellValue("예산 형태");
+		headerCell.setCellStyle(headerStyle);
+		headerCell = headerRow.createCell(8);
+		headerCell.setCellValue("예산");
+		headerCell.setCellStyle(headerStyle);
+		headerCell = headerRow.createCell(9);
+		headerCell.setCellValue("시작 형태");
+		headerCell.setCellStyle(headerStyle);
+		headerCell = headerRow.createCell(10);
+		headerCell.setCellValue("일수");
+		headerCell.setCellStyle(headerStyle);
+		headerCell = headerRow.createCell(11);
+		headerCell.setCellValue("종료일 없이 계속 광고하기");
+		headerCell.setCellStyle(headerStyle);
+		headerCell = headerRow.createCell(12);
+		headerCell.setCellValue("상세 일정 설정하기");
+		headerCell.setCellStyle(headerStyle);
+		headerCell = headerRow.createCell(13);
+		headerCell.setCellValue("입금 확인 상태");
+		headerCell.setCellStyle(headerStyle);
+		headerCell = headerRow.createCell(14);
+		headerCell.setCellValue("승인 확인 상태");
+		headerCell.setCellStyle(headerStyle);
+		headerCell = headerRow.createCell(15);
+		headerCell.setCellValue("등록일");
+		headerCell.setCellStyle(headerStyle);
+		headerCell = headerRow.createCell(16);
+		headerCell.setCellValue("수정일");
+		headerCell.setCellStyle(headerStyle);
+		headerCell = headerRow.createCell(17);
+		headerCell.setCellValue("삭제일");
+		headerCell.setCellStyle(headerStyle);
+		
+		//날짜 형식 변환
+		XSSFDataFormat fmt = wb.createDataFormat();
+		CellStyle rowCellStyle = wb.createCellStyle();
+		rowCellStyle.setDataFormat(fmt.getFormat("yyyy-MM-dd HH:mm:ss"));
+		
+		for(int i=0; i<list.size(); i++) {
+			dataRow =sheet.createRow(rowNum++);
+					
+			dataCell = dataRow.createCell(1);
+			dataCell.setCellValue(i+1);
+			dataCell = dataRow.createCell(2);
+			dataCell.setCellValue(list.get(i).getAdvertNo());
+			dataCell = dataRow.createCell(3);
+			dataCell.setCellValue(list.get(i).getContent());
+			dataCell = dataRow.createCell(4);
+			dataCell.setCellValue(list.get(i).getLocation());
+			dataCell = dataRow.createCell(5);
+			dataCell.setCellValue(list.get(i).getAge());
+			dataCell = dataRow.createCell(6);
+			if(list.get(i).getGender().equals("M")) {
+				dataCell.setCellValue("남");
+			}if(list.get(i).getGender().equals("F")) {
+				dataCell.setCellValue("여");
+			}
+			dataCell = dataRow.createCell(7);
+			if(list.get(i).getPriceType().equals("day")) {
+				dataCell.setCellValue("하루 예산");
+			}if(list.get(i).getPriceType().equals("total")) {
+				dataCell.setCellValue("전체 예산");
+			}
+			dataCell = dataRow.createCell(8);
+			dataCell.setCellValue(list.get(i).getPrice());
+			dataCell = dataRow.createCell(9);
+			if(list.get(i).getStartType().equals("now")) {
+				dataCell.setCellValue("바로시작");
+			}if(list.get(i).getStartType().equals("later")) {
+				dataCell.setCellValue("나중에");
+			}
+			dataCell = dataRow.createCell(10);
+			dataCell.setCellValue(list.get(i).getDays());
+			dataCell = dataRow.createCell(11);
+			dataCell.setCellValue(list.get(i).getEndDateYn());
+			dataCell = dataRow.createCell(12);
+			dataCell.setCellValue(list.get(i).getDetailYn());
+			dataCell = dataRow.createCell(13);
+			if(list.get(i).getPayStatus().equals("Y")) {
+				dataCell.setCellValue("입금 확인 완료");
+			}if(list.get(i).getPayStatus().equals("S")) {
+				dataCell.setCellValue("입금 확인 대기중");
+			}if(list.get(i).getPayStatus().equals("N")) {
+				dataCell.setCellValue("입금 확인 불가");
+			}
+			dataCell = dataRow.createCell(14);
+			if(list.get(i).getApproveStatus().equals("Y")) {
+				dataCell.setCellValue("승인 완료");
+			}if(list.get(i).getApproveStatus().equals("S")) {
+				dataCell.setCellValue("승인 대기중");
+			}if(list.get(i).getApproveStatus().equals("N")) {
+				dataCell.setCellValue("승인 불가");
+			}
+			
+			dataCell = dataRow.createCell(15);
+			dataCell.setCellValue(list.get(i).getRegDate());
+			dataCell.setCellStyle(rowCellStyle);
+			dataCell = dataRow.createCell(16);
+			dataCell.setCellValue(list.get(i).getModDate());
+			dataCell.setCellStyle(rowCellStyle);
+			dataCell = dataRow.createCell(17);
+			dataCell.setCellValue(list.get(i).getDelDate());
+			dataCell.setCellStyle(rowCellStyle);
+		}
+	
+		String fileName=null;
+		
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
+		String now= sdf.format(date);
+	
+		fileName ="ExcelFile_"+now+".xlsx";
+		
+		 /* 엑셀 파일 생성 */
+	    response.setContentType("ms-vnd/excel");
+	    response.setHeader("Content-Disposition", "attachment;filename="+fileName);
+	    wb.write(response.getOutputStream());
+	    
+	}
+	
+	
+	@ResponseBody
+	@RequestMapping(value = "chatList",method = RequestMethod.POST)
+	public List<AdminChatVO> postChatMessageList(AdminChatVO chatVO,HttpSession session
+										)throws Exception{
+		
+		int targetUserNo = (int)session.getAttribute("userNo");
+		
+		List<AdminChatVO> list = adminService.selectChatList(targetUserNo);
+		
+		return list;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "chat",method = RequestMethod.POST,produces = "application/text; charset=UTF-8;")
+	public String postChatMessage(AdminChatVO chatVO,HttpSession session
+							,@RequestParam("targetUserNo")int targetUserNo
+							,@RequestParam("userId")String userId
+							,@RequestParam("message")String message)throws Exception{
+		
+		chatVO.setTargetUserNo(targetUserNo);
+		chatVO.setUserId(userId);
+		chatVO.setMessage(message);
+		
+		adminService.insertChatMessage(chatVO);
+		
+		return message;
+	}
+	
+	@RequestMapping(value = "chat/main",method = RequestMethod.GET)
+	public String getChatMain(@ModelAttribute("scri")SearchCriteria scri,HttpSession session,Model model)throws Exception{
+		
+		List<AdminChatVO> list= adminService.selectChatRoom(scri);
+		model.addAttribute("list",list);
+		
+		PageMaker pageMaker = new PageMaker();
+		pageMaker.setCri(scri);
+		pageMaker.setTotalCount(adminService.selectChatRoomTotalCnt(scri));
+		
+		model.addAttribute("pageMaker",pageMaker);
+	
+		
+		return "admin/chat/main";
+	}
+	@RequestMapping(value = "chat/detail", method=RequestMethod.GET)
+	public String getChatDetail(@RequestParam("targetUserNo")int targetUserNo,Model model)throws Exception{
+		List<AdminChatVO> list = adminService.selectChatList(targetUserNo);
+		model.addAttribute("list",list);
+		
+		adminService.updateReadMessage(targetUserNo);
+		
+		return "admin/chat/detail";
+	}
+	@RequestMapping(value = "chat/excelDown",method = RequestMethod.POST)
+	public void postChatExcelDown(@RequestParam( "keyword")String keyword
+							,@RequestParam("searchType")String searchType
+							,@RequestParam("startDate")String startDate
+							,@RequestParam("endDate")String endDate
+							,HttpServletResponse response
+							,HttpServletRequest request
+							)throws Exception{
+		
+		SearchCriteria scri = new SearchCriteria();
+		scri.setKeyword(keyword);
+		scri.setSearchType(searchType);
+		scri.setStartDate(startDate);
+		scri.setEndDate(endDate);
+		
+		//list.size를 위함 - 데이터 건수는 (조건포함) 처음부터 전체건수 까지
+		scri.setPagePerNum(adminService.selectChatRoomTotalCnt(scri));
+		
+		
+		List<AdminChatVO> list = adminService.selectChatRoom(scri);
+		
+		
+		XSSFWorkbook wb = new XSSFWorkbook();
+		Sheet sheet = wb.createSheet("Sheet");
+		
+		CellStyle style =wb.createCellStyle();
+		Font font =wb.createFont();
+		
+		font.setBold(true);
+		font.setFontHeight((short)(16*18));
+		font.setFontName("맑은 고딕");
+		
+		style.setAlignment(HorizontalAlignment.CENTER);
+		style.setWrapText(true);
+		style.setFont(font);
+		
+		Row titleRow = sheet.createRow(0);
+		Cell titleCell = titleRow.createCell(0);
+		titleCell.setCellValue("CHAT DATA");
+		sheet.addMergedRegion(new CellRangeAddress(0,0,0,6));
+		titleCell.setCellStyle(style);
+		
+		int rowNum =4;
+		Row dataRow = null;
+		Cell dataCell = null;
+		
+		Row totalCntRow = sheet.createRow(1);
+		Cell totalCntCell = totalCntRow.createCell(0);
+		totalCntCell.setCellValue("총 데이터 건수 : "+adminService.selectChatRoomTotalCnt(scri)+" 건");
+		sheet.addMergedRegion(new CellRangeAddress(1,1,0,6));
+		totalCntCell.setCellStyle(style);
+		
+		Row headerRow = sheet.createRow(2);
+		Cell headerCell = null;
+		
+		CellStyle headerStyle = wb.createCellStyle();
+		headerStyle.setFont(font);
+		
+		headerCell = headerRow.createCell(1);
+		headerCell.setCellValue("#");
+		headerCell.setCellStyle(headerStyle);
+		headerCell = headerRow.createCell(2);
+		headerCell.setCellValue("번호");
+		headerCell.setCellStyle(headerStyle);
+		headerCell = headerRow.createCell(3);
+		headerCell.setCellValue("사용자 아이디");
+		headerCell.setCellStyle(headerStyle);
+		headerCell = headerRow.createCell(4);
+		headerCell.setCellValue("안읽은 메세지");
+		headerCell.setCellStyle(headerStyle);
+		headerCell = headerRow.createCell(5);
+		headerCell.setCellValue("최근 날짜");
+		headerCell.setCellStyle(headerStyle);
+		
+		
+		//날짜 형식 변환
+		XSSFDataFormat fmt = wb.createDataFormat();
+		CellStyle rowCellStyle = wb.createCellStyle();
+		rowCellStyle.setDataFormat(fmt.getFormat("yyyy-MM-dd HH:mm:ss"));
+		
+		for(int i=0; i<list.size(); i++) {
+			dataRow =sheet.createRow(rowNum++);
+					
+			dataCell = dataRow.createCell(1);
+			dataCell.setCellValue(i+1);
+			dataCell = dataRow.createCell(2);
+			dataCell.setCellValue(list.get(i).getChatNo());
+			dataCell = dataRow.createCell(3);
+			dataCell.setCellValue(list.get(i).getUserId());
+			dataCell = dataRow.createCell(4);
+			dataCell.setCellValue(list.get(i).getNotReadCnt());
+			dataCell = dataRow.createCell(5);
+			dataCell.setCellValue(list.get(i).getCreateDate());
+			dataCell.setCellStyle(rowCellStyle);
+			
+		}
+	
+		String fileName=null;
+		
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
+		String now= sdf.format(date);
+	
+		fileName ="ExcelFile_"+now+".xlsx";
+		
+		 /* 엑셀 파일 생성 */
+	    response.setContentType("ms-vnd/excel");
+	    response.setHeader("Content-Disposition", "attachment;filename="+fileName);
+	    wb.write(response.getOutputStream());
+	    
+	}
+	
 }

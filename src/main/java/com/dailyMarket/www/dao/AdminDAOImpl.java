@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.dailyMarket.www.utils.SearchCriteria;
+import com.dailyMarket.www.vo.AdminChatVO;
 import com.dailyMarket.www.vo.AdminVO;
+import com.dailyMarket.www.vo.AdvertVO;
 import com.dailyMarket.www.vo.AnswerVO;
 import com.dailyMarket.www.vo.BusiFileVO;
 import com.dailyMarket.www.vo.BusiVO;
@@ -206,6 +208,11 @@ public class AdminDAOImpl implements AdminDAO{
 	public List<UserAccountVO> selectUserAccount(String userId) throws Exception {
 		return sqlSession.selectList("AdminMapper.selectUserAccount",userId);
 	}
+	
+	@Override
+	public List<UserAccountVO> selectUserAccountDetail(UserAccountVO accoutVO) throws Exception {
+		return sqlSession.selectList("AdminMapper.selectUserAccountDetail", accoutVO);
+	}
 	@Override
 	public List<UserTradeVO> selectUserTrade(String userId) throws Exception {
 		return sqlSession.selectList("AdminMapper.selectUserTrade",userId);
@@ -331,9 +338,66 @@ public class AdminDAOImpl implements AdminDAO{
 		sqlSession.insert("AdminMapper.deleteAnswerByInquiryNo",inquiryNo);
 		
 	}
+
+
+
+	@Override
+	public List<AdvertVO> selectAdvertList(SearchCriteria scri) throws Exception {
+		return sqlSession.selectList("AdminMapper.selectAdvertList",scri);
+	}
+	@Override
+	public int selectAdvertTotalCnt(SearchCriteria scri) throws Exception {
+		return sqlSession.selectOne("AdminMapper.selectAdvertTotalCnt",scri);
+	}
+	@Override
+	public AdvertVO SelectAdvertDetail(int advertNo) throws Exception {
+		return sqlSession.selectOne("AdminMapper.SelectAdvertDetail",advertNo);
+	}
+
+
+
+	@Override
+	public void updatePriceAgree(int advertNo) throws Exception {
+		sqlSession.update("AdminMapper.updatePriceAgree",advertNo);
+	}
+	@Override
+	public void updatePriceDisAgree(int advertNo) throws Exception {
+		sqlSession.update("AdminMapper.updatePriceDisAgree",advertNo);
+	}
 	
+	@Override
+	public void updateApproveAgree(int advertNo) throws Exception {
+		sqlSession.update("AdminMapper.updateApproveAgree",advertNo);
+	}
+
+	@Override
+	public void updateApproveDisAgree(int advertNo) throws Exception {
+		sqlSession.update("AdminMapper.updateApproveDisAgree",advertNo);
+	}
+
+
+
+	@Override
+	public void insertChatMessage(AdminChatVO chatVO) throws Exception {
+		sqlSession.insert("AdminMapper.insertChatMessage",chatVO);
+	}
+	@Override
+	public List<AdminChatVO> selectChatList(int targetUserNo) throws Exception {
+		return sqlSession.selectList("AdminMapper.selectChatList",targetUserNo);
+	}
+	@Override
+	public List<AdminChatVO> selectChatRoom(SearchCriteria scri) throws Exception {
+		return sqlSession.selectList("AdminMapper.selectChatRoom", scri);
+	}
+	@Override
+	public int selectChatRoomTotalCnt(SearchCriteria scri) throws Exception {
+		return sqlSession.selectOne("AdminMapper.selectChatRoomTotalCnt",scri);
+	}
+	@Override
+	public void updateReadMessage(int targetUserNo) throws Exception {
+		sqlSession.selectOne("AdminMapper.updateReadMessage",targetUserNo);
+	}
 	
 
-	
 	
 }

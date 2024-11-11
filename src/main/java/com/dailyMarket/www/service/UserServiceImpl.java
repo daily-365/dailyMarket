@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.dailyMarket.www.dao.UserDAO;
 import com.dailyMarket.www.utils.SearchCriteria;
+import com.dailyMarket.www.vo.AdvertVO;
 import com.dailyMarket.www.vo.AnswerVO;
 import com.dailyMarket.www.vo.BusiFileVO;
 import com.dailyMarket.www.vo.BusiNoticeFileVO;
@@ -17,6 +18,8 @@ import com.dailyMarket.www.vo.BusiReviewVO;
 import com.dailyMarket.www.vo.BusiVO;
 import com.dailyMarket.www.vo.CarFileVO;
 import com.dailyMarket.www.vo.CarVO;
+import com.dailyMarket.www.vo.ChatRoomVO;
+import com.dailyMarket.www.vo.ConnexionVO;
 import com.dailyMarket.www.vo.EstateFileVO;
 import com.dailyMarket.www.vo.EstateVO;
 import com.dailyMarket.www.vo.EventVO;
@@ -33,6 +36,7 @@ import com.dailyMarket.www.vo.StoreFileVO;
 import com.dailyMarket.www.vo.UserAccountVO;
 import com.dailyMarket.www.vo.UserJobVO;
 import com.dailyMarket.www.vo.UserProfileFileVO;
+import com.dailyMarket.www.vo.UserSumAccountVO;
 import com.dailyMarket.www.vo.UserTradeVO;
 import com.dailyMarket.www.vo.UserVO;
 
@@ -103,8 +107,8 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public BusiVO selectByBusiNo(int busiNo) throws Exception {
-		return userDAO.selectByBusiNo(busiNo);
+	public BusiVO selectByBusiNo(BusiVO busiVO) throws Exception {
+		return userDAO.selectByBusiNo(busiVO);
 	}
 	
 	@Override
@@ -384,11 +388,13 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public void insertAccount(UserAccountVO userAccountVO) throws Exception {
 		userDAO.insertAccount(userAccountVO);
+		
+		
 	}
 
 	@Override
-	public List<UserAccountVO> selectAccount(String userId) throws Exception {
-		return userDAO.selectAccount(userId);
+	public List<UserAccountVO> selectSumAccountList(int userNo) throws Exception {
+		return userDAO.selectSumAccountList(userNo);
 	}
 
 	@Override
@@ -413,14 +419,21 @@ public class UserServiceImpl implements UserService{
 	
 
 	@Override
-	public List<UserTradeVO> selectLikeList(String userId) throws Exception {
-		return userDAO.selectLikeList(userId);
+	public List<UserTradeVO> selectLikeList(int userNo) throws Exception {
+		return userDAO.selectLikeList(userNo);
 	}
 
 	@Override
-	public List<ProductVO> selectProductSalesList(String userId) throws Exception {
-		return userDAO.selectProductSalesList(userId);
+	public List<ProductVO> selectProductSalesList(int userNo) throws Exception {
+		return userDAO.selectProductSalesList(userNo);
 	}
+	
+	@Override
+	public void updateProductSaleCancle(int productNo) throws Exception {
+		userDAO.updateProductSaleCancle(productNo);
+		
+	}
+
 	@Override
 	public List<EventVO> selectEventList(SearchCriteria scri) throws Exception {
 		return userDAO.selectEventList(scri);
@@ -488,6 +501,146 @@ public class UserServiceImpl implements UserService{
 		return userDAO.selectInquirySearch(scri);
 	}
 
+	@Override
+	public void insertConnexion(ConnexionVO connexionVO) throws Exception {
+		userDAO.insertConnexion(connexionVO);
+	}
+
+	@Override
+	public boolean selectConnexionYn(ConnexionVO connexionVO) throws Exception {
+		int result = userDAO.selectConnexionYn(connexionVO);
+		if(result>0) {
+			return true;
+		}else {
+			return false;
+		}
+		 
+	}
+
+	@Override
+	public void updateConnexionDel(ConnexionVO connexionVO) throws Exception {
+		userDAO.updateConnexionDel(connexionVO);
+		
+	}
+
+	@Override
+	public List<GetUserJobVO> selectGetJobList(String userId) throws Exception {
+		return userDAO.selectGetJobList(userId);
+	}
+
+	@Override
+	public void updateGetjobDel(int jobNo) throws Exception {
+		userDAO.updateGetjobDel(jobNo);
+	}
+
+	@Override
+	public List<ConnexionVO> selectConnexionList(int userNo) throws Exception {
+		return userDAO.selectConnexionList(userNo);
+	}
+
+	@Override
+	public List<BusiReviewVO> selectReviewList(String userId) throws Exception {
+		return userDAO.selectReviewList(userId);
+	}
+
+	@Override
+	public void updateConnexionNoticeY(ConnexionVO connexionVO) throws Exception {
+		userDAO.updateConnexionNoticeY(connexionVO);
+	}
+
+	@Override
+	public void updateConnexionNoticeN(ConnexionVO connexionVO) throws Exception {
+		userDAO.updateConnexionNoticeN(connexionVO);
+	}
+
+	@Override
+	public List<BusiNoticeVO> selectBusiNoticeList(int userNo) throws Exception {
+		return userDAO.selectBusiNoticeList(userNo);
+	}
+	@Override
+	public void updateUserSumAccountPlus(UserSumAccountVO sumAccountVO) throws Exception {
+		userDAO.updateUserSumAccountPlus(sumAccountVO);
+	}
+	@Override
+	public List<AdvertVO> selectBusiKeywordList() throws Exception {
+		return userDAO.selectBusiKeywordList();
+	}
+	@Override
+	public AdvertVO selectBusiKeywordByAdvertNo(int advertNo) throws Exception {
+		
+		return userDAO.selectBusiKeywordByAdvertNo(advertNo);
+	}
+	@Override
+	public void updateDeductAdvert(int advertNo) throws Exception {
+		userDAO.updateDeductAdvert(advertNo);
+	}
+	@Override
+	public boolean selectChatYn(int targetUserNo) throws Exception {
+		int result= userDAO.selectChatYn(targetUserNo);
+		
+		if(result>0) {
+			return true;
+		}else {
+			return false;
+		}
+	
+	}
+	@Override
+	public ProductVO selectAccountByProductNo(int productNo) throws Exception {
+		return userDAO.selectAccountByProductNo(productNo);
+	}
+
+	@Override
+	public void insertSumAccount(UserSumAccountVO sumAccount) throws Exception {
+		userDAO.insertSumAccount(sumAccount);
+	}
+
+	@Override
+	public int selectSumAccountCnt(String accountNum ) throws Exception {
+		return userDAO.selectSumAccountCnt(accountNum);
+	}
+
+	@Override
+	public void updatePurchaseTrade(UserTradeVO tradeVO) throws Exception {
+		userDAO.updatePurchaseTrade(tradeVO);
+	}
+
+	@Override
+	public void updatePurchaseProduct(ProductVO productVO) throws Exception {
+		userDAO.updatePurchaseProduct(productVO);
+	}
+
+	@Override
+	public void insertPurchaseAccount(UserAccountVO accountVO) throws Exception {
+		userDAO.insertPurchaseAccount(accountVO);
+	}
+	@Override
+	public void updatePurchaseSumAccount(UserSumAccountVO sumAccountVO) throws Exception {
+		userDAO.updatePurchaseSumAccount(sumAccountVO);
+	}
+
+	@Override
+	public void insertSalesAccount(UserAccountVO accountVO) throws Exception {
+		userDAO.insertSalesAccount(accountVO);
+	}
+
+	@Override
+	public void updateSalesSumAccount(UserSumAccountVO sumAccountVO) throws Exception {
+		userDAO.updateSalesSumAccount(sumAccountVO);
+	}
+
+	@Override
+	public List<ProductVO> selectPurchaseList(int tradeUserNo) throws Exception {
+		return userDAO.selectPurchaseList(tradeUserNo);
+	}
+
+	@Override
+	public ProductVO selectPurchaseDetail(ProductVO productVO) throws Exception {
+		return userDAO.selectPurchaseDetail(productVO);
+	}
+
+
+	
 	
 
 	

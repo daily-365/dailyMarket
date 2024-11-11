@@ -78,7 +78,7 @@
   		</div>
   	</div>
   	<br><br>
-	<div class="row text-center " id="locEstateWrap">
+	<div class="row text-center" id="locEstateWrap">
   		<c:forEach var="locList" items="${ locEstate}">
   		<c:set var="locListPriceLen" value="${fn:length(locList.esPrice) }"/>
   		<c:if test="${not empty locList.regDate3 }">
@@ -157,30 +157,39 @@ $(document).ready(function(){
 
 
 	function locEstateMoreFunc(){
-		var addr = localStorage.getItem("roadNameAddr").substring(0,8)
-		
-		$.ajax({
-			url:"/user/estate/loc",
-			type:"post",
-			data : {"endRow": $("#locEstateEndRow").val() ,
-					"esLoc" : addr},
-			success:function(result){
-				var locMoreContent =''
-				
-				result.forEach(function(item){
-						locMoreContent+='<div class="col-3">'
-						locMoreContent+='<img src="/resources/upload/user/estate/'+item.storedFileName  +'" style="width: 120px; height: 120px;">'		
-		  				locMoreContent+='<br><br>'
-		  				locMoreContent+='<a href="/user/estate/detail?esNo='+item.esNo+'" class="fw-bold text-dark">'+item.esRoomType +' ( '+item.esTradeType +' ) '+item.esPrice.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,",") +' </a>'
-		  				locMoreContent+='<br><br>'
-		  				locMoreContent+='<p class="col-auto fw-bold">'+item.esLoc +'</p>'
-		  				locMoreContent+='<p class="col-auto">'+item.esLocContent.substr(0,40) +'..</p>'
-	  					locMoreContent+='</div>'
-  			
-						$("#locEstateWrap").html(locMoreContent)
-				});		
+
+		if(!localStorage.getItem("roadNameAddr")){
+			if(!confirm("위치가 설정되어있지 않습니다. 위치 설정페이지로 이동할까요?")){
+				return false;
+			}else{
+				location.href="/user/mypage/location"	
 			}
-		})
+			
+		}else{
+		
+			$.ajax({
+				url:"/user/estate/loc",
+				type:"post",
+				data : {"endRow": $("#locEstateEndRow").val() ,
+						"esLoc" : localStorage.getItem("roadNameAddr").substring(0,8)},
+				success:function(result){
+					var locMoreContent =''
+					
+					result.forEach(function(item){
+							locMoreContent+='<div class="col-3">'
+							locMoreContent+='<img src="/resources/upload/user/estate/'+item.storedFileName  +'" style="width: 120px; height: 120px;">'		
+			  				locMoreContent+='<br><br>'
+			  				locMoreContent+='<a href="/user/estate/detail?esNo='+item.esNo+'" class="fw-bold text-dark">'+item.esRoomType +' ( '+item.esTradeType +' ) '+item.esPrice.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,",") +' </a>'
+			  				locMoreContent+='<br><br>'
+			  				locMoreContent+='<p class="col-auto fw-bold">'+item.esLoc +'</p>'
+			  				locMoreContent+='<p class="col-auto">'+item.esLocContent.substr(0,40) +'..</p>'
+		  					locMoreContent+='</div>'
+	  			
+							$("#locEstateWrap").html(locMoreContent)
+					});		
+				}
+			})
+		}
 	}
 	
 	var locCount =8;

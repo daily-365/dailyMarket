@@ -40,7 +40,7 @@
 		<c:if test="${pageMaker.prev }">
 			<a class="btn btn-light" href="${pageMaker.makeSearch(pageMaker.startPage-1) }">&laquo;</a>
 		</c:if>
-		<c:forEach var="idx" begin="${pageMaker.startPage }" end="${pageMaker.endPage}"  >
+		<c:forEach var="idx" begin="${pageMaker.startPage }" end="${pageMaker.endPage+1 }"  >
 			<a class="btn btn-light <c:if test="${param.page eq idx}">active</c:if>"  href="${pageMaker.makeSearch(idx) }">${idx}</a>
 		</c:forEach>
 		<c:if test="${pageMaker.next && pageMaker.endPage>0}">

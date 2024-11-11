@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.dailyMarket.www.utils.SearchCriteria;
+import com.dailyMarket.www.vo.AdvertVO;
 import com.dailyMarket.www.vo.AnswerVO;
 import com.dailyMarket.www.vo.BusiFileVO;
 import com.dailyMarket.www.vo.BusiNoticeFileVO;
@@ -19,6 +20,8 @@ import com.dailyMarket.www.vo.BusiReviewVO;
 import com.dailyMarket.www.vo.BusiVO;
 import com.dailyMarket.www.vo.CarFileVO;
 import com.dailyMarket.www.vo.CarVO;
+import com.dailyMarket.www.vo.ChatRoomVO;
+import com.dailyMarket.www.vo.ConnexionVO;
 import com.dailyMarket.www.vo.EstateFileVO;
 import com.dailyMarket.www.vo.EstateVO;
 import com.dailyMarket.www.vo.EventVO;
@@ -35,6 +38,7 @@ import com.dailyMarket.www.vo.StoreFileVO;
 import com.dailyMarket.www.vo.UserAccountVO;
 import com.dailyMarket.www.vo.UserJobVO;
 import com.dailyMarket.www.vo.UserProfileFileVO;
+import com.dailyMarket.www.vo.UserSumAccountVO;
 import com.dailyMarket.www.vo.UserTradeVO;
 import com.dailyMarket.www.vo.UserVO;
 
@@ -96,8 +100,8 @@ public class UserDAOImpl implements UserDAO{
 		return sqlSession.selectList("UserMapper.selectBusiList",busiVO);
 	}
 	@Override
-	public BusiVO selectByBusiNo(int busiNo) throws Exception {
-		return sqlSession.selectOne("UserMapper.selectByBusiNo",busiNo);
+	public BusiVO selectByBusiNo(BusiVO busiVO) throws Exception {
+		return sqlSession.selectOne("UserMapper.selectByBusiNo",busiVO);
 	}
 	
 	
@@ -378,8 +382,8 @@ public class UserDAOImpl implements UserDAO{
 	}
 
 	@Override
-	public List<UserAccountVO> selectAccount(String userId) throws Exception {
-		return sqlSession.selectList("UserMapper.selectAccount",userId);
+	public List<UserAccountVO> selectSumAccountList(int userNo) throws Exception {
+		return sqlSession.selectList("UserMapper.selectSumAccountList",userNo);
 	}
 
 	@Override
@@ -404,13 +408,19 @@ public class UserDAOImpl implements UserDAO{
 	}
 
 	@Override
-	public List<UserTradeVO> selectLikeList(String userId) throws Exception {
-		return sqlSession.selectList("UserMapper.selectLikeList",userId);
+	public List<UserTradeVO> selectLikeList(int userNo) throws Exception {
+		return sqlSession.selectList("UserMapper.selectLikeList",userNo);
 	}
 
 	@Override
-	public List<ProductVO> selectProductSalesList(String userId) throws Exception {
-		return sqlSession.selectList("UserMapper.selectProductSalesList",userId);
+	public List<ProductVO> selectProductSalesList(int userNo) throws Exception {
+		return sqlSession.selectList("UserMapper.selectProductSalesList",userNo);
+	}
+
+	@Override
+	public void updateProductSaleCancle(int productNo) throws Exception {
+		sqlSession.update("UserMapper.updateProductSaleCancle",productNo);
+		
 	}
 
 	@Override
@@ -479,7 +489,136 @@ public class UserDAOImpl implements UserDAO{
 	public List<InquiryVO> selectInquirySearch(SearchCriteria scri) throws Exception {
 		return sqlSession.selectList("UserMapper.selectInquirySearch",scri);
 	}
-	
+
+	@Override
+	public void insertConnexion(ConnexionVO connexionVO) throws Exception {
+		sqlSession.insert("UserMapper.insertConnexion",connexionVO);
+	}
+
+	@Override
+	public int selectConnexionYn(ConnexionVO connexionVO) throws Exception {
+		return sqlSession.selectOne("UserMapper.selectConnexionYn",connexionVO);
+	}
+
+	@Override
+	public void updateConnexionDel(ConnexionVO connexionVO) throws Exception {
+		sqlSession.update("UserMapper.updateConnexionDel",connexionVO);
+	}
+
+	@Override
+	public List<GetUserJobVO> selectGetJobList(String userId) throws Exception {
+		return sqlSession.selectList("UserMapper.selectGetJobList",userId);
+	}
+
+	@Override
+	public void updateGetjobDel(int jobNo) throws Exception {
+		sqlSession.update("UserMapper.updateGetjobDel",jobNo);
+	}
+
+	@Override
+	public List<ConnexionVO> selectConnexionList(int userNo) throws Exception {
+		return sqlSession.selectList("UserMapper.selectConnexionList",userNo);
+	}
+
+	@Override
+	public List<BusiReviewVO> selectReviewList(String userId) throws Exception {
+		return sqlSession.selectList("UserMapper.selectReviewList",userId);
+	}
+
+	@Override
+	public void updateConnexionNoticeY(ConnexionVO connexionVO) throws Exception {
+		sqlSession.update("UserMapper.updateConnexionNoticeY",connexionVO);		
+	}
+
+	@Override
+	public void updateConnexionNoticeN(ConnexionVO connexionVO) throws Exception {
+		sqlSession.update("UserMapper.updateConnexionNoticeN",connexionVO);				
+	}
+
+	@Override
+	public List<BusiNoticeVO> selectBusiNoticeList(int userNo) throws Exception {
+		return sqlSession.selectList("UserMapper.selectBusiNoticeList",userNo);
+	}
+	@Override
+	public void updateUserSumAccountPlus(UserSumAccountVO sumAccountVO) throws Exception {
+		sqlSession.insert("UserMapper.updateUserSumAccountPlus",sumAccountVO);
+		
+	}
+	@Override
+	public List<AdvertVO> selectBusiKeywordList() throws Exception {
+		return sqlSession.selectList("UserMapper.selectBusiKeywordList");
+	}
+
+	@Override
+	public AdvertVO selectBusiKeywordByAdvertNo(int advertNo) throws Exception {
+				
+		return sqlSession.selectOne("UserMapper.selectBusiKeywordByAdvertNo",advertNo);
+	}
+	@Override
+	public void updateDeductAdvert(int advertNo) throws Exception {
+		 sqlSession.update("UserMapper.updateDeductAdvert",advertNo);
+		
+	}
+	@Override
+	public int selectChatYn(int targetUserNo) throws Exception {
+		return sqlSession.selectOne("UserMapper.selectChatYn",targetUserNo);
+	}
+
+	@Override
+	public ProductVO selectAccountByProductNo(int productNo) throws Exception {
+		return sqlSession.selectOne("UserMapper.selectAccountByProductNo",productNo);
+	}
+	@Override
+	public void insertSumAccount(UserSumAccountVO sumAccount) throws Exception {
+		sqlSession.insert("UserMapper.insertSumAccount",sumAccount);
+		
+	}
+	@Override
+	public int selectSumAccountCnt(String accountNum) throws Exception {
+		return sqlSession.selectOne("UserMapper.selectSumAccountCnt",accountNum);
+	}
+
+	@Override
+	public void updatePurchaseTrade(UserTradeVO tradeVO) throws Exception {
+		sqlSession.update("UserMapper.updatePurchaseTrade",tradeVO);
+	}
+
+	@Override
+	public void updatePurchaseProduct(ProductVO productVO) throws Exception {
+		sqlSession.update("UserMapper.updatePurchaseProduct",productVO);
+	}
+
+	@Override
+	public void insertPurchaseAccount(UserAccountVO accountVO) throws Exception {
+		sqlSession.insert("UserMapper.insertPurchaseAccount",accountVO);
+	}
+
+	@Override
+	public void updatePurchaseSumAccount(UserSumAccountVO sumAccountVO) throws Exception {
+		sqlSession.update("UserMapper.updatePurchaseSumAccount",sumAccountVO);
+	}
+
+	@Override
+	public void insertSalesAccount(UserAccountVO accountVO) throws Exception {
+		sqlSession.insert("UserMapper.insertSalesAccount",accountVO);
+		
+	}
+
+	@Override
+	public void updateSalesSumAccount(UserSumAccountVO sumAccountVO) throws Exception {
+		sqlSession.update("UserMapper.updateSalesSumAccount",sumAccountVO);
+		
+	}
+	@Override
+	public List<ProductVO> selectPurchaseList(int tradeUserNo) throws Exception {
+		return sqlSession.selectList("UserMapper.selectPurchaseList",tradeUserNo);
+	}
+
+	@Override
+	public ProductVO selectPurchaseDetail(ProductVO productVO) throws Exception {
+		return sqlSession.selectOne("UserMapper.selectPurchaseDetail",productVO);
+	}
+
 	
 
 	

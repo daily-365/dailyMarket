@@ -43,18 +43,14 @@ public class OwnerController {
 	public String getOwnerMain(HttpSession session,Model model)throws Exception{
 		logger.info("GET OWNER MAIN");
 		String userId = (String)session.getAttribute("userId");
+		int userNo =(int)session.getAttribute("userNo");
 		
 		BusiVO busiVO = ownerService.selectBusiByWriter(userId);
 		model.addAttribute("busiVO",busiVO);
 		
-		boolean menuExist = ownerService.selectMenuExist(busiVO.getBusiNo());
-		boolean jobExsit= ownerService.selectJobExist(userId);
+		AdvertVO advertVO = ownerService.selectAdvertByuserNo(userNo);
+		model.addAttribute("advertVO",advertVO);
 		
-		model.addAttribute("menuExist",menuExist);
-		model.addAttribute("jobExsit",jobExsit);
-		
-		System.out.println(menuExist);
-		System.out.println(jobExsit);
 		return "owner/main";
 	}
 	
@@ -618,5 +614,175 @@ public class OwnerController {
 		}
 		
 		return "업로드 완료";
+	}
+	
+	
+	@RequestMapping(value = "advert/write",method =  RequestMethod.GET)
+	public String getAdvertWrite(@RequestParam(value = "tradeBank",required = false)String tradeBank
+				,@RequestParam(value = "accountNum",required = false)String accountNum,HttpSession session,Model model,UserAccountVO accoutVO)throws Exception{
+		
+		int userNo = (int)session.getAttribute("userNo");
+		
+		AdvertVO advertVO = ownerService.selectAdvertByuserNo(userNo);
+		model.addAttribute("advertVO",advertVO);
+		
+		
+		return "owner/advert/write";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "advert/account",method = RequestMethod.POST)
+	public UserAccountVO postUserAccount(@RequestParam("tradeBank")String tradeBank,@RequestParam("accountNum")String accountNum,
+									HttpSession session)throws Exception{
+		int userNo = (int)session.getAttribute("userNo");
+		
+		UserAccountVO accoutVO = new UserAccountVO();
+		
+		accoutVO.setUserNo(userNo);
+		accoutVO.setTradeBank(tradeBank);
+		accoutVO.setAccountNum(accountNum);
+		
+		accoutVO = ownerService.selectUserAcoount(accoutVO);
+		
+		return accoutVO;
+	}
+	
+	
+	@ResponseBody
+	@RequestMapping(value = "advert/regist", method=RequestMethod.POST,produces = "application/text; charset=UTF-8;")
+	public String postAdvertRegist(HttpSession session,
+								@RequestParam("busiNo")int busiNo,@RequestParam("content")String content,
+								@RequestParam("location")String location,@RequestParam("age")String age,
+								@RequestParam("gender")String gender,@RequestParam("priceType")String priceType,
+								@RequestParam("price")int price,@RequestParam("startType")String startType,
+								@RequestParam("days")int days,@RequestParam("endDateYn")String endDateYn,
+								@RequestParam("detailYn")String detailYn,
+								@RequestParam("tradeBank")String tradeBank, @RequestParam("accountNum")String accountNum,
+								@RequestParam("userName")String userName,
+								AdvertVO advertVO
+								)throws Exception{
+		
+		int userNo = (int)session.getAttribute("userNo");
+		String userId =(String)session.getAttribute("userId");
+		
+		advertVO.setUserNo(userNo);
+		advertVO.setBusiNo(busiNo);
+		advertVO.setContent(content);
+		advertVO.setLocation(location);
+		advertVO.setAge(age);
+		advertVO.setGender(gender);
+		advertVO.setPriceType(priceType);
+		advertVO.setPrice(price);
+		advertVO.setStartType(startType);
+		advertVO.setDays(days);
+		advertVO.setEndDateYn(endDateYn);
+		advertVO.setDetailYn(detailYn);
+		
+		ownerService.insertAdvert(advertVO);
+		
+		UserSumAccountVO sumAccountVO = new UserSumAccountVO();
+		sumAccountVO.setUserNo(userNo);
+		sumAccountVO.setTradeBank(tradeBank);
+		sumAccountVO.setAccountNum(accountNum);
+		sumAccountVO.setSaveMoney(price);
+		
+		ownerService.updateUserSumAccountMinus(sumAccountVO);
+		
+		UserAccountVO accountVO = new UserAccountVO();
+		accountVO.setUserNo(userNo);
+		accountVO.setUserId(userId);
+		accountVO.setUserName(userName);
+		accountVO.setTradeBank(tradeBank);
+		accountVO.setAccountNum(accountNum);
+		accountVO.setSaveMoney(price);
+		
+		ownerService.insertUserAccountMinus(accountVO);
+		
+		AdminAccountVO admAccountVO = new AdminAccountVO();
+		admAccountVO.setUserNo(userNo);
+		admAccountVO.setTradeBank(tradeBank);
+		admAccountVO.setAccountNum(accountNum);
+		admAccountVO.setSaveMoney(price);
+		
+		ownerService.insertAdminAccount(admAccountVO);
+		
+		AdminSumAccountVO admSumAccountVO = new AdminSumAccountVO();
+		admSumAccountVO.setSaveMoney(price);
+		
+		ownerService.updateAdminSumAccount(admSumAccountVO);
+		
+		return "광고가 등록되었습니다.";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "advert/insertFile",method =RequestMethod.POST )
+	public String postAdvertInsertFile(@RequestParam("fileContent")List<MultipartFile> multipartFile, HttpSession session
+									  ,@RequestParam("fileNo")int fileNo)
+											throws Exception{
+		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
+		Map<String,Object> map =null;
+		int userNo = (int)session.getAttribute("userNo");
+		
+		if(multipartFile.size()!=0&&!multipartFile.get(0).getOriginalFilename().equals("")) {
+			for(int i=0; i<multipartFile.size(); i++) {
+			
+				String originFileName= multipartFile.get(i).getOriginalFilename();
+				String extendFileName = originFileName.substring(originFileName.lastIndexOf("."));
+				String storedFileName = UUID.randomUUID()+extendFileName;
+				
+				File targetfile = new File(uploadPath+"advert\\"+storedFileName);
+				multipartFile.get(i).transferTo(targetfile);
+				
+				map = new HashMap<String,Object>();
+				
+				map.put("userNo",userNo );
+				map.put("originFileName",originFileName );
+				map.put("storedFileName",storedFileName );
+				map.put("fileSize",multipartFile.get(i).getSize());
+				
+				list.add(map);
+			}
+		}
+		
+		for(int i=0; i<list.size(); i++) {
+			ownerService.insertAdvertFile(list.get(i));
+		}
+		//기존 파일 삭제
+		ownerService.updatePrevAdvertFileDelete(fileNo);
+		
+		return "Advert File Upload Success";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "advert/modify", method=RequestMethod.POST,produces = "application/text; charset=UTF-8;")
+	public String postAdvertModify(HttpSession session,
+								@RequestParam("busiNo")int busiNo,@RequestParam("content")String content,
+								@RequestParam("location")String location,@RequestParam("age")String age,
+								@RequestParam("gender")String gender,
+								AdvertVO advertVO
+								)throws Exception{
+		
+		int userNo = (int)session.getAttribute("userNo");
+		
+		advertVO.setUserNo(userNo);
+		advertVO.setBusiNo(busiNo);
+		advertVO.setContent(content);
+		advertVO.setLocation(location);
+		advertVO.setAge(age);
+		advertVO.setGender(gender);
+		
+		
+		ownerService.updateAdvertModify(advertVO);
+		
+		return "광고가 수정되었습니다.";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "advert/delete",method = RequestMethod.POST,produces = "application/text; charset=UTF-8;")
+	public String postAdvertDelete(HttpSession session)throws Exception{
+		int userNo =(int)session.getAttribute("userNo");
+		ownerService.updateAdvertDelete(userNo);
+		
+		return "광고가 취소되었습니다.";
 	}
 }

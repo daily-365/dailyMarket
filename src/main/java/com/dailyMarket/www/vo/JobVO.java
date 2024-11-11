@@ -2,7 +2,7 @@ package com.dailyMarket.www.vo;
 
 import java.util.Date;
 
-public class JobVO {
+public class JobVO extends UserJobVO{
 	private int rnum;
 	private int jobNo;
 	private String jobWriter;

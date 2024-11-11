@@ -59,7 +59,8 @@
 			<button type="button" id="accountRegBtn" class="btn btn-light form-control">충전하기</button>
 		</div>
 	</div>
-	<input type="text" id="resSaveMoney" style="display: none;">
+	<input type="hidden" id="userNo" value="${userNo }">
+	<input type="hidden" id="resSaveMoney">
 </form>
 </main>
 </body>
@@ -104,9 +105,11 @@ $(document).ready(function(){
 					"userName" : $("#userName").val(),
 					"accountNum" :$("#accountNum").val(),
 					"tradeBank" : $("#tradeBank").val(),
-					"saveMoney" :$("#resSaveMoney").val()				
+					"saveMoney" :$("#resSaveMoney").val(),
+					"targetUserNo" : $("#userNo").val(),
+					"userType" : 'self'
 					}
-			console.log(params)
+			
 			$.ajax({
 				url :"/user/mypage/account",
 				type : "post",

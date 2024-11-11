@@ -22,10 +22,16 @@ Insert into storefile(busiNo,originFileName,storedFileName,fileSize,writer,regDa
 SELECT a.busiNo,a.busiNum,a.ownerName,a.busiTel,a.busiName,a.busiType,a.busiType1,a.busiType2,a.busiType3,a.storeTel,a.storeAddr,a.storeAddrDetail,a.agreeYn,a.status,a.regDate,a.modDate,a.delDate,a.deleteYn
 		,a.title,a.homePage,a.introduce
 		,b.busiStoredFileName
+		,c.jobNo
+		,d.menuNo
 FROM busi a
 INNER JOIN busifile b
 ON a.busiNo =b.busiNo
-	AND a.writer =#{writer}
+INNER JOIN job c
+ON a.writer = b.writer
+INNER JOIN menu d
+ON a.busiNo= b.busiNo
+	AND a.writer =#{userId}
 	AND a.deleteYn ='N'
 	AND b.deleteYn ='N'
 GROUP BY busiNo
@@ -61,18 +67,6 @@ WHERE busiNo=#{busiNo}
 UPDATE storeFile set deleteYn='Y' , modDate =now() ,delDate =now()
 WHERE fileNo=#{fileNo}
 </update>
-
-<!-- /owner/main 에서 메뉴 및 알바 등록 여부  -->
-<select id="selectMenuExist" resultType="int">
-SELECT COUNT(menuNo) 
-FROM menu
-WHERE busiNo=#{busiNo}
-</select>
-<select id="selectJobExist" resultType="int">
-SELECT COUNT(jobNo)
-FROM job
-WHERE jobWriter =#{uesrId}
-</select>
 
 <insert id="insertMenu">
 INSERT into menu (busiNo,name,price,count,content,deleveryYn,deleveryPrice,regDate)
@@ -187,5 +181,83 @@ Where getUserJobNo = #{getUserJobNo}
 Update getUSerJob set status ='N' , modDate =now()
 Where getUserJobNo = #{getUserJobNo}
 </update>
+
+<!-- 광고 등록 -->
+<insert id="insertAdvert">
+Insert Into advert (busiNo,userNo,content,location,age,gender,priceType,prevPrice,price,startType,days,endDateYn,detailYn)
+	values(#{busiNo},#{userNo},#{content},#{location},#{age},#{gender},#{priceType},#{prevPrice},#{price},#{startType},#{days},#{endDateYn},#{detailYn})
+</insert>
+<!-- 광고 등록시 계좌정보 일치 여부 -->
+<select id="selectUserAcoount" resultType="com.dailyMarket.www.vo.UserAccountVO">
+SELECT idx,userNo,userId,userName,accountNum,tradeBank,SUM(saveMoney) AS saveMoney,modDate
+	FROM useraccount
+WHERE userNo =#{userNo}
+	AND tradeBank = #{tradeBank}
+	AND accountNum = #{accountNum}
+GROUP BY userNo,tradeBank
+</select>
+
+<!-- 계좌 총액에서 예산 만큼 차감 -->
+<update id="updateUserSumAccountMinus">
+UPDATE userSumAccount SET saveMoney =saveMoney-#{saveMoney}
+WHERE userNo=#{userNo}
+	AND tradeBank=#{tradeBank}
+	AND accountNum=#{accountNum}
+</update>
+<!-- 출금 정보 입력 -->
+<insert id="insertUserAccountMinus">
+INSERT INTO useraccount (userNo,userId,userName,accountNum,tradeBank,saveMoney,moneyType)
+				VALUES (#{userNo},#{userId},#{userName},#{accountNum},#{tradeBank},#{saveMoney},'출금')
+</insert>
+
+<!-- admin 계좌에 입금 -->
+<insert id="insertAdminAccount">
+INSERT INTO adminAccount(tradeBank,accountNum,saveMoney,userNo,moneyType)
+		VALUES (#{tradeBank},#{accountNum},#{saveMoney},#{userNo},'입금')
+</insert>
+<!-- admin 계좌 정보에 금액 업데이트 -->
+<update id="updateAdminSumAccount">
+UPDATE adminSumAccount SET saveMoney = #{saveMoney}
+</update>
+
+<!-- 광고 파일 등록 -->
+<insert id="insertAdvertFile">
+Insert Into advertFile (advertNo,userNo,originFileName,storedFileName,fileSize  )
+	values ( ( SELECT IFNULL(max(advertNo),1) From advert ),#{userNo},#{originFileName},#{storedFileName},#{fileSize})
+</insert>
+<!-- 등록된 광고  -->
+<select id="selectAdvertByuserNo" resultType="com.dailyMarket.www.vo.AdvertVO">
+SELECT a.advertNo,a.busiNo,a.userNo,a.location,a.content,a.age,a.gender,a.approveStatus,a.payStatus,
+		a.prevPrice,a.priceType,a.price,a.startType,a.days,a.endDateYn,a.detailYn,
+		a.regDate,a.modDate,a.delDate,a.deleteYn,
+		b.fileNo,b.storedFileName,
+		c.userName,c.accountNum,c.tradeBank,c.moneyType
+FROM advert a
+INNER JOIN advertfile b
+ON a.advertNo=b.advertNo
+INNER JOIN useraccount c
+ON a.userNo =c.userNo
+WHERE a.userNo = #{userNo}
+	AND a.deleteYn='N'
+	AND b.deleteYn='N'
+GROUP BY advertNo
+</select>
+<!-- 광고 수정 -->
+<update id="updateAdvertModify">
+UPDATE advert SET busiNo=#{busiNo},userNo=#{userNo},location=#{location},content=#{content},age=#{age},gender=#{gender},modDate=now()
+WHERE userNo=#{userNo}
+</update>
+<!-- 광고 삭제 -->
+<update id="updateAdvertDelete">
+UPDATE advert SET deleteYn='Y',delDate=now()
+WHERE userNo=#{userNo}
+</update>
+<!-- 기존 사진 (파일) 삭제 -->
+<update id="updatePrevAdvertFileDelete">
+UPDATE advertFile SET deleteYn='Y', delDate = now()
+WHERE fileNo=#{fileNo}
+</update>
+
+
 
 </mapper>

@@ -11,8 +11,8 @@
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <style type="text/css">
 svg {
- width: 30px;
- height: 30px;
+ width: 25px;
+ height: 25px;
 }
 
 img {
@@ -51,7 +51,7 @@ img {
 	</div>
 
 	<br><br>
-
+	
 	<div id="buttons" class="text-center fw-bold text-dark h4">
 	    <span data-cycle-cmd="prev">
 	    	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-left-fill" viewBox="0 0 16 16">
@@ -96,35 +96,77 @@ img {
 		<div class="col-4">
 		</div>
 		<div class="col-4">
-			<c:if test="${detail.writer ne userId }">
-				<c:if test="${empty product.productNo}">
-					<svg class="text-danger" id="likeBtn" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
-		 				<path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
-					</svg>
-					<span id="likeChk" class="fw-bold text-danger">찜하기</span>
-				</c:if>
-				<c:if test="${not empty product.productNo}">
-					<svg class="text-warning" id="likeCancleBtn" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
-		 				<path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
-					</svg>
-					<span id="likeCancleChk" class="fw-bold text-warning">취소하기</span>
-				</c:if>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<svg class="text-warning" id="purChaseBtn" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-handbag" viewBox="0 0 16 16">
-	  				<path d="M8 1a2 2 0 0 1 2 2v2H6V3a2 2 0 0 1 2-2m3 4V3a3 3 0 1 0-6 0v2H3.36a1.5 1.5 0 0 0-1.483 1.277L.85 13.13A2.5 2.5 0 0 0 3.322 16h9.355a2.5 2.5 0 0 0 2.473-2.87l-1.028-6.853A1.5 1.5 0 0 0 12.64 5zm-1 1v1.5a.5.5 0 0 0 1 0V6h1.639a.5.5 0 0 1 .494.426l1.028 6.851A1.5 1.5 0 0 1 12.678 15H3.322a1.5 1.5 0 0 1-1.483-1.723l1.028-6.851A.5.5 0 0 1 3.36 6H5v1.5a.5.5 0 1 0 1 0V6z"/>
-				</svg>
-				<span id="tradeBtn" class="fw-bold text-warning">채팅하기</span>
-			</c:if>
+			<c:if test="${detail.tradeYn eq 'S' }">
+				<c:if test="${detail.writer ne userId }">
+					<c:if test="${empty product.productNo}">
+						<svg class="text-danger" id="likeBtn" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
+			 				<path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
+						</svg>
+						<span id="likeChk" class="fw-bold text-danger">찜하기</span>
+					</c:if>
+					<c:if test="${not empty product.productNo}">
+						<svg class="text-warning" id="likeCancleBtn" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
+			 				<path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
+						</svg>
+						<span id="likeCancleChk" class="fw-bold text-warning">취소하기</span>
+					</c:if>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 					
+					<c:if test="${chatYn eq false }">
+					<svg class="text-warning" id="purChaseBtn" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-handbag" viewBox="0 0 16 16">
+		  				<path d="M8 1a2 2 0 0 1 2 2v2H6V3a2 2 0 0 1 2-2m3 4V3a3 3 0 1 0-6 0v2H3.36a1.5 1.5 0 0 0-1.483 1.277L.85 13.13A2.5 2.5 0 0 0 3.322 16h9.355a2.5 2.5 0 0 0 2.473-2.87l-1.028-6.853A1.5 1.5 0 0 0 12.64 5zm-1 1v1.5a.5.5 0 0 0 1 0V6h1.639a.5.5 0 0 1 .494.426l1.028 6.851A1.5 1.5 0 0 1 12.678 15H3.322a1.5 1.5 0 0 1-1.483-1.723l1.028-6.851A.5.5 0 0 1 3.36 6H5v1.5a.5.5 0 1 0 1 0V6z"/>
+					</svg>
+						<c:choose>
+							<c:when test="${ detail.roomNo eq 0 }">
+								<span id="createChatRoom" class="fw-bold text-warning"  data-bs-toggle="modal" data-bs-target=".chatModal">채팅하기</span>
+							</c:when>
+							<c:otherwise>
+								<input type="hidden" id="moveChatRoomNo" value="${detail.roomNo }">
+								<span id="moveChatRoomBtn" class="fw-bold text-warning" >채팅하기</span>
+							</c:otherwise>
+						</c:choose>
+					</c:if>
+					<c:if test="${chatYn eq true }">
+						<svg class="text-danger"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-handbag" viewBox="0 0 16 16">
+			  				<path d="M8 1a2 2 0 0 1 2 2v2H6V3a2 2 0 0 1 2-2m3 4V3a3 3 0 1 0-6 0v2H3.36a1.5 1.5 0 0 0-1.483 1.277L.85 13.13A2.5 2.5 0 0 0 3.322 16h9.355a2.5 2.5 0 0 0 2.473-2.87l-1.028-6.853A1.5 1.5 0 0 0 12.64 5zm-1 1v1.5a.5.5 0 0 0 1 0V6h1.639a.5.5 0 0 1 .494.426l1.028 6.851A1.5 1.5 0 0 1 12.678 15H3.322a1.5 1.5 0 0 1-1.483-1.723l1.028-6.851A.5.5 0 0 1 3.36 6H5v1.5a.5.5 0 1 0 1 0V6z"/>
+						</svg>
+						<span onclick="javascript:location.href='/user/trade/main?productNo=${detail.productNo}'" class="fw-bold text-danger" >구매하기</span>
+					</c:if>
+				</c:if>
+			</c:if>	
+			<c:if test="${detail.tradeYn eq 'Y' }">
+				<button type="button" class="btn btn-light form-control" onclick="javascript: location.href='/user/mypage/purchase/main'">구매완료</button>
+			</c:if>
 		</div>
 	</div>
 </main>
+
+<!-- 채팅 모달 -->
+<div class="modal fade chatModal modal-dialog modal-fullscreen-sm-down chatModal" id="chatModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">채팅방 만들기</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="text" class="title form-control" id="title" placeholder="채팅방 제목을 입력해 주세요">
+      </div>
+      <div class="modal-footer">
+      	<button type="button" id="createChatRoomBtn" class="btn btn-primary " >채팅방 만들기</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">닫기</button>
+      </div>
+    </div>
+  </div>
 </div>
-<input type="text" id="productNo" value=${param.productNo } style="display: none;">
-<input type="text" id="price" value=${detail.price } style="display: none;">
-<input type="text" id="title" value="${detail.title }" style="display: none;">
-<input type="text" id="content" value="${detail.content }" style="display: none;">
-<input type="text" id="location" value="${detail.location }" style="display: none;">
+</div>
+
+<input type="hidden" id="productNo" value=${param.productNo } >
+<input type="hidden" id="productUserNo" value="${detail.userNo }">
+<input type="hidden" id="price" value=${detail.price } >
+<input type="hidden" id="title" value="${detail.title }" >
+<input type="hidden" id="content" value="${detail.content }" >
+<input type="hidden" id="location" value="${detail.location }" >
 <%@ include file="/resources/common/user/footer.jsp" %>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
@@ -145,7 +187,8 @@ $(document).ready(function(){
 					"title" : $("#title").val(),
 					"content" :$("#content").val(),
 					"price" : $("#price").val(),
-					"location" : $("#location").val()
+					"location" : $("#location").val(),
+					"productUserNo" : $("#productUserNo").val()
 					},
 			success:function(result){
 				alert(result)
@@ -167,11 +210,32 @@ $(document).ready(function(){
 		})
 	});
 	
-	//바로구매
-	$("#tradeBtn").on("click",function(){
-		location.href="/user/trade/main?productNo="+$("#productNo").val()
-	
+	//채팅하기
+	$("#createChatRoomBtn").on("click",function(){
+		
+		var params = {
+					"targetUserNo":	$("#productUserNo").val(),
+					"title" :$("#title").val(),
+					"userType" : "user"
+					}
+		
+		$.ajax({
+			url:"/chat/openChatRoom",
+			type:"post",
+			data : params,
+			success:function(result){
+				location.href="/chat/room?roomNo="+result;
+			}
+		});
+		
 	});
+	
+	//채팅방 이동 (기존 채팅방이 생성되어있는 경우)
+	$("#moveChatRoomBtn").on("click",function(){
+		location.href="/chat/room?roomNo="+$("#moveChatRoomNo").val()
+	});
+	
+	
 	
 	
 	

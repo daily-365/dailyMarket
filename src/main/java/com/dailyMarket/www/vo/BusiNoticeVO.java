@@ -21,6 +21,8 @@ public class BusiNoticeVO extends BusiNoticeFileVO {
 	
 	private int endRow;
 	
+	private String busiName;
+	
 	public int getBusiNoticeNo() {
 		return busiNoticeNo;
 	}
@@ -110,6 +112,12 @@ public class BusiNoticeVO extends BusiNoticeFileVO {
 	}
 	public void setEndRow(int endRow) {
 		this.endRow = endRow;
+	}
+	public String getBusiName() {
+		return busiName;
+	}
+	public void setBusiName(String busiName) {
+		this.busiName = busiName;
 	}
 	
 	

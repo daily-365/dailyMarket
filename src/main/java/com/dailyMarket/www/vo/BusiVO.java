@@ -42,6 +42,17 @@ public class BusiVO  {
 	private int menuNo;
 	private int jobNo;
 	
+	//페이징 처리를 위한 변수 추가 선언
+	private int endRow;
+	
+	//검색 
+	private String keyword;
+	
+	//채팅  <업체 사용자 번호>
+	private int userNo;
+	private int roomNo;
+	private String userType;
+	
 	public int getRnum() {
 		return rnum;
 	}
@@ -272,6 +283,46 @@ public class BusiVO  {
 
 	public void setJobNo(int jobNo) {
 		this.jobNo = jobNo;
+	}
+
+	public int getEndRow() {
+		return endRow;
+	}
+
+	public void setEndRow(int endRow) {
+		this.endRow = endRow;
+	}
+
+	public String getKeyword() {
+		return keyword;
+	}
+
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
+	}
+
+	public int getUserNo() {
+		return userNo;
+	}
+
+	public void setUserNo(int userNo) {
+		this.userNo = userNo;
+	}
+
+	public int getRoomNo() {
+		return roomNo;
+	}
+
+	public void setRoomNo(int roomNo) {
+		this.roomNo = roomNo;
+	}
+
+	public String getUserType() {
+		return userType;
+	}
+
+	public void setUserType(String userType) {
+		this.userType = userType;
 	}
 
 	

@@ -59,7 +59,7 @@
 		</div>
 		<div class="row  justify-content-center">
 			<div class="col-4">
-				<button type="button" class="form-control btn btn-outline-danger">판매 취소 하기</button>
+				<button type="button" class="deleteProductBtn form-control btn btn-outline-danger" value="${list.productNo }">판매 취소 하기</button>
 			</div>
 		</div>
 		<br>
@@ -76,7 +76,23 @@
 <script type="text/javascript">
 $(document).ready(function(){
 
-
+	$(".deleteProductBtn").on("click",function(){
+		if(!confirm("해당 제품을 삭제하시겠습니까?")){
+			return false;
+		}else{
+			$.ajax({
+				url :"/user/mypage/sales/cancle",
+				type: "post",
+				data : { "productNo" : Number($(this).val())},
+				success:function(result){
+					alert(result)
+					location.reload(true);
+				}
+			});
+		}
+		
+		
+	});
 
 });
 </script>

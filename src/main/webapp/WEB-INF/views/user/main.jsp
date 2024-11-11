@@ -278,7 +278,10 @@
     </div>
   </div>
 </main>
+<input type="hidden" value="<%=session.getAttribute("userNo") %>" id="userNo">
+<input type="hidden" value="<%=session.getAttribute("userId") %>" id="userId">
 <%@ include file="/resources/common/user/footer.jsp" %>
+
 </body>
 <!-- Jquery  -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -293,7 +296,76 @@ $(document).ready(function(){
 	 $('#mainCarousel').carousel({        
 	  	interval: 3000         
 	   });
+	 
+	
+	 //메세지 보내기
+	 $("#writeChatMessageBtn").on("click",function(){
+		 
+		 var params = {
+				 		"targetUserNo" : $("#userNo").val(),
+				 		"userId" : $("#userId").val(),
+				 		"message" : $("#message").val()
+				  
+		 				}
+	
+		 $.ajax({
+			url :"/admin/chat",
+			type:"post",
+			data:  params,
+			success: function(result){
+				$("#messageList").append("<p class='fw-bold'>"+$("#userId").val()+"</p>"
+						+"<p>"+result.substring(0,30)+"</p>"
+						+"<p>"+result.substring(30,60)+"</p>"
+						+"<p>"+result.substring(60,90)+"</p>"
+						+"<p>"+result.substring(90,120)+"</p>"
+						+"<p>"+result.substring(120,150)+"</p>"
+												)
+				$("#message").val('')
+			}
+		 })
+	 });
 	   
+	   
+	//메세지 리스트
+	$.ajax({
+		url :"/admin/chatList",
+		type:"post",
+		success: function(result){
+		
+			result.forEach(function(item){
+				var year = new Date(item.createDate).getFullYear()
+				var month = new Date(item.createDate).getMonth()+1
+					if(String(month).length==1)
+						month="0"+month
+				var day = new Date(item.createDate).getDay()
+					if(String(day).length==1)
+						day="0"+day
+						
+				var hour = new Date(item.createDate).getHours()	
+					if(String(hour).length==1)
+						hour="0"+hour
+				var minute = new Date(item.createDate).getMinutes()	
+					if(String(minute).length==1)
+						minute="0"+minute
+				var second = new Date(item.createDate).getSeconds()	
+					if(String(second).length==1)
+						second="0"+second
+				
+				
+				$("#messageList").append("<p class='fw-bold'>"+item.userId+"</p>"
+												+"<p>"+year+"-"+month+"-"+day+" "+hour+":"+minute+":"+second+"</p>"	
+												+"<p>"+item.message.substring(0,30)+"</p>"
+												+"<p>"+item.message.substring(30,60)+"</p>"
+												+"<p>"+item.message.substring(60,90)+"</p>"
+												+"<p>"+item.message.substring(90,120)+"</p>"
+												+"<p>"+item.message.substring(120,150)+"</p>"
+												)		
+				
+				
+				
+			})			
+		}
+ 	})
 
 });
 

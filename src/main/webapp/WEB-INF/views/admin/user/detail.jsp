@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>사용자 상세 정보</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
@@ -81,7 +81,7 @@
 					<c:when test="${not empty account }">
 						<div class="col">
 							<span>계좌번호 : </span>	
-							<span>${account.accountNum}</span>
+							<span><a href="/admin/user/account?userNo=${account.userNo}&accountNum=${account.accountNum}">${account.accountNum}</a></span>
 						</div>
 						<div class="col">
 							<span>은행 : </span>	
@@ -93,6 +93,7 @@
 								￦ <fmt:formatNumber type="number" maxFractionDigits="3" value="${account.saveMoney}"/>원
 							</span>
 						</div>
+						<hr>
 					</c:when>
 					<c:otherwise>
 						<div class="row">
@@ -105,7 +106,6 @@
 			</c:forEach>
 		</div>
 		<br>
-		<hr>
 		<div class="col">
 			<p class="h4">거래내역</p>	
 			<c:forEach var="trade" items="${trade }">

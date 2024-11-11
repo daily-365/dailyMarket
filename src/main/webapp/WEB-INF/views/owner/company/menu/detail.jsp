@@ -12,7 +12,7 @@
 </head>
 <body class="container">
 	<br><br>
-	<h5 class="fw-bold text-dark text-center">메뉴 등록</h5>
+	<h5 class="fw-bold text-dark text-center">물품 등록</h5>
 	<br><br>
 	<div class="row">
 		<div class="col-5"></div>

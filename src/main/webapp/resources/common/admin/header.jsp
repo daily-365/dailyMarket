@@ -40,22 +40,22 @@
           </a>
         </li>
         <li class="nav-item dropdown">
-            <div class="dropdown text-dark">
+            <div class="dropdown text-light">
 			  <span class="dropdown-toggle nav-link fw-bold align-text-bottom" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 			   	이벤트
 			  </span>
-			  <ul class="dropdown-menu fw-bold text-dark">
+			  <ul class="dropdown-menu fw-bold text-light">
 			    <li><a class="dropdown-item " href="/admin/event/main">메인페이지</a></li>
 			    <li><a class="dropdown-item" href="/admin/event/write">작성페이지</a></li>
 			  </ul>
 			</div>
           </li>
         <li class="nav-item dropdown">
-            <div class="dropdown text-dark">
+            <div class="dropdown text-light">
 			  <span class="dropdown-toggle nav-link fw-bold align-text-bottom" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 			   	공지사항
 			  </span>
-			  <ul class="dropdown-menu fw-bold text-dark">
+			  <ul class="dropdown-menu fw-bold  text-light">
 			    <li><a class="dropdown-item" href="/admin/notice/main">메인페이지</a></li>
 			    <li><a class="dropdown-item" href="/admin/notice/write">작성페이지</a></li>
 			  </ul>
@@ -67,6 +67,25 @@
               	문의사항
             </a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link fw-bold text-light" href="#">
+              <span data-feather="layers" class="align-text-bottom"></span>
+              	비즈프로필
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link fw-bold text-light" href="/admin/advert/main">
+              <span data-feather="layers" class="align-text-bottom"></span>
+              	광고
+            </a>
+          </li>
+           <li class="nav-item">
+            <a class="nav-link fw-bold text-light" href="/admin/chat/main">
+              <span data-feather="layers" class="align-text-bottom"></span>
+              	채팅
+            </a>
+          </li>
+          
           <li class="nav-item">
             <a class="nav-link fw-bold" href="/admin/logout">
               <span data-feather="file-text" class="align-text-bottom"></span>

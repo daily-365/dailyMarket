@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 
 import com.dailyMarket.www.dao.AdminDAO;
 import com.dailyMarket.www.utils.SearchCriteria;
+import com.dailyMarket.www.vo.AdminChatVO;
 import com.dailyMarket.www.vo.AdminVO;
+import com.dailyMarket.www.vo.AdvertVO;
 import com.dailyMarket.www.vo.AnswerVO;
 import com.dailyMarket.www.vo.BusiFileVO;
 import com.dailyMarket.www.vo.BusiVO;
@@ -201,6 +203,11 @@ public class AdminServiceImpl implements AdminService{
 	public List<UserAccountVO> selectUserAccount(String userId) throws Exception {
 		return adminDAO.selectUserAccount(userId);
 	}
+	
+	@Override
+	public List<UserAccountVO> selectUserAccountDetail(UserAccountVO accountVO) throws Exception {
+		return adminDAO.selectUserAccountDetail(accountVO);
+	}
 	@Override
 	public List<UserTradeVO> selectUserTrade(String userId) throws Exception {
 		return adminDAO.selectUserTrade(userId);
@@ -317,9 +324,64 @@ public class AdminServiceImpl implements AdminService{
 	public void updateInquiryStatus(int inquiryNo) throws Exception {
 		adminDAO.updateInquiryStatus(inquiryNo);
 	}
+
 	
 	
+
+	@Override
+	public List<AdvertVO> selectAdvertList(SearchCriteria scri) throws Exception {
+		return adminDAO.selectAdvertList(scri);
+	}
+	@Override
+	public int selectAdvertTotalCnt(SearchCriteria scri) throws Exception {
+		return adminDAO.selectAdvertTotalCnt(scri);
+	}
+	@Override
+	public AdvertVO SelectAdvertDetail(int advertNo) throws Exception {
+		return adminDAO.SelectAdvertDetail(advertNo);
+	}
+
+
+	@Override
+	public void updatePriceAgree(int advertNo) throws Exception {
+		adminDAO.updatePriceAgree(advertNo);
+	}
+	@Override
+	public void updatePriceDisAgree(int advertNo) throws Exception {
+		adminDAO.updatePriceDisAgree(advertNo);
+	}
+	@Override
+	public void updateApproveAgree(int advertNo) throws Exception {
+		adminDAO.updateApproveAgree(advertNo);
+	}
+	@Override
+	public void updateApproveDisAgree(int advertNo) throws Exception {
+		adminDAO.updateApproveDisAgree(advertNo);
+	}
+
+
 	
+	@Override
+	public void insertChatMessage(AdminChatVO chatVO) throws Exception {
+		adminDAO.insertChatMessage(chatVO);
+	}
+	@Override
+	public List<AdminChatVO> selectChatList(int targetUserNo) throws Exception {
+		return adminDAO.selectChatList(targetUserNo);
+	}
+	@Override
+	public List<AdminChatVO> selectChatRoom(SearchCriteria scri) throws Exception {
+		return adminDAO.selectChatRoom(scri);
+	}
+	@Override
+	public int selectChatRoomTotalCnt(SearchCriteria scri) throws Exception {
+		return adminDAO.selectChatRoomTotalCnt(scri);
+	}
+	@Override
+	public void updateReadMessage(int targetUserNo) throws Exception {
+		adminDAO.updateReadMessage(targetUserNo);
+	}
 	
+
 	
 }

@@ -163,21 +163,19 @@
 		</div>
 		<c:if test="${getJobYn eq false}">
 			<div class="col-8">
-				<button class="form-control fw-bold btn btn-outline-dark" type="button" id="getJobBtn">데일리 알바 지원하기</button>
+				<button class="form-control fw-bold btn btn-outline-success" type="button" id="getJobBtn">데일리 알바 지원하기</button>
 			</div>
 		</c:if>
 		<c:if test="${getJobYn eq true }">
 			<div class="col-8">
-				<button class="form-control fw-bold btn btn-outline-danger" type="button" >지원 취소</button>
+				<button class="form-control fw-bold btn btn-outline-warning" type="button" id="chkGetJobBtn" >지원 확인하러 가기</button>
 			</div>
 		</c:if>
 	</div>
 	<br>
 	<div class="row">
-		<div class="col-2">
-		</div>
 		<div class="col">
-			<h5 id="loc" class="fw-bold">${fn:substring(jobVO.jobLoc,0,7)} 근처 알바</h5>
+			<h5 id="loc" class="fw-bold text-center">${fn:substring(jobVO.jobLoc,0,7)} 근처 알바</h5>
 		</div>
 	</div>
 	<br>
@@ -257,8 +255,6 @@ geocoder.addressSearch(''+addrVal+'', function(result, status) {
 $(document).ready(function(){
 	
 	$("#getJobBtn").on("click",function(){
-				
-		//String형식으로 true/false를 받아온다.
 		if($("#jobWriteYn").val()=="false"){
 			alert("아직 이력서가 없네요 - 이력서 작성 페이지로 이동합니다.")
 			location.href='/user/job/write'
@@ -272,10 +268,15 @@ $(document).ready(function(){
 					data : {"jobNo":$("#jobNo").val()},
 					success:function(result){
 						alert(result)
+						location.reload(true)
 					}
 				})
 			}
 		}
+	});
+	
+	$("#chkGetJobBtn").on("click",function(){
+		location.href="/user/job/chk";
 	});
 
 });

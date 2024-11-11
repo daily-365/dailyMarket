@@ -35,7 +35,7 @@
 				<div id="map" style="width:100%;height:350px;"></div>
 					<br><Br>
 					<div class="hAddr">
-        				<p id="centerAddr"></p>
+        				<p id="centerAddr">${user.userAddr1 } ${user.userAddr2 } </p>
     				</div>
 			</div>
 		</div>
@@ -252,6 +252,7 @@ function getLocationFunc(){
 	// 현재 지도 중심좌표로 주소를 검색해서 지도 좌측 상단에 표시합니다
 	searchAddrFromCoords(map.getCenter(), displayCenterInfo);
 	
+	    
 	// 지도를 클릭했을 때 클릭 위치 좌표에 대한 주소정보를 표시하도록 이벤트를 등록합니다
 	kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
     	searchDetailAddrFromCoords(mouseEvent.latLng, function(result, status) {
@@ -320,7 +321,13 @@ function getLocationFunc(){
 
 
 $(document).ready(function(){
-
+	//위치 설정이 된 상태
+	var roadNameAddr =localStorage.getItem("roadNameAddr")
+	var gibunAddr = localStorage.getItem("gibunAddr")
+	if(roadNameAddr&&gibunAddr){
+		$("#centerAddr").html(roadNameAddr+" "+gibunAddr)
+	}
+	
 	viewEsLocMapFunc()
 	
 	$("#setLocBtn").on("click",function(){
